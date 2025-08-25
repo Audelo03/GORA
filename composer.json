@@ -1,0 +1,21 @@
+{
+    "name": "diego/itsa",
+    "description": "platafoma de",
+    "type": "project",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Diego\\Itsa\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Audelo03",
+            "email": "diegoaudelopersonal@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "twbs/bootstrap-icons": "^1.13"
+    }
+}
