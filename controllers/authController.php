@@ -17,6 +17,8 @@ class AuthController {
         $_SESSION["usuario_id"] = $user["id_usuario"];
             $_SESSION["usuario_nombre"] = $user["nombre"];
             $_SESSION["usuario_nivel"] = $user["niveles_usuarios_id_nivel_usuario"];
+            $_SESSION["usuario_apellido_paterno"] = $user["apellido_paterno"];
+            $_SESSION["usuario_apellido_materno"] = $user["apellido_materno"];
             return true;
         }
         return false;

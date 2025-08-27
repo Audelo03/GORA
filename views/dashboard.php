@@ -5,8 +5,18 @@ require_once __DIR__ . '/../controllers/authController.php';
 $auth = new AuthController($conn);
 $auth->checkAuth();
 
+
+$niveles_autorizados = [1 => "Admin", 2 => "Coordinador", 4 => "Tutor", 9 => "Director"];
+
 $usuario_id = $_SESSION['usuario_id'];
 $nivel = $_SESSION['usuario_nivel'];
+$nivel_nombre  = $niveles_autorizados[$nivel] ?? "Desconocido"; 
+
+
+$nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_paterno'] . ' ' . $_SESSION['usuario_apellido_materno'];
+
+
+
 
 $alumnoController = new AlumnoController($conn);
 
@@ -83,6 +93,11 @@ function obtenerAlumnosParaAdminLv1($alumnoController, $conn) {
             $tutorNombre = $tutorData ? "{$tutorData['nombre']} {$tutorData['apellido_paterno']} {$tutorData['apellido_materno']}" : "Desconocido";
             $data[$grupoNombre][$tutorNombre][] = $a;
         }
+
+        if (empty($data)) {
+            echo "<div class='alert alert-info'>No hay alumnos registrados en su carrera.</div>";
+            return;
+        }
     
 
         echo "<h2>Alumnos de la carrera: {$nombre_carrera}</h2>";
@@ -103,12 +118,17 @@ function obtenerAlumnosParaAdminLv1($alumnoController, $conn) {
     <meta charset="UTF-8">
     <title>Dashboard de Alumnos</title>
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../public/css/sidebar.css" rel="stylesheet">
 </head>
 <body class="bg-light">
+     <?php include __DIR__ . "/objects/sidebar.php"; ?>
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
+        
         <h1 class="mb-0">Tabla de Alumnos</h1>
+        <h2 class="mb-0">Nivel: <?php echo $nivel_nombre; ?></h1>
+        <h2 class="mb-0">Usuario Nombre: <?php echo $nombre; ?></h1> 
         <a href="login.php" class="btn btn-danger">Cerrar Sesión</a>
     </div>
 
@@ -130,5 +150,15 @@ function obtenerAlumnosParaAdminLv1($alumnoController, $conn) {
 </div>
 
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const btnToggle = document.getElementById('btn-toggle');
+    const sidebar = document.getElementById('app-sidebar');
+    const content = document.getElementById('app-content');
+
+    btnToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      content.classList.toggle('collapsed');
+    });
+  </script>
 </body>
 </html>
