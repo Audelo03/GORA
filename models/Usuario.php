@@ -94,7 +94,7 @@ class Usuario {
     public function getCarrreraIdByUsuarioId($usuario_id) {
         $sql = "SELECT c.id_carrera
                 FROM carreras c
-                JOIN usuarios u ON c.usuarios_usuario_id_coordinador = u.id_usuario
+                JOIN usuarios u ON c.usuarios_id_usuario_coordinador = u.id_usuario
                 WHERE u.id_usuario = :usuario_id
                 LIMIT 1";
         $stmt = $this->conn->prepare($sql);

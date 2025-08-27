@@ -18,11 +18,11 @@ class Alumno {
     }
 
     public function getAll() {
-        $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo, t.usuarios_id_usuario AS tutor
+        $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo, t.id_usuario AS tutor
                 FROM " . $this->table . " a
                 LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
                 LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
-                LEFT JOIN tutores t ON a.tutores_id_tutor = t.id_tutor";
+                LEFT JOIN usuarios t ON g.usuarios_id_usuario_tutor = t.id_usuario";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -39,8 +39,8 @@ class Alumno {
     // Crear alumno
     public function create() {
         $sql = "INSERT INTO " . $this->table . " 
-                (matricula, nombre, apellido_paterno, apellido_materno, estatus, tutores_id_tutor, carreras_id_carrera, grupos_id_grupo, fecha_creacion)
-                VALUES (:matricula, :nombre, :apellido_paterno, :apellido_materno, :estatus, :tutor, :carrera, :grupo, NOW())";
+                (matricula, nombre, apellido_paterno, apellido_materno, estatus, carreras_id_carrera, grupos_id_grupo, fecha_creacion)
+                VALUES (:matricula, :nombre, :apellido_paterno, :apellido_materno, :estatus, :carrera, :grupo, NOW())";
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindParam(":matricula", $this->matricula);
@@ -48,7 +48,6 @@ class Alumno {
         $stmt->bindParam(":apellido_paterno", $this->apellido_paterno);
         $stmt->bindParam(":apellido_materno", $this->apellido_materno);
         $stmt->bindParam(":estatus", $this->estatus, PDO::PARAM_INT);
-        $stmt->bindParam(":tutor", $this->tutores_id_tutor, PDO::PARAM_INT);
         $stmt->bindParam(":carrera", $this->carreras_id_carrera, PDO::PARAM_INT);
         $stmt->bindParam(":grupo", $this->grupos_id_grupo, PDO::PARAM_INT);
 
@@ -76,7 +75,7 @@ class Alumno {
         return $stmt->execute();
     }
 
-    // Eliminar alumno
+
     public function delete($id) {
         $sql = "DELETE FROM " . $this->table . " WHERE id_alumno = :id";
         $stmt = $this->conn->prepare($sql);
