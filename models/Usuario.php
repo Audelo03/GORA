@@ -12,6 +12,7 @@ class Usuario {
     public $estatus;
     public $fecha_creacion;
     public $niveles_usuarios_id_nivel_usuario;
+     public $usuarios_id_usuario_movimiento;
 
 
     public function __construct($db) {
@@ -26,36 +27,53 @@ class Usuario {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function create() {
-        $sql = "INSERT INTO " . $this->table . " 
-                (nombre, apellido_paterno, apellido_materno, email, password, estatus, fecha_creacion, niveles_usuarios_id_nivel_usuario)
-                VALUES (:nombre, :apellido_paterno, :apellido_materno, :email, :password, :estatus, NOW(), :nivel)";
-        
-        $stmt = $this->conn->prepare($sql);
+    public function create($data) {
+        $query = "INSERT INTO " . $this->table . " (nombre, apellido_paterno, apellido_materno, email, password, estatus, niveles_usuarios_id_nivel_usuario, usuarios_id_usuario_movimiento) VALUES (:nombre, :apellido_paterno, :apellido_materno, :email, :password, :estatus, :niveles_usuarios_id_nivel_usuario, :usuarios_id_usuario_movimiento)";
+        $stmt = $this->conn->prepare($query);
 
-        // Encriptar contraseña antes de guardar
-        $hash = password_hash($this->password, PASSWORD_DEFAULT);
+        $nombre = htmlspecialchars(strip_tags($data['nombre']));
+        $apellido_paterno = htmlspecialchars(strip_tags($data['apellido_paterno']));
+        $apellido_materno = isset($data['apellido_materno']) ? htmlspecialchars(strip_tags($data['apellido_materno'])) : null;
+        $email = htmlspecialchars(strip_tags($data['email']));
+        $password = $data['password'];
+        $estatus = htmlspecialchars(strip_tags($data['estatus']));
+        $nivel_usuario = htmlspecialchars(strip_tags($data['niveles_usuarios_id_nivel_usuario']));
+        $usuario_movimiento = isset($data['usuarios_id_usuario_movimiento']) ? htmlspecialchars(strip_tags($data['usuarios_id_usuario_movimiento'])) : null;
 
-        $stmt->bindParam(":nombre", $this->nombre);
-        $stmt->bindParam(":apellido_paterno", $this->apellido_paterno);
-        $stmt->bindParam(":apellido_materno", $this->apellido_materno);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":password", $hash);
-        $stmt->bindParam(":estatus", $this->estatus, PDO::PARAM_INT);
-        $stmt->bindParam(":nivel", $this->niveles_usuarios_id_nivel_usuario, PDO::PARAM_INT);
+        $stmt->bindParam(":nombre", $nombre);
+        $stmt->bindParam(":apellido_paterno", $apellido_paterno);
+        $stmt->bindParam(":apellido_materno", $apellido_materno);
+        $stmt->bindParam(":email", $email);
+        $stmt->bindParam(":password", $password);
+        $stmt->bindParam(":estatus", $estatus);
+        $stmt->bindParam(":niveles_usuarios_id_nivel_usuario", $nivel_usuario);
+        $stmt->bindParam(":usuarios_id_usuario_movimiento", $usuario_movimiento);
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
     }
 
     public function getAll() {
-        $sql = "SELECT u.*, n.nombre AS nivel_nombre
-                FROM " . $this->table . " u
-                LEFT JOIN niveles_usuarios n ON u.niveles_usuarios_id_nivel_usuario = n.id_nivel_usuario";
-        $stmt = $this->conn->prepare($sql);
+        $query = "SELECT 
+                    u.id_usuario, 
+                    u.nombre, 
+                    u.apellido_paterno, 
+                    u.apellido_materno, 
+                    u.email, 
+                    u.estatus, 
+                    u.niveles_usuarios_id_nivel_usuario,
+                    nu.nombre as nivel_usuario 
+                  FROM " . $this->table . " u
+                  LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario
+                  ORDER BY u.id_usuario DESC";
+
+        $stmt = $this->conn->prepare($query);
         $stmt->execute();
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
     public function getById($id) {
         $sql = "SELECT * FROM " . $this->table . " WHERE id_usuario = :id LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -64,32 +82,50 @@ class Usuario {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update() {
-        $sql = "UPDATE " . $this->table . " 
-                SET nombre = :nombre, apellido_paterno = :apellido_paterno, apellido_materno = :apellido_materno,
-                    email = :email, estatus = :estatus, niveles_usuarios_id_nivel_usuario = :nivel, fecha_modificacion = NOW(),
-                WHERE id_usuario = :id";
+    public function update($id, $data) {
+        $set_parts = [];
+        foreach ($data as $key => $value) {
+            $set_parts[] = "$key = :$key";
+        }
+        $set_clause = implode(", ", $set_parts);
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":nombre", $this->nombre);
-        $stmt->bindParam(":apellido_paterno", $this->apellido_paterno);
-        $stmt->bindParam(":apellido_materno", $this->apellido_materno);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":estatus", $this->estatus, PDO::PARAM_INT);
-        $stmt->bindParam(":nivel", $this->niveles_usuarios_id_nivel_usuario, PDO::PARAM_INT);
-        $stmt->bindParam(":id", $this->id_usuario, PDO::PARAM_INT);
+        $query = "UPDATE " . $this->table . " SET " . $set_clause . " WHERE id_usuario = :id_usuario";
 
-        return $stmt->execute();
+        $stmt = $this->conn->prepare($query);
+
+        foreach ($data as $key => &$value) {
+            $clean_value = htmlspecialchars(strip_tags($value));
+            $stmt->bindParam(":$key", $clean_value);
+        }
+        
+        $id = htmlspecialchars(strip_tags($id));
+        $stmt->bindParam(":id_usuario", $id);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        printf("Error: %s.\n", $stmt->error);
+        return false;
     }
 
 
-    public function delete($id) {
-        $sql = "DELETE FROM " . $this->table . " WHERE id_usuario = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
+     public function delete($id) {
+        $query = "DELETE FROM " . $this->table . " WHERE id_usuario = :id_usuario";
 
+        $stmt = $this->conn->prepare($query);
+
+        $id = htmlspecialchars(strip_tags($id));
+
+        $stmt->bindParam(":id_usuario", $id);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        
+        printf("Error: %s.\n", $stmt->error);
+        return false;
+    }
     //solo para coordinadores
     public function getCarrreraIdByUsuarioId($usuario_id) {
         $sql = "SELECT c.id_carrera
@@ -105,7 +141,7 @@ class Usuario {
     }
     // solo para tutores
     public function getGruposIdByUsuarioId($usuario_id) {
-        $sql = "SELECT g.id_grupo
+        $sql = "SELECT g.id_grupo, g.nombre
                 FROM grupos g
                 JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
                 WHERE u.id_usuario = :usuario_id";
@@ -116,5 +152,134 @@ class Usuario {
         $grupos = array_map(function($row) { return $row['id_grupo']; }, $result);
         return $grupos; 
 }
+    //ADMIN
+    public function obtenerAlumnosParaAdminLv1($alumnoController, $conn) {
+    $lista = $alumnoController->listarAlumnos();
+    $data = [];
+    foreach ($lista as $row) $data[$row['carrera']][$row['tutor']][$row['grupo']][] = $row;
+    ?>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3 text-primary">Todos los Alumnos</h2>
+            <?php foreach ($data as $carrera => $tutores): ?>
+                <h5 class="mt-4 text-secondary">Carrera: <?= $carrera ?></h5>
+                <?php foreach ($tutores as $tutor_id => $grupos): 
+                    $tutor = $conn->prepare("SELECT nombre, apellido_paterno, apellido_materno FROM usuarios WHERE id_usuario = :id");
+                    $tutor->bindParam(':id', $tutor_id, PDO::PARAM_INT);
+                    $tutor->execute();
+                    $tutorData = $tutor->fetch(PDO::FETCH_ASSOC);
+                    $tutorNombre = $tutorData ? "{$tutorData['nombre']} {$tutorData['apellido_paterno']} {$tutorData['apellido_materno']}" : "Desconocido";
+                ?>
+                    <h6 class="mt-3">Tutor: <?= $tutorNombre ?></h6>
+                    <?php foreach ($grupos as $grupo => $alumnos): ?>
+                        <div class="mb-2">
+                            <span class="badge bg-info text-dark">Grupo: <?= $grupo ?></span>
+                            <ul class="list-group list-group-flush mt-2">
+                                <?php foreach ($alumnos as $a): ?>
+                                    <li class="list-group-item"><?= $a['nombre'] ?> <?= $a['apellido_paterno'] ?> <?= $a['apellido_materno'] ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+}
+
+    //TUTOR
+    public function obtenerAlumnosParaTutorLvl3($alumnoController, $conn, $usuario_id, $auth) {
+    //obtener grupos del tutor
+    $grupos_ids = $auth->usuario->getGruposIdByUsuarioId($usuario_id);
+    if (!$grupos_ids) {
+        echo "<div class='alert alert-info'>No tiene grupos asignados.</div>";
+        return;
+    }
+   
+    ?>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3 text-primary">Mis Alumnos</h2>
+            <?php foreach ($grupos_ids as $id_grupo): 
+                $stmt = $conn->prepare("SELECT nombre FROM grupos WHERE id_grupo = :id_grupo");
+                $stmt->bindParam(':id_grupo', $id_grupo, PDO::PARAM_INT);
+                $stmt->execute();
+                $grupo = $stmt->fetch(PDO::FETCH_ASSOC)['nombre'] ?? "Desconocido";
+                $alumnos = $alumnoController->alumno->listByGroupId($id_grupo);
+                if (empty($alumnos)) continue;
+            ?>
+            <div class="mb-2">
+                <span class="badge bg-info text-dark">Grupo: <?= $grupo ?></span>
+                    <ul class="list-group list-group-flush mt-2">
+                    <?php foreach ($alumnos as $a): ?>
+                        <li class="list-group-item"><?= $a['nombre'] ?> <?= $a['apellido_paterno'] ?> <?= $a['apellido_materno'] ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+}
+
+//COORDINADOR
+public function obtenerAlumnosParaCoordinadorLvl2($alumnoController, $conn, $auth, $usuario_id) {
+    $carreraid = $auth->usuario->getCarrreraIdByUsuarioId($usuario_id);
+    $alumnos = $alumnoController->alumno->listByCarreraId($carreraid);
+    $nombre_carrera = $conn->prepare("SELECT nombre FROM carreras WHERE id_carrera = :id");
+    $nombre_carrera->bindParam(':id', $carreraid, PDO::PARAM_INT);
+    $nombre_carrera->execute();
+    $nombre_carrera = $nombre_carrera->fetch(PDO::FETCH_ASSOC)['nombre'] ?? "Desconocido";
+    
+    $data = [];
+    foreach ($alumnos as $a) {
+        $grupo = $conn->prepare("SELECT nombre, usuarios_id_usuario_tutor FROM grupos WHERE id_grupo = :id");
+        $grupo->bindParam(':id', $a['grupos_id_grupo'], PDO::PARAM_INT);
+        $grupo->execute();
+        $grupoData = $grupo->fetch(PDO::FETCH_ASSOC);
+        $grupoNombre = $grupoData ? $grupoData['nombre'] : "Desconocido";
+        $grupoTutorId = $grupoData ? $grupoData['usuarios_id_usuario_tutor'] : null;
+
+        $tutor  = $conn->prepare("SELECT nombre, apellido_paterno, apellido_materno FROM usuarios WHERE id_usuario = :id");
+        $tutor->bindParam(':id', $grupoTutorId, PDO::PARAM_INT);
+        $tutor->execute();
+        $tutorData = $tutor->fetch(PDO::FETCH_ASSOC);
+        $tutorNombre = $tutorData ? "{$tutorData['nombre']} {$tutorData['apellido_paterno']} {$tutorData['apellido_materno']}" : "Desconocido";
+        $data[$grupoNombre][$tutorNombre][] = $a;
+    }
+
+    if (empty($data)) {
+        echo "<div class='alert alert-info'>No hay alumnos registrados en su carrera.</div>";
+        return;
+    }
+    ?>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3 text-primary">Alumnos de la carrera: <?= $nombre_carrera ?></h2>
+            <?php foreach ($data as $grupo => $tutores): ?>
+               <div class="mb-2">
+                <span class="badge bg-info text-dark">Grupo: <?= $grupo ?></span>
+                    <ul class="list-group list-group-flush mt-2">
+                <?php foreach ($tutores as $tutor => $alumnos): ?>
+                    <h6 class="mt-2">Tutor: <?= $tutor ?></h6>
+                    <ul class="list-group list-group-flush mb-3">
+                        <?php foreach ($alumnos as $a): ?>
+                            <li class="list-group-item"><?= $a['nombre'] ?> <?= $a['apellido_paterno'] ?> <?= $a['apellido_materno'] ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
+
+    </div>
+    </div>
+    <?php
+}
+
+public function obtenerAlumnosParaDirLvl4($alumnoController, $conn) {
+    $this->obtenerAlumnosParaAdminLv1($alumnoController, $conn);
+}
+
+
 }
 ?>

@@ -1,4 +1,9 @@
+
 <?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+require_once __DIR__ . "/../config/db.php";
 class Alumno {
     private $conn;
     private $table = "alumnos";
@@ -12,19 +17,16 @@ class Alumno {
     public $carreras_id_carrera;
     public $grupos_id_grupo;
 
-    public function __construct($db) {
+    public function __construct($db = null) {
         $this->conn = $db;
     }
 
     public function getAll() {
-        $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo, t.id_usuario AS tutor
-                FROM " . $this->table . " a
+        $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo
+                FROM alumnos a
                 LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
-                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
-                LEFT JOIN usuarios t ON g.usuarios_id_usuario_tutor = t.id_usuario";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo";
+          return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getById($id) {
@@ -36,51 +38,35 @@ class Alumno {
     }
 
     // Crear alumno
-    public function create() {
-        $sql = "INSERT INTO " . $this->table . " 
-                (matricula, nombre, apellido_paterno, apellido_materno, estatus, carreras_id_carrera, grupos_id_grupo, fecha_creacion)
-                VALUES (:matricula, :nombre, :apellido_paterno, :apellido_materno, :estatus, :carrera, :grupo, NOW())";
+      public function create($data) {
+        $sql = "INSERT INTO $this->table 
+                (matricula, nombre, apellido_paterno, apellido_materno, estatus, usuarios_id_usuario_movimiento, carreras_id_carrera, grupos_id_grupo)
+                VALUES (:matricula, :nombre, :apellido_paterno, :apellido_materno, :estatus, :usuarios_id_usuario_movimiento, :carreras_id_carrera, :grupos_id_grupo)";
         $stmt = $this->conn->prepare($sql);
-
-        $stmt->bindParam(":matricula", $this->matricula);
-        $stmt->bindParam(":nombre", $this->nombre);
-        $stmt->bindParam(":apellido_paterno", $this->apellido_paterno);
-        $stmt->bindParam(":apellido_materno", $this->apellido_materno);
-        $stmt->bindParam(":estatus", $this->estatus, PDO::PARAM_INT);
-        $stmt->bindParam(":carrera", $this->carreras_id_carrera, PDO::PARAM_INT);
-        $stmt->bindParam(":grupo", $this->grupos_id_grupo, PDO::PARAM_INT);
-
-        return $stmt->execute();
+        return $stmt->execute($data);
     }
 
-    // Actualizar alumno
-    public function update() {
-        $sql = "UPDATE " . $this->table . " 
-                SET matricula = :matricula, nombre = :nombre, apellido_paterno = :apellido_paterno, apellido_materno = :apellido_materno,
-                    estatus = :estatus, carreras_id_carrera = :carrera, grupos_id_grupo = :grupo
-                WHERE id_alumno = :id";
+    public function update($id, $data) {
+        $sql = "UPDATE $this->table SET 
+                    matricula=:matricula, 
+                    nombre=:nombre, 
+                    apellido_paterno=:apellido_paterno, 
+                    apellido_materno=:apellido_materno, 
+                    estatus=:estatus, 
+                    usuarios_id_usuario_movimiento=:usuarios_id_usuario_movimiento, 
+                    carreras_id_carrera=:carreras_id_carrera, 
+                    grupos_id_grupo=:grupos_id_grupo
+                WHERE id_alumno=:id";
         $stmt = $this->conn->prepare($sql);
-
-        $stmt->bindParam(":matricula", $this->matricula);
-        $stmt->bindParam(":nombre", $this->nombre);
-        $stmt->bindParam(":apellido_paterno", $this->apellido_paterno);
-        $stmt->bindParam(":apellido_materno", $this->apellido_materno);
-        $stmt->bindParam(":estatus", $this->estatus, PDO::PARAM_INT);
-        $stmt->bindParam(":carrera", $this->carreras_id_carrera, PDO::PARAM_INT);
-        $stmt->bindParam(":grupo", $this->grupos_id_grupo, PDO::PARAM_INT);
-        $stmt->bindParam(":id", $this->id_alumno, PDO::PARAM_INT);
-
-        return $stmt->execute();
+        $data['id'] = $id;
+        return $stmt->execute($data);
     }
-
 
     public function delete($id) {
-        $sql = "DELETE FROM " . $this->table . " WHERE id_alumno = :id";
+        $sql = "DELETE FROM $this->table WHERE id_alumno=:id";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
-        return $stmt->execute();
+        return $stmt->execute(['id' => $id]);
     }
-
     public function getByMatricula($matricula) {
         $sql = "SELECT * FROM " . $this->table . " WHERE matricula = :matricula LIMIT 1";
         $stmt = $this->conn->prepare($sql);
