@@ -55,7 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"]) && isset($_P
     <main class="form-signin w-100 m-auto bg-white rounded-3 shadow">
         <form method="POST">
             <div class="text-center mb-4">
-                <i class="bi bi-mortarboard-fill" style="font-size: 3rem; color:crimson"></i>
                 <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
             </div>
 

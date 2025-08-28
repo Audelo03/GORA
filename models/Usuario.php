@@ -103,5 +103,18 @@ class Usuario {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ? $result['id_carrera'] : null;
     }
+    // solo para tutores
+    public function getGruposIdByUsuarioId($usuario_id) {
+        $sql = "SELECT g.id_grupo
+                FROM grupos g
+                JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
+                WHERE u.id_usuario = :usuario_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":usuario_id", $usuario_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $grupos = array_map(function($row) { return $row['id_grupo']; }, $result);
+        return $grupos; 
+}
 }
 ?>
