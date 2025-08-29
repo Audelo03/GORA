@@ -23,6 +23,10 @@ class UsuarioController {
         return $this->usuario->getAll();
     }
 
+    public function listarCoordinadores() {
+        return $this->usuario->fetchCoordinadores('coordinador');
+    }
+
     public function verUsuario($id) {
         return $this->usuario->getById($id);
     }

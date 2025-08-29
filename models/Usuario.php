@@ -82,6 +82,15 @@ class Usuario {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function fetchCoordinadores($role) {
+        $sql = "SELECT u.id_usuario, u.nombre, u.apellido_paterno, u.apellido_materno 
+                FROM " . $this->table . " u WHERE u.niveles_usuarios_id_nivel_usuario = :role";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":role", $role, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function update($id, $data) {
         $set_parts = [];
         foreach ($data as $key => $value) {
