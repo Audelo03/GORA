@@ -1,16 +1,18 @@
 <?php
 session_start();
-require_once "../config/db.php"; // Conexión PDO
+require_once "../config/db.php";
 require_once "../controllers/usuarioController.php";
 require_once "../controllers/alumnoController.php";
+
 $auth = new UsuarioController();
 $alumnoController = new AlumnoController();
 
 // Identificar tipo de usuario
-$usuario = $_SESSION['usuario']; // Ejemplo: array con ['id','nivel','nombre']
+$usuario = $_SESSION['usuario'];
 $nivel = $usuario['nivel'];
 
 // Obtener datos según nivel
+// (Tu lógica de switch para obtener $stats va aquí...)
 switch($nivel){
     case 1: // Admin
         $stats = $alumnoController->getStatsAll();
@@ -27,21 +29,21 @@ switch($nivel){
     default:
         $stats = [];
 }
+
+
+// Establece el título de la página
+$page_title = "Dashboard de Asistencia";
+
+// Incluye el header
+include 'objects/header.php';
+
+// Incluye la navbar
+include 'objects/navbar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard de Asistencia</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-<div class="container py-4">
-    <h1 class="mb-4 text-primary">Dashboard de Asistencia</h1>
+<div class="container-fluid">
+    <h1 class="mb-4 text-primary">Resumen de Asistencia</h1>
 
-    <!-- Cards con métricas -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card text-white bg-primary mb-3">
@@ -77,7 +79,6 @@ switch($nivel){
         </div>
     </div>
 
-    <!-- Gráfico de asistencia -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title mb-3">Asistencia por grupo</h5>
@@ -86,9 +87,11 @@ switch($nivel){
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const ctx = document.getElementById('asistenciaChart').getContext('2d');
-const chart = new Chart(ctx, {
+    // Tu script de Chart.js va aquí...
+    const ctx = document.getElementById('asistenciaChart').getContext('2d');
+    const chart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: <?= json_encode($stats['grupos_nombres'] ?? []) ?>,
@@ -106,5 +109,8 @@ const chart = new Chart(ctx, {
     }
 });
 </script>
-</body>
-</html>
+
+<?php
+// Incluye el footer
+include 'objects/footer.php';
+?>

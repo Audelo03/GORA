@@ -1,20 +1,79 @@
-/* Deja espacio al contenido para que no quede debajo del sidebar */
-#app-content {
-  margin-left: 260px; /* mismo ancho del sidebar */
+/* === ESTILOS GENERALES === */
+#app-sidebar {
+  width: 260px;
+  /* Transición para el ancho del sidebar */
+  transition: width 0.3s ease; 
 }
 
-/* En pantallas pequeñas, el sidebar será ocultable si quieres (opcional) */
+#app-content {
+  margin-left: 260px;
+  /* Transición para el margen del contenido */
+  transition: margin-left 0.3s ease;
+}
+
+/* --- ESTADO COLAPSADO (para pantallas de escritorio) --- */
+
+/* Cuando el sidebar tiene la clase .collapsed */
+#app-sidebar.collapsed {
+  width: 70px;
+}
+
+/* Oculta el texto y otros elementos cuando está colapsado */
+#app-sidebar.collapsed .sidebar-text,
+#app-sidebar.collapsed .fs-5, /* Oculta el título "ITSADATA" */
+#app-sidebar.collapsed .small, /* Oculta el nombre de usuario y rol */
+#app-sidebar.collapsed hr, /* Oculta la línea divisoria */
+#app-sidebar.collapsed a[href*="logout.php"] span /* Oculta el texto del botón de cerrar sesión */
+{
+  display: none;
+}
+
+/* Ajusta los links para que solo se vea el ícono */
+#app-sidebar.collapsed .nav-link {
+  text-align: center;
+  padding: 0.75rem 0.5rem;
+}
+
+/* Asegura que los íconos estén centrados y visibles */
+#app-sidebar.collapsed .nav-link i {
+  margin-right: 0 !important;
+  font-size: 1.25rem;
+  width: 100%;
+}
+
+/* Cuando el sidebar está colapsado, el contenido principal se expande */
+#app-content.collapsed {
+  margin-left: 70px;
+}
+
+
+/* --- VISTA MÓVIL (ocultable tipo off-canvas) --- */
 @media (max-width: 991.98px) {
+  /* Por defecto, el sidebar está fuera de la pantalla en móviles */
   #app-sidebar {
     position: fixed;
+    height: 100vh;
     transform: translateX(-100%);
-    transition: transform .2s ease;
     z-index: 1040;
+    /* La transición ahora es para transform */
+    transition: transform 0.3s ease; 
   }
+
+  /* La clase .show lo trae a la vista */
   #app-sidebar.show {
     transform: translateX(0);
   }
+  
+  /* El contenido ocupa todo el ancho en móviles */
   #app-content {
     margin-left: 0;
   }
+  
+  /* En móvil, la clase .collapsed no debe tener efecto */
+   #app-sidebar.collapsed {
+      width: 260px; /* Restaura el ancho original */
+   }
+   #app-content.collapsed {
+      margin-left: 0;
+   }
 }

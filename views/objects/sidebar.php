@@ -1,11 +1,11 @@
 <?php
-$current = basename($_SERVER['PHP_SELF']); // archivo actual
+$current = basename($_SERVER['PHP_SELF']);
 function active($files) {
     global $current;
     return in_array($current, (array)$files) ? 'active' : '';
 }
 ?>
-<!-- SIDEBAR -->
+
 <nav id="app-sidebar" class="sidebar bg-dark text-white position-fixed h-100 p-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <span class="fs-5 fw-bold">ITSADATA</span>
