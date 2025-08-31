@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
     <div class="container-fluid">
-        <button class="btn btn-primary d-lg-none" id="sidebar-toggle-btn">
+        <button class="btn btn-primary d-lg-none" id="btn-toggle">
             <i class="bi bi-list"></i>
         </button>
 

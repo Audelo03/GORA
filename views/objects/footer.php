@@ -8,13 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   btnToggle.addEventListener('click', function () {
     // Si es pantalla grande (desktop)
-    if (window.innerWidth > 991.98) {
       sidebar.classList.toggle('collapsed');
-      content.classList.toggle('collapsed');
-    } else {
-      // Si es móvil, se muestra/oculta como off-canvas
-      sidebar.classList.toggle('show');
-    }
+     
   });
 });
 </script>
