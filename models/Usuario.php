@@ -118,6 +118,14 @@ class Usuario {
         return false;
     }
 
+    public function getGruposIdByCarreraId($carrera_id){
+         $sql = "SELECT id_grupo FROM grupos WHERE carreras_id_carrera = :carrera";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":carrera", $carrera_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
      public function delete($id) {
         $query = "DELETE FROM " . $this->table . " WHERE id_usuario = :id_usuario";
@@ -137,7 +145,7 @@ class Usuario {
     }
     //solo para coordinadores
     public function getCarrreraIdByUsuarioId($usuario_id) {
-        $sql = "SELECT c.id_carrera
+        $sql = "SELECT c.id_carrera AS id_carrera, c.nombre AS nombre
                 FROM carreras c
                 JOIN usuarios u ON c.usuarios_id_usuario_coordinador = u.id_usuario
                 WHERE u.id_usuario = :usuario_id
@@ -147,6 +155,19 @@ class Usuario {
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ? $result['id_carrera'] : null;
+    }
+
+    public function getCarrreraDataByUsuarioId($usuario_id) {
+        $sql = "SELECT c.id_carrera AS id_carrera, c.nombre AS nombre
+                FROM carreras c
+                JOIN usuarios u ON c.usuarios_id_usuario_coordinador = u.id_usuario
+                WHERE u.id_usuario = :usuario_id
+                LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":usuario_id", $usuario_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ;
     }
     // solo para tutores
     public function getGruposIdByUsuarioId($usuario_id) {
@@ -161,11 +182,24 @@ class Usuario {
         $grupos = array_map(function($row) { return $row['id_grupo']; }, $result);
         return $grupos; 
 }
+
+public function getGruposDataByUsuarioId($usuario_id) {
+        $sql = "SELECT g.id_grupo, g.nombre
+                FROM grupos g
+                JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
+                WHERE u.id_usuario = :usuario_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":usuario_id", $usuario_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+       
+        return $result; 
+}
     //ADMIN
     public function obtenerAlumnosParaAdminLv1($alumnoController, $conn) {
     $lista = $alumnoController->listarAlumnos();
     $data = [];
-    foreach ($lista as $row) $data[$row['carrera']][$row['tutor']][$row['grupo']][] = $row;
+    foreach ($lista as $row) $data[$row['carrera']][$row['id_tutor']][$row['grupo']][] = $row;
     ?>
     <div class="card shadow-sm mb-4">
         <div class="card-body">

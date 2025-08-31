@@ -13,85 +13,209 @@ class AlumnoController {
         $this->alumno = new Alumno($conn);
     }
 
-    public function index() {
-        echo json_encode($this->alumno->getAll());
-    }
-
-    public function listarAlumnos() {
-        return $this->alumno->getAll();
-    }
-
-    public function verAlumno($id) {
-        return $this->alumno->getById($id);
-    }
-
-    public function store() {
-        $data = [
-            'matricula' => $_POST['matricula'],
-            'nombre' => $_POST['nombre'],
-            'apellido_paterno' => $_POST['apellido_paterno'],
-            'apellido_materno' => $_POST['apellido_materno'] ?? null,
-            'estatus' => $_POST['estatus'],
-            'usuarios_id_usuario_movimiento' => $_SESSION['usuario_id'] ?? null,
-            'carreras_id_carrera' => $_POST['carreras_id_carrera'],
-            'grupos_id_grupo' => $_POST['grupos_id_grupo'] ?? null
-        ];
-        $this->alumno->create($data);
-        echo json_encode(["status" => "ok"]);
-    }
-
-    public function update() {
-        $id = $_POST['id'];
-        $data = [
-            'matricula' => $_POST['matricula'],
-            'nombre' => $_POST['nombre'],
-            'apellido_paterno' => $_POST['apellido_paterno'],
-            'apellido_materno' => $_POST['apellido_materno'] ?? null,
-            'estatus' => $_POST['estatus'],
-            'usuarios_id_usuario_movimiento' => $_SESSION['usuario_id'] ?? null,
-            'carreras_id_carrera' => $_POST['carreras_id_carrera'],
-            'grupos_id_grupo' => $_POST['grupos_id_grupo'] ?? null
-        ];
-        $this->alumno->update($id, $data);
-        echo json_encode(["status" => "ok"]);
-    }
-
-    public function delete() {
-        $this->alumno->delete($_POST['id']);
-        echo json_encode(["status" => "ok"]);
-    }
-
-    public function obtenerAlumnosParaTutorLvl4($usuario_id) {
-        $alumnos = $this->alumno->getByTutorId($usuario_id);
-        $grupos = [];
-        foreach ($alumnos as $a) $grupos[$a['grupos_id_grupo']][] = $a;
-
-        echo "<h2>Mis Alumnos</h2>";
-        foreach ($grupos as $id_grupo => $alumnos) {
-            global $conn;
-            $stmt = $conn->prepare("SELECT nombre FROM grupos WHERE id_grupo = :id_grupo");
-            $stmt->bindParam(':id_grupo', $id_grupo, PDO::PARAM_INT);
-            $stmt->execute();
-            $grupo = $stmt->fetch(PDO::FETCH_ASSOC)['nombre'] ?? "Desconocido";
-
-            echo "<h3 class='mt-3'>Grupo: {$grupo}</h3>";
-            echo "<ul class='list-group mb-3'>";
-            foreach ($alumnos as $a) {
-                echo "<li class='list-group-item'>{$a['nombre']} {$a['apellido_paterno']} {$a['apellido_materno']}</li>";
-            }
-            echo "</ul>";
-        }
-    }
+    // --- MÉTODOS DE PAGINACION Y CONTEO ---
+    public function contarTotalCarreras($terminoBusqueda) {
+    $sql = "SELECT COUNT(DISTINCT c.id_carrera) 
+            FROM carreras c
+            LEFT JOIN alumnos a ON a.carreras_id_carrera = c.id_carrera
+            LEFT JOIN grupos g ON g.carreras_id_carrera = c.id_carrera
+            WHERE (
+                LOWER(c.nombre) LIKE LOWER(:termino)
+                OR LOWER(g.nombre) LIKE LOWER(:termino)   -- 🔹 Buscar por grupo
+                OR LOWER(a.nombre) LIKE LOWER(:termino)
+                OR LOWER(a.apellido_paterno) LIKE LOWER(:termino)
+                OR LOWER(a.apellido_materno) LIKE LOWER(:termino)
+                OR LOWER(a.matricula) LIKE LOWER(:termino)
+            )";
+    $stmt = $this->alumno->conn->prepare($sql);
+    $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+    $stmt->execute();
+    return (int)$stmt->fetchColumn();
 }
 
-if (isset($_GET['action'])) {
-    $action = $_GET['action'];
-    $controller = new AlumnoController($conn);
+public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
+    $sql = "SELECT DISTINCT c.* 
+            FROM carreras c
+            LEFT JOIN alumnos a ON a.carreras_id_carrera = c.id_carrera
+            LEFT JOIN grupos g ON g.carreras_id_carrera = c.id_carrera
+            WHERE (
+                LOWER(c.nombre) LIKE LOWER(:termino)
+                OR LOWER(g.nombre) LIKE LOWER(:termino)   -- 🔹 Buscar por grupo
+                OR LOWER(a.nombre) LIKE LOWER(:termino)
+                OR LOWER(a.apellido_paterno) LIKE LOWER(:termino)
+                OR LOWER(a.apellido_materno) LIKE LOWER(:termino)
+                OR LOWER(a.matricula) LIKE LOWER(:termino)
+            )
+            ORDER BY c.nombre 
+            LIMIT :limit OFFSET :offset";
+    $stmt = $this->alumno->conn->prepare($sql);
+    $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+    
+    public function contarTotalGruposPorCarrera($idCarrera, $terminoBusqueda) {
+        $sql = "SELECT COUNT(DISTINCT g.id_grupo) 
+                FROM grupos g
+                LEFT JOIN alumnos a ON a.grupos_id_grupo = g.id_grupo
+                WHERE g.carreras_id_carrera = :idCarrera 
+                AND (
+                    LOWER(g.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_paterno) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_materno) LIKE LOWER(:termino)
+                    OR LOWER(a.matricula) LIKE LOWER(:termino)
+                )";
+        $stmt = $this->alumno->conn->prepare($sql);
+        $stmt->bindParam(':idCarrera', $idCarrera, PDO::PARAM_INT);
+        $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
 
-    if (method_exists($controller, $action)) {
-        $controller->$action();
-    } else {
-        echo json_encode(["error" => "Método $action no encontrado"]);
+    public function obtenerGruposPaginadosPorCarrera($idCarrera, $terminoBusqueda, $offset, $limit) {
+        $sql = "SELECT DISTINCT g.id_grupo, g.nombre
+                FROM grupos g
+                LEFT JOIN alumnos a ON a.grupos_id_grupo = g.id_grupo
+                WHERE g.carreras_id_carrera = :idCarrera 
+                AND (
+                    LOWER(g.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_paterno) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_materno) LIKE LOWER(:termino)
+                    OR LOWER(a.matricula) LIKE LOWER(:termino)
+                )
+                ORDER BY g.nombre 
+                LIMIT :limit OFFSET :offset";
+        $stmt = $this->alumno->conn->prepare($sql);
+        $stmt->bindParam(':idCarrera', $idCarrera, PDO::PARAM_INT);
+        $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarTotalGruposPorTutor($idUsuario, $terminoBusqueda) {
+        $sql = "SELECT COUNT(DISTINCT g.id_grupo) 
+                FROM grupos g
+                LEFT JOIN alumnos a ON a.grupos_id_grupo = g.id_grupo
+                WHERE g.usuarios_id_usuario_tutor = :idUsuario 
+                AND (
+                    LOWER(g.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_paterno) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_materno) LIKE LOWER(:termino)
+                    OR LOWER(a.matricula) LIKE LOWER(:termino)
+                )";
+        $stmt = $this->alumno->conn->prepare($sql);
+        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+    
+    public function obtenerGruposPaginadosPorTutor($idUsuario, $terminoBusqueda, $offset, $limit) {
+        $sql = "SELECT DISTINCT g.id_grupo, g.nombre
+                FROM grupos g
+                LEFT JOIN alumnos a ON a.grupos_id_grupo = g.id_grupo
+                WHERE g.usuarios_id_usuario_tutor = :idUsuario 
+                AND (
+                    LOWER(g.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_paterno) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_materno) LIKE LOWER(:termino)
+                    OR LOWER(a.matricula) LIKE LOWER(:termino)
+                )
+                ORDER BY g.nombre 
+                LIMIT :limit OFFSET :offset";
+        $stmt = $this->alumno->conn->prepare($sql);
+        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // --- MÉTODOS DE RENDERIZADO ---
+    public function listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, string $parentUid = "root"){ 
+        ob_start();
+        ?>
+        <div class="accordion" id="accordion_<?= htmlspecialchars($parentUid) ?>">
+            <?php foreach ($grupos_ids as $id_grupo_data): 
+                $id_grupo_id = $id_grupo_data["id_grupo"];
+                $stmt = $conn->prepare("SELECT nombre FROM grupos WHERE id_grupo = :id_grupo");
+                $stmt->bindParam(':id_grupo', $id_grupo_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $grupo_result = $stmt->fetch(PDO::FETCH_ASSOC);
+                $grupo_nombre = $grupo_result ? $grupo_result['nombre'] : "Grupo no encontrado (ID: ".htmlspecialchars($id_grupo_id).")";
+                
+                $alumnosResult = $this->alumno->listByGroupId($id_grupo_id);
+                $alumnos = is_array($alumnosResult) ? $alumnosResult : [];
+
+                $grupoUid = "grupo_" . $id_grupo_id . "_" . uniqid();
+            ?>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading_<?= htmlspecialchars($grupoUid) ?>">
+                    <button class="accordion-button collapsed bg-info text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_<?= htmlspecialchars($grupoUid) ?>">
+                        <i class="bi bi-people-fill me-2"></i> Grupo: <?= htmlspecialchars($grupo_nombre) ?> (<?= count($alumnos) ?> alumnos)
+                    </button>
+                </h2>
+                <div id="collapse_<?= htmlspecialchars($grupoUid) ?>" class="accordion-collapse collapse" data-bs-parent="#accordion_<?= htmlspecialchars($parentUid) ?>">
+                    <div class="accordion-body">
+                        <?php if (empty($alumnos)): ?>
+                            <p>No hay alumnos en este grupo.</p>
+                        <?php else: ?>
+                            <ul class="list-group">
+                                <?php foreach ($alumnos as $a): ?>
+                                    <li class="list-group-item">
+                                        <i class="bi bi-person-circle text-primary me-2"></i>
+                                        <?= htmlspecialchars($a['nombre'] . ' ' . $a['apellido_paterno'] . ' ' . ($a['apellido_materno'] ?? '')) ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    public function renderizarAcordeonCarrera($dataCarrera, $conn, $auth) {
+        ob_start();
+        $carreraid = $dataCarrera["id_carrera"];
+        $nombre_carrera = $dataCarrera["nombre"];
+        $carreraUid = "carrera_" . $carreraid;
+        ?>
+        <div class="accordion mb-3" id="<?= $carreraUid ?>">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading_<?= $carreraUid ?>">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_<?= $carreraUid ?>">
+                        <i class="bi bi-mortarboard-fill me-2"></i> Carrera: <?= htmlspecialchars($nombre_carrera) ?>
+                    </button>
+                </h2>
+                <div id="collapse_<?= $carreraUid ?>" class="accordion-collapse collapse" data-bs-parent="#<?= $carreraUid ?>">
+                    <div class="accordion-body">
+                        <?php 
+                            $grupos_ids = $auth->usuario->getGruposIdByCarreraId($carreraid);
+                            if (!empty($grupos_ids)) {
+                               echo $this->listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, $carreraUid); 
+                            } else {
+                                echo "<p>No hay grupos asignados a esta carrera.</p>";
+                            }
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
     }
 }
 ?>

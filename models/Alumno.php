@@ -5,7 +5,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 require_once __DIR__ . "/../config/db.php";
 class Alumno {
-    private $conn;
+    public $conn;
     private $table = "alumnos";
 
     public $id_alumno;
@@ -22,7 +22,7 @@ class Alumno {
     }
 
     public function getAll() {
-        $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo
+        $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo, g.usuarios_id_usuario_tutor AS id_tutor
                 FROM alumnos a
                 LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
                 LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo";
@@ -47,6 +47,7 @@ class Alumno {
     }
 
     public function update($id, $data) {
+        echo $data;
         $sql = "UPDATE $this->table SET 
                     matricula=:matricula, 
                     nombre=:nombre, 
@@ -58,7 +59,7 @@ class Alumno {
                     grupos_id_grupo=:grupos_id_grupo
                 WHERE id_alumno=:id";
         $stmt = $this->conn->prepare($sql);
-        $data['id'] = $id;
+        $data['id_alumno'] = $id;
         return $stmt->execute($data);
     }
 

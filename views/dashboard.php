@@ -1,67 +1,110 @@
 <?php
-require_once __DIR__ . '/../controllers/alumnoController.php';
-require_once __DIR__ . '/../controllers/authController.php';
-require_once __DIR__ . '/../controllers/nivelController.php';
+session_start();
+require_once "../config/db.php"; // Conexión PDO
+require_once "../controllers/usuarioController.php";
+require_once "../controllers/alumnoController.php";
+$auth = new UsuarioController();
+$alumnoController = new AlumnoController();
 
-$auth = new AuthController($conn);
-$auth->checkAuth();
+// Identificar tipo de usuario
+$usuario = $_SESSION['usuario']; // Ejemplo: array con ['id','nivel','nombre']
+$nivel = $usuario['nivel'];
 
-$nivelController = new nivelController($conn);
-
-$niveles_autorizados = [1 => "Admin", 2 => "Coordinador", 3 => "Tutor", 4 => "Director"];
-
-$usuario_id = $_SESSION['usuario_id'];
-$nivel = $_SESSION['usuario_nivel'];
-$nivel_nombre  = $niveles_autorizados[$nivel] ?? "Desconocido"; 
-
-$nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_paterno'] . ' ' . $_SESSION['usuario_apellido_materno'];
-
-$alumnoController = new AlumnoController($conn);
+// Obtener datos según nivel
+switch($nivel){
+    case 1: // Admin
+        $stats = $alumnoController->getStatsAll();
+        break;
+    case 2: // Coordinador
+        $stats = $alumnoController->getStatsByCarrera($usuario['id_carrera']);
+        break;
+    case 3: // Tutor
+        $stats = $alumnoController->getStatsByTutor($usuario['id']);
+        break;
+    case 4: // Director
+        $stats = $alumnoController->getStatsAllSummary();
+        break;
+    default:
+        $stats = [];
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard de Alumnos</title>
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../public/css/sidebar.css" rel="stylesheet">
+    <title>Dashboard de Asistencia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="card shadow-sm mb-4">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h3 mb-1">Tabla de Alumnos</h1>
-                <p class="mb-0 text-muted">Nivel: <strong><?= $nivel_nombre ?></strong></p>
-                <p class="mb-0 text-muted">Usuario: <strong><?= $nombre ?></strong></p>
+<body>
+<div class="container py-4">
+    <h1 class="mb-4 text-primary">Dashboard de Asistencia</h1>
+
+    <!-- Cards con métricas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Alumnos</h5>
+                    <p class="card-text fs-3"><?= $stats['total_alumnos'] ?? 0 ?></p>
+                </div>
             </div>
-            <a href="login.php" class="btn btn-danger">Cerrar Sesión</a>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Asistencia Promedio</h5>
+                    <p class="card-text fs-3"><?= $stats['promedio_asistencia'] ?? 0 ?>%</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Grupos Activos</h5>
+                    <p class="card-text fs-3"><?= $stats['total_grupos'] ?? 0 ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Baja Asistencia</h5>
+                    <p class="card-text fs-3"><?= $stats['grupos_baja_asistencia'] ?? 0 ?></p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <?php
-    switch ($nivel) {
-        case 4:
-            $nivelController->fetchLvl4($alumnoController, $conn); 
-            break;
-        case 3:
-            $nivelController->fetchLvl3($alumnoController, $conn, $usuario_id, $auth); 
-            break;
-        case 1:
-            $nivelController->fetchLvl1($alumnoController, $conn);
-            break;
-        case 2:
-            $nivelController->fetchLvl2($alumnoController, $conn, $auth, $usuario_id);
-            break;
-        default:
-            // Nivel no autorizado
-            echo '<div class="alert alert-danger">No tiene permisos para ver esta página.</div>';
-            break;
-    }
-    ?>
+    <!-- Gráfico de asistencia -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Asistencia por grupo</h5>
+            <canvas id="asistenciaChart"></canvas>
+        </div>
+    </div>
 </div>
 
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+const ctx = document.getElementById('asistenciaChart').getContext('2d');
+const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: <?= json_encode($stats['grupos_nombres'] ?? []) ?>,
+        datasets: [{
+            label: 'Asistencia (%)',
+            data: <?= json_encode($stats['grupos_asistencia'] ?? []) ?>,
+            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true, max: 100 }
+        }
+    }
+});
+</script>
 </body>
 </html>

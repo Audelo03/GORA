@@ -1,30 +1,30 @@
 <?php
 require_once __DIR__ . "/../config/db.php";
-require_once __DIR__ . "/../models/Usuario.php";
+require_once __DIR__ . "/../controllers/alumnoController.php";
 
 class nivelController {
-    public $usuario;
+    public $alumnoController;
 
     public function __construct($conn) {
-        $this->usuario = new Usuario($conn);
+        $this->alumnoController = new AlumnoController($conn);
     }
     //ADMIN
-    public function fetchLvl1($alumnoController, $conn) {
-        return $this->usuario->obtenerAlumnosParaAdminLv1($alumnoController, $conn);
+    public function fetchLvl1($conn,$auth) {
+        return $this->alumnoController->obtenerAlumnosParaAdminLv1($conn,$auth);
     }
     //COORDINADOR
-    public function fetchLvl2($alumnoController, $conn, $auth, $usuario_id) {
-        return $this->usuario->obtenerAlumnosParaCoordinadorLvl2($alumnoController, $conn, $auth, $usuario_id);
+    public function fetchLvl2($conn, $auth, $usuario_id) {
+        return $this->alumnoController->obtenerAlumnosParaCoordinadorLvl2($conn, $auth, $usuario_id,null);
     }
 
     //TUTOR
-    public function fetchLvl3($alumnoController, $conn, $usuario_id, $auth) {
-        return $this->usuario->obtenerAlumnosParaTutorLvl3($alumnoController, $conn, $usuario_id, $auth);
+    public function fetchLvl3($conn, $auth) {
+        return $this->alumnoController->obtenerAlumnosParaTutorLvl3($conn, $auth);
     }
 
     //DIRECTOR
-    public function fetchLvl4($alumnoController, $conn) {
-        return $this->usuario->obtenerAlumnosParaDirLvl4($alumnoController, $conn);
+    public function fetchLvl4($conn,$auth) {
+        return $this->alumnoController->obtenerAlumnosParaDirLvl4($conn,$auth);
     }
 }
 ?>
