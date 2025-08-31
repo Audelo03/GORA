@@ -1,79 +1,128 @@
-/* === ESTILOS GENERALES === */
+/* === CONFIGURACIÓN GENERAL DEL SIDEBAR === */
 #app-sidebar {
   width: 260px;
-  /* Transición para el ancho del sidebar */
-  transition: width 0.3s ease; 
+  background-color: #111827; /* Un fondo oscuro más moderno */
+  transition: width 0.3s ease-in-out;
+  padding: 1.25rem !important;
+  display: flex;
+  flex-direction: column;
 }
 
 #app-content {
   margin-left: 260px;
-  /* Transición para el margen del contenido */
-  transition: margin-left 0.3s ease;
+  transition: margin-left 0.3s ease-in-out;
 }
 
-/* --- ESTADO COLAPSADO (para pantallas de escritorio) --- */
+/* === ENCABEZADO Y TÍTULO === */
+#app-sidebar .fs-5 {
+  font-weight: 700 !important;
+  letter-spacing: 1px;
+  color: #fff;
+}
 
-/* Cuando el sidebar tiene la clase .collapsed */
+#btn-toggle-sidebar {
+  border-radius: 0.375rem;
+}
+
+/* === ESTILOS DE LOS ENLACES DE NAVEGACIÓN === */
+#app-sidebar .nav-link {
+  color: #aeb2d5; /* Color de texto suave para los enlaces */
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#app-sidebar .nav-link i {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+/* --- Efecto Hover --- */
+#app-sidebar .nav-link:hover {
+  background-color: #1f2937; /* Fondo sutil al pasar el mouse */
+  color: #ffffff;
+}
+
+#app-sidebar .nav-link:hover i {
+  transform: scale(1.1); /* Agranda ligeramente el icono */
+}
+
+/* --- Enlace Activo --- */
+#app-sidebar .nav-link.active {
+  background-color: #3b82f6; /* Color de acento para el enlace activo */
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* === SECCIÓN DEL USUARIO Y LOGOUT === */
+#app-sidebar hr {
+  display: none; /* Ocultamos el <hr> para usar un borde en su lugar */
+}
+
+.user-info {
+  margin-top: auto; /* Empuja esta sección hacia abajo */
+  padding-top: 1.25rem;
+  border-top: 1px solid #374151; /* Separador sutil */
+}
+
+#app-sidebar .btn-outline-light {
+    border-color: #4b5563;
+    color: #d1d5db;
+}
+#app-sidebar .btn-outline-light:hover {
+    background-color: #dc3545; /* Color rojo para la acción de salir */
+    border-color: #dc3545;
+    color: #fff;
+}
+
+
+/* === ESTADO COLAPSADO (ESCRITORIO) === */
 #app-sidebar.collapsed {
-  width: 70px;
+  width: 90px;
+  padding: 1.25rem 0.5rem !important; /* Ajusta el padding */
 }
 
-/* Oculta el texto y otros elementos cuando está colapsado */
 #app-sidebar.collapsed .sidebar-text,
-#app-sidebar.collapsed .fs-5, /* Oculta el título "ITSADATA" */
-#app-sidebar.collapsed .small, /* Oculta el nombre de usuario y rol */
-#app-sidebar.collapsed hr, /* Oculta la línea divisoria */
-#app-sidebar.collapsed a[href*="logout.php"] span /* Oculta el texto del botón de cerrar sesión */
-{
+#app-sidebar.collapsed .fs-5,
+#app-sidebar.collapsed .small {
   display: none;
 }
 
-/* Ajusta los links para que solo se vea el ícono */
 #app-sidebar.collapsed .nav-link {
-  text-align: center;
-  padding: 0.75rem 0.5rem;
+  justify-content: center;
+  padding: 0.75rem;
 }
 
-/* Asegura que los íconos estén centrados y visibles */
 #app-sidebar.collapsed .nav-link i {
   margin-right: 0 !important;
-  font-size: 1.25rem;
-  width: 100%;
+  font-size: 1.5rem; /* Iconos más grandes cuando está colapsado */
 }
 
-/* Cuando el sidebar está colapsado, el contenido principal se expande */
+#app-sidebar.collapsed .user-info {
+  display: none !important; /* Oculta la info de usuario al colapsar */
+}
+
+#app-sidebar.collapsed a[href*="logout.php"] span {
+  display: none;
+}
+#app-sidebar.collapsed a[href*="logout.php"] {
+  justify-content: center;
+}
+
 #app-content.collapsed {
-  margin-left: 70px;
+  margin-left: 90px;
 }
 
-
-/* --- VISTA MÓVIL (ocultable tipo off-canvas) --- */
-@media (max-width: 991.98px) {
-  /* Por defecto, el sidebar está fuera de la pantalla en móviles */
-  #app-sidebar {
-    position: fixed;
-    height: 100vh;
-    transform: translateX(-100%);
-    z-index: 1040;
-    /* La transición ahora es para transform */
-    transition: transform 0.3s ease; 
-  }
-
-  /* La clase .show lo trae a la vista */
-  #app-sidebar.show {
-    transform: translateX(0);
-  }
-  
-  /* El contenido ocupa todo el ancho en móviles */
-  #app-content {
-    margin-left: 0;
-  }
-  
-  /* En móvil, la clase .collapsed no debe tener efecto */
-   #app-sidebar.collapsed {
-      width: 260px; /* Restaura el ancho original */
-   }
-   #app-content.collapsed {
-      margin-left: 0;
-   }
+/* --- CENTRADO HORIZONTAL DEL BOTÓN TOGGLE AL COLAPSAR --- */
+/* Cuando el sidebar colapsa, el título "ITSADATA" se oculta.
+  Esto deja solo al botón dentro del contenedor flex.
+  Cambiando justify-content a 'center' se centrará el botón.
+*/
+#app-sidebar.collapsed .d-flex.justify-content-between {
+  justify-content: center !important;
 }
+
