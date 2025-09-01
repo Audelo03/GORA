@@ -14,8 +14,7 @@ const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
   if (btnToggleSidebar) {
 
     btnToggleSidebar.addEventListener('click', function () {
-      // Este botón solo funciona en vista de escritorio
-    
+
         sidebar.classList.toggle('collapsed');
         content.classList.toggle('collapsed');
       
@@ -24,6 +23,30 @@ const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
 
 });
 </script>
+<script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script>
 
+    function initTooltips() {
+        // Eliminar instancias de tooltips anteriores para evitar conflictos
+        var oldTooltipList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        oldTooltipList.map(function (tooltipEl) {
+            var tooltip = bootstrap.Tooltip.getInstance(tooltipEl);
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        });
+
+        // Inicializar todos los tooltips que se encuentren en la página
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+
+    // Ejecutar la función una vez cuando la página carga por primera vez
+    document.addEventListener('DOMContentLoaded', function () {
+        initTooltips();
+        });
+</script>
 </body>
 </html>

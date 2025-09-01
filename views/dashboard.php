@@ -1,116 +1,62 @@
 <?php
 session_start();
-require_once "../config/db.php";
-require_once "../controllers/usuarioController.php";
-require_once "../controllers/alumnoController.php";
-
-$auth = new UsuarioController();
-$alumnoController = new AlumnoController();
-
-// Identificar tipo de usuario
-$usuario = $_SESSION['usuario'];
-$nivel = $usuario['nivel'];
-
-// Obtener datos según nivel
-// (Tu lógica de switch para obtener $stats va aquí...)
-switch($nivel){
-    case 1: // Admin
-        $stats = $alumnoController->getStatsAll();
-        break;
-    case 2: // Coordinador
-        $stats = $alumnoController->getStatsByCarrera($usuario['id_carrera']);
-        break;
-    case 3: // Tutor
-        $stats = $alumnoController->getStatsByTutor($usuario['id']);
-        break;
-    case 4: // Director
-        $stats = $alumnoController->getStatsAllSummary();
-        break;
-    default:
-        $stats = [];
-}
-
-
-// Establece el título de la página
 $page_title = "Dashboard de Asistencia";
-
-// Incluye el header
 include 'objects/header.php';
-
-// Incluye la navbar
 include 'objects/navbar.php';
 ?>
 
 <div class="container-fluid">
-    <h1 class="mb-4 text-primary">Resumen de Asistencia</h1>
+    <div class="row">
+        <div class="col-lg-6" id="estadisticas-container">
+            <div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>
+        </div>
 
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Alumnos</h5>
-                    <p class="card-text fs-3"><?= $stats['total_alumnos'] ?? 0 ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Asistencia Promedio</h5>
-                    <p class="card-text fs-3"><?= $stats['promedio_asistencia'] ?? 0 ?>%</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Grupos Activos</h5>
-                    <p class="card-text fs-3"><?= $stats['total_grupos'] ?? 0 ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-danger mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Baja Asistencia</h5>
-                    <p class="card-text fs-3"><?= $stats['grupos_baja_asistencia'] ?? 0 ?></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h5 class="card-title mb-3">Asistencia por grupo</h5>
-            <canvas id="asistenciaChart"></canvas>
+        <div class="col-lg-6" id="lista-alumnos-container">
+            <div class="d-flex justify-content-center p-5"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Cargando...</span></div></div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Tu script de Chart.js va aquí...
-    const ctx = document.getElementById('asistenciaChart').getContext('2d');
-    const chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: <?= json_encode($stats['grupos_nombres'] ?? []) ?>,
-        datasets: [{
-            label: 'Asistencia (%)',
-            data: <?= json_encode($stats['grupos_asistencia'] ?? []) ?>,
-            backgroundColor: 'rgba(54, 162, 235, 0.7)'
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: { beginAtZero: true, max: 100 }
+document.addEventListener('DOMContentLoaded', function () {
+
+    function loadAndExecuteScript(containerId, scriptId) {
+        const scriptTag = document.getElementById(scriptId);
+        if (scriptTag) {
+            const scriptElement = document.createElement('script');
+            scriptElement.innerHTML = scriptTag.innerHTML;
+            document.body.appendChild(scriptElement);
+            scriptTag.remove(); // Limpiamos la etiqueta original
         }
     }
+
+    // Cargar las estadísticas (añadimos ?modo=componente)
+    fetch('estadisticas.php?modo=componente')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('estadisticas-container').innerHTML = html;
+            loadAndExecuteScript('estadisticas-container', 'estadisticas-script');
+        })
+        .catch(error => {
+            console.error('Error al cargar las estadísticas:', error);
+            document.getElementById('estadisticas-container').innerHTML = `<div class="alert alert-danger">No se pudieron cargar las estadísticas.</div>`;
+        });
+
+    // Cargar la lista de alumnos (añadimos ?modo=componente)
+    fetch('listas.php?modo=componente')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('lista-alumnos-container').innerHTML = html;
+            loadAndExecuteScript('lista-alumnos-container', 'listas-script');
+        })
+        .catch(error => {
+            console.error('Error al cargar la lista de alumnos:', error);
+            document.getElementById('lista-alumnos-container').innerHTML = `<div class="alert alert-danger">No se pudo cargar la lista de alumnos.</div>`;
+        });
 });
 </script>
 
 <?php
-// Incluye el footer
 include 'objects/footer.php';
 ?>

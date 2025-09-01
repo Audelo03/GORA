@@ -139,8 +139,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    // --- MÉTODOS DE RENDERIZADO ---
+//renderizar alumnos
     public function listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, string $parentUid = "root"){ 
         ob_start();
         ?>
@@ -159,10 +158,19 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
                 $grupoUid = "grupo_" . $id_grupo_id . "_" . uniqid();
             ?>
             <div class="accordion-item">
-                <h2 class="accordion-header" id="heading_<?= htmlspecialchars($grupoUid) ?>">
-                    <button class="accordion-button collapsed bg-info text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_<?= htmlspecialchars($grupoUid) ?>">
-                        <i class="bi bi-people-fill me-2"></i> Grupo: <?= htmlspecialchars($grupo_nombre) ?> (<?= count($alumnos) ?> alumnos)
-                    </button>
+                <h2 class="accordion-header d-flex align-items-center" id="heading_<?= htmlspecialchars($grupoUid) ?>">
+    
+    <button class="accordion-button collapsed bg-info text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_<?= htmlspecialchars($grupoUid) ?>">
+        <i class="bi bi-people-fill me-2"></i> Grupo: <?= htmlspecialchars($grupo_nombre) ?> (<?= count($alumnos) ?> alumnos)
+    </button>
+    
+                    <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>" 
+                class="btn btn-success flex-shrink-0 me-2" 
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Tomar Asistencia">
+                    <i class="bi bi-list-check me-1"></i>
+                </a>
                 </h2>
                 <div id="collapse_<?= htmlspecialchars($grupoUid) ?>" class="accordion-collapse collapse" data-bs-parent="#accordion_<?= htmlspecialchars($parentUid) ?>">
                     <div class="accordion-body">
@@ -217,5 +225,33 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         <?php
         return ob_get_clean();
     }
+    public function getNombreGrupo($id_grupo)
+    {
+        $sql = "SELECT nombre FROM grupos WHERE id_grupo = :id_grupo";
+        $stmt = $this->alumno->conn->prepare($sql);
+        $stmt->bindParam(':id_grupo', $id_grupo, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['nombre'] : null;
+    }
+
+    public function getAlumnosByGrupo($id_grupo)
+{
+    $query = "SELECT 
+                a.id_alumno, 
+                a.matricula, 
+                CONCAT(a.nombre, ' ', a.apellido_paterno, ' ', a.apellido_materno) as nombre_completo,
+                g.nombre as nombre_grupo
+              FROM alumnos a
+              JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
+              WHERE a.grupos_id_grupo = :id_grupo
+              ORDER BY a.apellido_paterno, a.apellido_materno, a.nombre";
+    
+     $stmt = $this->alumno->conn->prepare($query);
+    $stmt->bindParam(":id_grupo", $id_grupo);
+    $stmt->execute();
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
 ?>

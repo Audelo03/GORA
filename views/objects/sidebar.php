@@ -21,7 +21,7 @@ function active($files) {
       </a>
     </li>
     <li>
-      <a href="pages/alumnos.php" class="nav-link text-white <?php echo active(['alumnos.php']); ?>">
+      <a href="listas.php" class="nav-link text-white <?php echo active(['listas.php']); ?>">
         <i class="bi bi-people me-2"></i> <span class="sidebar-text">Alumnos</span>
       </a>
     </li>
