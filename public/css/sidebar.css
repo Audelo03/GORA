@@ -1,7 +1,7 @@
 /* === CONFIGURACIÓN GENERAL DEL SIDEBAR === */
 #app-sidebar {
   width: 260px;
-  background-color: #111827; /* Un fondo oscuro más moderno */
+  background-color: #111827; 
   transition: width 0.3s ease-in-out;
   padding: 1.25rem !important;
   display: flex;
@@ -13,7 +13,6 @@
   transition: margin-left 0.3s ease-in-out;
 }
 
-/* === ENCABEZADO Y TÍTULO === */
 #app-sidebar .fs-5 {
   font-weight: 700 !important;
   letter-spacing: 1px;
@@ -24,9 +23,9 @@
   border-radius: 0.375rem;
 }
 
-/* === ESTILOS DE LOS ENLACES DE NAVEGACIÓN === */
+
 #app-sidebar .nav-link {
-  color: #aeb2d5; /* Color de texto suave para los enlaces */
+  color: #aeb2d5;
   font-weight: 500;
   padding: 0.75rem 1rem;
   margin-bottom: 0.5rem;
@@ -80,7 +79,6 @@
 }
 
 
-/* === ESTADO COLAPSADO (ESCRITORIO) === */
 #app-sidebar.collapsed {
   width: 90px;
   padding: 1.25rem 0.5rem !important; /* Ajusta el padding */
@@ -117,11 +115,6 @@
   margin-left: 90px;
 }
 
-/* --- CENTRADO HORIZONTAL DEL BOTÓN TOGGLE AL COLAPSAR --- */
-/* Cuando el sidebar colapsa, el título "ITSADATA" se oculta.
-  Esto deja solo al botón dentro del contenedor flex.
-  Cambiando justify-content a 'center' se centrará el botón.
-*/
 #app-sidebar.collapsed .d-flex.justify-content-between {
   justify-content: center !important;
 }

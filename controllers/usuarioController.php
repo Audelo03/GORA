@@ -73,6 +73,11 @@ class UsuarioController {
         $this->usuario->delete($id);
         echo json_encode(["status" => "ok", "message" => "Usuario eliminado exitosamente"]);
     }
+    public function obtenerUsuarioPorId($user_id) {
+        
+        return $this->usuario->getById($user_id);
+        
+    }
 }
 
 

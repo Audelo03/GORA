@@ -140,67 +140,94 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
     }
 //renderizar alumnos
     public function listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, string $parentUid = "root"){ 
-        ob_start();
-        ?>
-        <div class="accordion" id="accordion_<?= htmlspecialchars($parentUid) ?>">
-            <?php foreach ($grupos_ids as $id_grupo_data): 
-                $id_grupo_id = $id_grupo_data["id_grupo"];
-                $stmt = $conn->prepare("SELECT nombre FROM grupos WHERE id_grupo = :id_grupo");
-                $stmt->bindParam(':id_grupo', $id_grupo_id, PDO::PARAM_INT);
-                $stmt->execute();
-                $grupo_result = $stmt->fetch(PDO::FETCH_ASSOC);
-                $grupo_nombre = $grupo_result ? $grupo_result['nombre'] : "Grupo no encontrado (ID: ".htmlspecialchars($id_grupo_id).")";
-                
-                $alumnosResult = $this->alumno->listByGroupId($id_grupo_id);
-                $alumnos = is_array($alumnosResult) ? $alumnosResult : [];
+    ob_start();
+    ?>
+    <div class="accordion" id="accordion_<?= htmlspecialchars($parentUid) ?>">
+    <?php foreach ($grupos_ids as $id_grupo_data): 
+        // ... (la lógica para obtener el nombre del grupo y los alumnos sigue igual) ...
+        $id_grupo_id = $id_grupo_data["id_grupo"];
+        $stmt = $conn->prepare("SELECT nombre FROM grupos WHERE id_grupo = :id_grupo");
+        $stmt->bindParam(':id_grupo', $id_grupo_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $grupo_result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $grupo_nombre = $grupo_result ? $grupo_result['nombre'] : "Grupo no encontrado (ID: ".htmlspecialchars($id_grupo_id).")";
+        
+        // Asumimos que este método devuelve un array que incluye 'id_alumno' para cada alumno.
+        $alumnosResult = $this->alumno->listByGroupId($id_grupo_id);
+        $alumnos = is_array($alumnosResult) ? $alumnosResult : [];
 
-                $grupoUid = "grupo_" . $id_grupo_id . "_" . uniqid();
-            ?>
-            <div class="accordion-item">
-                <h2 class="accordion-header d-flex align-items-center" id="heading_<?= htmlspecialchars($grupoUid) ?>">
-    
-    <button class="accordion-button collapsed bg-info text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_<?= htmlspecialchars($grupoUid) ?>">
-        <i class="bi bi-people-fill me-2"></i> Grupo: <?= htmlspecialchars($grupo_nombre) ?> (<?= count($alumnos) ?> alumnos)
-    </button>
-    
-                    <a href="gestionar_listas.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>"
-                       class="btn btn-primary flex-shrink-0 me-2"
-                       data-bs-toggle="tooltip"
-                       data-bs-placement="top"
-                       title="Gestionar Listas">
-                        <i class="bi bi-pencil-square me-1"></i>
-                    </a>
-                  <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>&fecha=<?= urlencode(date('Y-m-d')) ?>"
-   class="btn btn-success flex-shrink-0 me-2" 
-   data-bs-toggle="tooltip" 
-   data-bs-placement="top" 
-   title="Tomar Asistencia">
-    <i class="bi bi-list-check me-1"></i>
-</a>
-
-                </h2>
-                <div id="collapse_<?= htmlspecialchars($grupoUid) ?>" class="accordion-collapse collapse" data-bs-parent="#accordion_<?= htmlspecialchars($parentUid) ?>">
-                    <div class="accordion-body">
-                        <?php if (empty($alumnos)): ?>
-                            <p>No hay alumnos en este grupo.</p>
-                        <?php else: ?>
-                            <ul class="list-group">
-                                <?php foreach ($alumnos as $a): ?>
-                                    <li class="list-group-item">
-                                        <i class="bi bi-person-circle text-primary me-2"></i>
-                                        <?= htmlspecialchars($a['nombre'] . ' ' . $a['apellido_paterno'] . ' ' . ($a['apellido_materno'] ?? '')) ?>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-                    </div>
+        $grupoUid = "grupo_" . $id_grupo_id . "_" . uniqid();
+    ?>
+    <div class="accordion-item shadow-sm rounded-3 mb-2 border-0">
+        <h2 class="accordion-header" id="heading_<?= htmlspecialchars($grupoUid) ?>">
+            <button class="accordion-button collapsed bg-light fw-bold" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#collapse_<?= htmlspecialchars($grupoUid) ?>">
+                <i class="bi bi-people-fill me-2 text-primary"></i> 
+                Grupo: <?= htmlspecialchars($grupo_nombre) ?>
+                <span class="badge bg-primary ms-2"><?= count($alumnos) ?> alumnos</span>
+            </button>
+        </h2>
+        <div id="collapse_<?= htmlspecialchars($grupoUid) ?>" class="accordion-collapse collapse" 
+             data-bs-parent="#accordion_<?= htmlspecialchars($parentUid) ?>">
+            <div class="accordion-body">
+                <div class="d-flex justify-content-end mb-3">
+                    <!-- ... (botones de gestionar lista y asistencia) ... -->
                 </div>
+
+                <?php if (empty($alumnos)): ?>
+                    <div class="alert alert-secondary py-2 mb-0">
+                        <i class="bi bi-info-circle me-1"></i> No hay alumnos en este grupo.
+                    </div>
+                <?php else: ?>
+                    <ul class="list-group list-group-flush">
+                        <?php foreach ($alumnos as $a): ?>
+                        
+                        <!-- ============================================================= -->
+                        <!-- INICIO DE LA MODIFICACIÓN: Elemento de la lista con botones   -->
+                        <!-- ============================================================= -->
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            
+                            <!-- Parte Izquierda: Nombre del Alumno -->
+                            <div>
+                                <i class="bi bi-person-circle text-muted fs-5 me-2"></i>
+                                <span><?= htmlspecialchars($a['nombre'] . ' ' . $a['apellido_paterno'] . ' ' . ($a['apellido_materno'] ?? '')) ?></span>
+                            </div>
+
+                            <!-- Parte Derecha: Grupo de Botones -->
+                            <div class="btn-group" role="group" aria-label="Acciones de alumno">
+
+                            
+                                 <?php if ($_SESSION['usuario_nivel']==3): ?>
+                                <!-- Botón 1: Crear Seguimiento (+) -->
+                                <a href="crear_seguimiento.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" 
+                                   class="btn btn-sm btn-outline-success" 
+                                   data-bs-toggle="tooltip" 
+                                   title="Crear nuevo seguimiento">
+                                    <i class="bi bi-journal-plus"></i>
+                                </a>
+                                 <?php endif; ?>
+                                <!-- Botón 2: Ver Seguimientos -->
+                                <a href="ver_seguimientos.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" 
+                                   class="btn btn-sm btn-outline-primary" 
+                                   data-bs-toggle="tooltip" 
+                                   title="Ver seguimientos del alumno">
+                                    <i class="bi bi-card-list"></i>
+                                </a>
+
+                            </div>
+                        </li>
+                     
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
             </div>
-            <?php endforeach; ?>
         </div>
-        <?php
-        return ob_get_clean();
-    }
+    </div>
+    <?php endforeach; ?>
+</div>
+    <?php
+    return ob_get_clean();
+}
 
     public function renderizarAcordeonCarrera($dataCarrera, $conn, $auth) {
         ob_start();
@@ -259,6 +286,19 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
     $stmt->execute();
     
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function obtenerAlumnoPorId($id_alumno) {
+    $sql = "SELECT id_alumno, matricula, 
+                   CONCAT(nombre, ' ', apellido_paterno, ' ', apellido_materno) AS nombre_completo 
+            FROM alumnos 
+            WHERE id_alumno = :id_alumno";
+    
+    $stmt = $this->alumno->conn->prepare($sql);
+    $stmt->bindParam(':id_alumno', $id_alumno, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 }
 ?>

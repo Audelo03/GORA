@@ -1,12 +1,14 @@
 <?php
 $current = basename($_SERVER['PHP_SELF']);
-function active($files) {
+if (!function_exists('active')) {
+  function active($files) {
     global $current;
     return in_array($current, (array)$files) ? 'active' : '';
+  }
 }
 ?>
 
-<nav id="app-sidebar" class="sidebar bg-dark text-white position-fixed h-100 p-3">
+<nav id="app-sidebar" class="sidebar bg-dark text-white position-fixed h-100 p-3 collapsed">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <span class="fs-5 fw-bold">ITSADATA</span>
     <button id="btn-toggle-sidebar" class="btn btn-sm btn-outline-light">
@@ -31,7 +33,7 @@ function active($files) {
       </a>
     </li>
     <li>
-      <a href="perfil.php" class="nav-link text-white <?php echo active(['perfil.php']); ?>">
+      <a href="profile.php" class="nav-link text-white <?php echo active(['profile.php']); ?>">
         <i class="bi bi-person-circle me-2"></i> <span class="sidebar-text">Perfil</span>
       </a>
     </li>

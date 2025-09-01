@@ -20,33 +20,48 @@ $nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_patern
 ?>
 
 <div class="container mt-5">
-    
-    <div class="card shadow-sm mb-4">
-        <div class="card-body d-flex justify-content-between align-items-center">
+    <!-- Tarjeta de usuario -->
+    <div class="card shadow-lg border-0 rounded-3 mb-4">
+        <div class="card-body d-flex flex-wrap justify-content-between align-items-center">
             <div>
-                <?php if (!$is_component_mode):?>
-                <h1 class="h3 mb-1">Lista de Alumnos</h1>
-                 <?php endif ?>
+            
 
-                <p class="mb-0 text-muted">Nivel: <strong><?= htmlspecialchars($nivel_nombre) ?></strong></p>
-                <p class="mb-0 text-muted">Usuario: <strong><?= htmlspecialchars($nombre) ?></strong></p>
+                <p class="mb-1 text-muted">
+                    <i class="bi bi-person-badge me-1 text-secondary"></i>
+                    <strong class="text-dark"><?= htmlspecialchars($nivel_nombre) ?></strong>
+                </p>
+                <p class="mb-0 text-muted">
+                    <i class="bi bi-person-circle me-1 text-secondary"></i>
+                    <strong class="text-dark"><?= htmlspecialchars($nombre) ?></strong>
+                </p>
             </div>
+         
         </div>
     </div>
-   
-    <div class="card shadow-sm mb-4">
+
+    <!-- Buscador -->
+    <div class="card shadow-sm border-0 rounded-3 mb-4">
         <div class="card-body">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" id="buscador" class="form-control" placeholder="Buscar por alumno, matrícula, grupo o carrera...">
+            <div class="input-group input-group-lg">
+                <span class="input-group-text bg-primary text-white border-0">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="buscador" 
+                       class="form-control border-0 shadow-none" 
+                       placeholder="Buscar alumno, matrícula, grupo o carrera...">
             </div>
         </div>
     </div>
-    <div id="contenedor-alumnos"></div>
+
+    <!-- Contenedor alumnos -->
+    <div id="contenedor-alumnos" class="row g-3"></div>
+
+    <!-- Paginación -->
     <nav class="mt-4" aria-label="Paginación de alumnos">
-        <ul class="pagination justify-content-center" id="paginacion-controles"></ul>
+        <ul class="pagination pagination-lg justify-content-center" id="paginacion-controles"></ul>
     </nav>
 </div>
+
 
 <script id="listas-script">
 (function () {

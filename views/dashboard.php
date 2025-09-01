@@ -7,12 +7,20 @@ include 'objects/navbar.php';
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-6" id="estadisticas-container">
-            <div class="d-flex justify-content-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>
+        <div class="col-lg-8" id="estadisticas-container">
+            <div class="d-flex justify-content-center p-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
         </div>
 
-        <div class="col-lg-6" id="lista-alumnos-container">
-            <div class="d-flex justify-content-center p-5"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Cargando...</span></div></div>
+        <div class="col-lg-4" id="lista-alumnos-container">
+            <div class="d-flex justify-content-center p-5">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -31,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Cargar las estadísticas (añadimos ?modo=componente)
+  
     fetch('estadisticas.php?modo=componente')
         .then(response => response.text())
         .then(html => {

@@ -12,4 +12,5 @@
 
 <div class="d-flex">
     <?php include 'sidebar.php'; ?>
-    <main id="app-content" class="flex-grow-1 p-3">
+    <main id="app-content" class="flex-grow-1 p-3 collapsed">
+      
