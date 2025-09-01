@@ -34,8 +34,7 @@ class AlumnoController {
 }
 
 public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
-    $sql = "SELECT DISTINCT c.* 
-            FROM carreras c
+    $sql = "SELECT DISTINCT c.* FROM carreras c
             LEFT JOIN alumnos a ON a.carreras_id_carrera = c.id_carrera
             LEFT JOIN grupos g ON g.carreras_id_carrera = c.id_carrera
             WHERE (
@@ -164,13 +163,21 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         <i class="bi bi-people-fill me-2"></i> Grupo: <?= htmlspecialchars($grupo_nombre) ?> (<?= count($alumnos) ?> alumnos)
     </button>
     
-                    <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>" 
-                class="btn btn-success flex-shrink-0 me-2" 
-                data-bs-toggle="tooltip" 
-                data-bs-placement="top" 
-                title="Tomar Asistencia">
-                    <i class="bi bi-list-check me-1"></i>
-                </a>
+                    <a href="gestionar_listas.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>"
+                       class="btn btn-primary flex-shrink-0 me-2"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="Gestionar Listas">
+                        <i class="bi bi-pencil-square me-1"></i>
+                    </a>
+                  <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>&fecha=<?= urlencode(date('Y-m-d')) ?>"
+   class="btn btn-success flex-shrink-0 me-2" 
+   data-bs-toggle="tooltip" 
+   data-bs-placement="top" 
+   title="Tomar Asistencia">
+    <i class="bi bi-list-check me-1"></i>
+</a>
+
                 </h2>
                 <div id="collapse_<?= htmlspecialchars($grupoUid) ?>" class="accordion-collapse collapse" data-bs-parent="#accordion_<?= htmlspecialchars($parentUid) ?>">
                     <div class="accordion-body">

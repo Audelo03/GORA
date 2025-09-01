@@ -5,8 +5,11 @@ class AsistenciaController {
     private $conn;
     private $table_name = "asistencias";
 
+    public $asistencia;
+
     public function __construct($db) {
-        $this->conn = $db;
+            $this->conn = $db;
+           $this->asistencia = new Asistencia($db);
     }
 
     public function guardarAsistenciasGrupo($id_grupo, $fecha, $ids_alumnos_presentes, $todos_los_alumnos_del_grupo) {
