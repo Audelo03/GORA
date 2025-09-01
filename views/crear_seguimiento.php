@@ -26,6 +26,7 @@ if (!$id_alumno) {
 
 $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId($id_alumno);
+echo var_dump($alumno);
 
 if (!$alumno) {
     header("Location: listas.php?error=alumno_not_found");
@@ -87,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <h3 class="mb-4">Nuevo Seguimiento</h3>
 
                     <div class="mb-4 p-3 bg-light rounded">
-                        <h5 class="mb-1"><?= htmlspecialchars($alumno['nombre_completo']) ?></h5>
+                        <h5 class="mb-1"><?= htmlspecialchars($alumno['nombre']) ?></h5>
                         <small class="text-muted">Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></small>
                     </div>
 

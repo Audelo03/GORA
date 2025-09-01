@@ -140,11 +140,10 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
     }
 //renderizar alumnos
     public function listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, string $parentUid = "root"){ 
-    ob_start();
-    ?>
-    <div class="accordion" id="accordion_<?= htmlspecialchars($parentUid) ?>">
+        ob_start();
+        ?>
+        <div class="accordion" id="accordion_<?= htmlspecialchars($parentUid) ?>">
     <?php foreach ($grupos_ids as $id_grupo_data): 
-        // ... (la lógica para obtener el nombre del grupo y los alumnos sigue igual) ...
         $id_grupo_id = $id_grupo_data["id_grupo"];
         $stmt = $conn->prepare("SELECT nombre FROM grupos WHERE id_grupo = :id_grupo");
         $stmt->bindParam(':id_grupo', $id_grupo_id, PDO::PARAM_INT);
@@ -152,7 +151,6 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         $grupo_result = $stmt->fetch(PDO::FETCH_ASSOC);
         $grupo_nombre = $grupo_result ? $grupo_result['nombre'] : "Grupo no encontrado (ID: ".htmlspecialchars($id_grupo_id).")";
         
-        // Asumimos que este método devuelve un array que incluye 'id_alumno' para cada alumno.
         $alumnosResult = $this->alumno->listByGroupId($id_grupo_id);
         $alumnos = is_array($alumnosResult) ? $alumnosResult : [];
 
@@ -171,7 +169,16 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
              data-bs-parent="#accordion_<?= htmlspecialchars($parentUid) ?>">
             <div class="accordion-body">
                 <div class="d-flex justify-content-end mb-3">
-                    <!-- ... (botones de gestionar lista y asistencia) ... -->
+                    <a href="gestionar_listas.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>"
+                       class="btn btn-outline-primary btn-sm me-2"
+                       data-bs-toggle="tooltip" title="Gestionar Listas">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>&fecha=<?= urlencode(date('Y-m-d')) ?>"
+                       class="btn btn-outline-success btn-sm"
+                       data-bs-toggle="tooltip" title="Tomar Asistencia">
+                        <i class="bi bi-list-check"></i>
+                    </a>
                 </div>
 
                 <?php if (empty($alumnos)): ?>
@@ -182,9 +189,6 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
                     <ul class="list-group list-group-flush">
                         <?php foreach ($alumnos as $a): ?>
                         
-                        <!-- ============================================================= -->
-                        <!-- INICIO DE LA MODIFICACIÓN: Elemento de la lista con botones   -->
-                        <!-- ============================================================= -->
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             
                             <!-- Parte Izquierda: Nombre del Alumno -->
@@ -195,9 +199,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
 
                             <!-- Parte Derecha: Grupo de Botones -->
                             <div class="btn-group" role="group" aria-label="Acciones de alumno">
-
-                            
-                                 <?php if ($_SESSION['usuario_nivel']==3): ?>
+                                
                                 <!-- Botón 1: Crear Seguimiento (+) -->
                                 <a href="crear_seguimiento.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" 
                                    class="btn btn-sm btn-outline-success" 
@@ -205,7 +207,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
                                    title="Crear nuevo seguimiento">
                                     <i class="bi bi-journal-plus"></i>
                                 </a>
-                                 <?php endif; ?>
+                                
                                 <!-- Botón 2: Ver Seguimientos -->
                                 <a href="ver_seguimientos.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" 
                                    class="btn btn-sm btn-outline-primary" 
@@ -216,7 +218,6 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
 
                             </div>
                         </li>
-                     
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>
@@ -225,9 +226,9 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
     </div>
     <?php endforeach; ?>
 </div>
-    <?php
-    return ob_get_clean();
-}
+        <?php
+        return ob_get_clean();
+    }
 
     public function renderizarAcordeonCarrera($dataCarrera, $conn, $auth) {
         ob_start();
@@ -288,16 +289,12 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-public function obtenerAlumnoPorId($id_alumno) {
-    $sql = "SELECT id_alumno, matricula, 
-                   CONCAT(nombre, ' ', apellido_paterno, ' ', apellido_materno) AS nombre_completo 
-            FROM alumnos 
-            WHERE id_alumno = :id_alumno";
-    
+public function obtenerAlumnoPorId($idAlumno)
+{
+    $sql = "SELECT * FROM alumnos WHERE id_alumno = :id_alumno";
     $stmt = $this->alumno->conn->prepare($sql);
-    $stmt->bindParam(':id_alumno', $id_alumno, PDO::PARAM_INT);
+    $stmt->bindParam(':id_alumno', $idAlumno, PDO::PARAM_INT);
     $stmt->execute();
-    
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 }
