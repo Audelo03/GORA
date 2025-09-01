@@ -13,6 +13,10 @@ if ($id_grupo === 0) {
     header('Location: dashboard.php');
     exit();
 }
+
+//Obtener la fecha que debe permanecer abierta desde la URL.
+$fecha_a_abrir = isset($_GET['fecha_abierta']) ? $_GET['fecha_abierta'] : null;
+
 $fecha = date('Y-m-d'); 
 $alumnoController = new AlumnoController($conn);
 $asistenciaController = new AsistenciaController($conn);
@@ -26,13 +30,12 @@ include "objects/navbar.php";
 ?>
 
 <div class="container mt-5">
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h1 class="h3 mb-1">Gestionar Asistencias del Grupo</h1>
-            <h2 class="h5 text-muted"><?= htmlspecialchars($nombre_grupo) ?></h2>
-        </div>
-    </div>
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm mb-4"> <div class="card-body">
+<h1 class="h3 mb-1">Gestionar Asistencias del Grupo</h1>
+ <h2 class="h5 text-muted"><?= htmlspecialchars($nombre_grupo) ?></h2>
+ </div>
+ </div>
+<div class="card shadow-sm mb-4">
     <div class="card-body text-center">
         <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo) ?>&fecha=<?= urlencode($fecha) ?>" 
            class="btn btn-primary btn-lg">
@@ -42,6 +45,7 @@ include "objects/navbar.php";
     </div>
 </div>
 
+
     <div class="card shadow-sm">
         <div class="card-header">
             <h3 class="h5 mb-0"><i class="bi bi-clock-history me-2"></i> Historial de Asistencias</h3>
@@ -50,46 +54,56 @@ include "objects/navbar.php";
             <?php if (!empty($historial)): ?>
                 <div class="accordion" id="accordionHistorial">
                     <?php foreach ($historial as $fecha => $asistencias): ?>
+                        <?php
+                            // NUEVO: Lógica para determinar si este acordeón debe estar abierto
+                            $es_activo = ($fecha === $fecha_a_abrir);
+                            $clase_boton = $es_activo ? '' : 'collapsed';
+                            $clase_collapse = $es_activo ? 'show' : '';
+                            $aria_expanded = $es_activo ? 'true' : 'false';
+                        ?>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading-<?= $fecha ?>">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<?= $fecha ?>" aria-expanded="false" aria-controls="collapse-<?= $fecha ?>">
+                                <button class="accordion-button <?= $clase_boton ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<?= $fecha ?>" aria-expanded="<?= $aria_expanded ?>" aria-controls="collapse-<?= $fecha ?>">
                                     <i class="bi bi-calendar-check me-2"></i>
                                     <strong>Fecha:</strong>&nbsp;<?= htmlspecialchars(date("d/m/Y", strtotime($fecha))) ?>
                                 </button>
                             </h2>
-                           <div id="collapse-<?= $fecha ?>" 
-     class="accordion-collapse collapse" 
-     aria-labelledby="heading-<?= $fecha ?>" 
-     data-bs-parent="#accordionHistorial">
+                            <div id="collapse-<?= $fecha ?>" 
+                                 class="accordion-collapse collapse <?= $clase_collapse ?>" 
+                                 aria-labelledby="heading-<?= $fecha ?>" 
+                                 data-bs-parent="#accordionHistorial">
+                                
+                                <div class="accordion-body">
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <a href="asistencia.php?id_grupo=<?= $id_grupo ?>&fecha=<?= $fecha ?>" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                           <i class="bi bi-pencil-fill me-1"></i> Editar esta lista
+                                        </a>
+                                    </div>
 
-    <div class="accordion-body">
-
-        <!-- Botón arriba a la derecha -->
-        <div class="d-flex justify-content-end mb-3">
-            <a href="asistencia.php?id_grupo=<?= $id_grupo ?>&fecha=<?= $fecha ?>" 
-               class="btn btn-sm btn-outline-secondary">
-                <i class="bi bi-pencil-fill me-1"></i> Editar esta lista
-            </a>
-        </div>
-
-        <!-- Lista de alumnos -->
-        <ul class="list-group">
-            <?php foreach ($asistencias as $asistencia): ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <?= htmlspecialchars($asistencia['nombre_completo']) ?>
-                    <?php
-                        $estatus = $asistencia['estatus'];
-                        $badge_class = 'bg-secondary';
-                        if ($estatus === 1) $badge_class = 'bg-success';
-                        if ($estatus === 0) $badge_class = 'bg-danger';
-                    ?>
-                    <span class="badge <?= $badge_class ?>"><?= "  " ?></span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-
-    </div>
-</div>
+                                    <ul class="list-group">
+                                        <?php foreach ($asistencias as $asistencia): ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <?= htmlspecialchars($asistencia['nombre_completo']) ?>
+                                                <?php
+                                                    $estatus = $asistencia['estatus'];
+                                                    // MODIFICADO: Simplificado el texto del badge y el código
+                                                    $badge_class = 'bg-secondary'; // Por defecto
+                                                    $texto_badge = 'Sin registrar';
+                                                    if ($estatus === 1) {
+                                                        $badge_class = 'bg-success';
+                                                        $texto_badge = 'Presente';
+                                                    } elseif ($estatus === 0) {
+                                                        $badge_class = 'bg-danger';
+                                                        $texto_badge = 'Ausente';
+                                                    }
+                                                ?>
+                                                <span class="badge <?= $badge_class ?>"><?= $texto_badge ?></span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>

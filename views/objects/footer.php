@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Añadimos un evento 'click' al botón
         toggleButton.addEventListener('click', function() {
-            // Alternamos (añadimos/quitamos) la clase 'collapsed' en el sidebar
+  
             sidebar.classList.toggle('collapsed');
+        
             
             content.classList.toggle('collapsed');
         });

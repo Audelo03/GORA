@@ -1,11 +1,15 @@
-/* === CONFIGURACIÓN GENERAL DEL SIDEBAR === */
+
 #app-sidebar {
   width: 260px;
   background-color: #111827; 
-  transition: width 0.3s ease-in-out;
+  transition: width 0.5s ease-in-out;
   padding: 1.25rem !important;
   display: flex;
   flex-direction: column;
+}
+
+#app-sidebar {
+  overflow: hidden;
 }
 
 #app-content {
@@ -22,7 +26,12 @@
 #btn-toggle-sidebar {
   border-radius: 0.375rem;
 }
+#app-sidebar .slow{
 
+
+transition: width 0.5s ease-in-out;
+
+}
 
 #app-sidebar .nav-link {
   color: #aeb2d5;
@@ -32,15 +41,14 @@
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 3s ease, color 3s ease;
 }
 
 #app-sidebar .nav-link i {
   font-size: 1.1rem;
-  transition: transform 0.2s ease;
+  transition: transform 3s ease;
 }
 
-/* --- Efecto Hover --- */
 #app-sidebar .nav-link:hover {
   background-color: #1f2937; /* Fondo sutil al pasar el mouse */
   color: #ffffff;
@@ -50,14 +58,12 @@
   transform: scale(1.1); /* Agranda ligeramente el icono */
 }
 
-/* --- Enlace Activo --- */
 #app-sidebar .nav-link.active {
   background-color: #3b82f6; /* Color de acento para el enlace activo */
   color: #ffffff;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-/* === SECCIÓN DEL USUARIO Y LOGOUT === */
 #app-sidebar hr {
   display: none; /* Ocultamos el <hr> para usar un borde en su lugar */
 }
@@ -81,7 +87,7 @@
 
 #app-sidebar.collapsed {
   width: 90px;
-  padding: 1.25rem 0.5rem !important; /* Ajusta el padding */
+  padding: 1.25rem 0.5rem !important; 
 }
 
 #app-sidebar.collapsed .sidebar-text,

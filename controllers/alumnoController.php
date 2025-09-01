@@ -168,18 +168,18 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         <div id="collapse_<?= htmlspecialchars($grupoUid) ?>" class="accordion-collapse collapse" 
              data-bs-parent="#accordion_<?= htmlspecialchars($parentUid) ?>">
             <div class="accordion-body">
-                <div class="d-flex justify-content-end mb-3">
-                    <a href="gestionar_listas.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>"
-                       class="btn btn-outline-primary btn-sm me-2"
-                       data-bs-toggle="tooltip" title="Gestionar Listas">
-                        <i class="bi bi-pencil-square"></i>
-                    </a>
-                    <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>&fecha=<?= urlencode(date('Y-m-d')) ?>"
-                       class="btn btn-outline-success btn-sm"
-                       data-bs-toggle="tooltip" title="Tomar Asistencia">
-                        <i class="bi bi-list-check"></i>
-                    </a>
-                </div>
+                <div class="d-flex mb-3 gap-2">
+    <a href="gestionar_listas.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>"
+       class="btn btn-outline-primary btn-sm"
+       data-bs-toggle="tooltip" title="Gestionar Listas">
+        <i class="bi bi-pencil-square"></i>
+    </a>
+    <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>&fecha=<?= urlencode(date('Y-m-d')) ?>"
+       class="btn btn-outline-success btn-sm"
+       data-bs-toggle="tooltip" title="Tomar Asistencia">
+        <i class="bi bi-list-check"></i>
+    </a>
+</div>
 
                 <?php if (empty($alumnos)): ?>
                     <div class="alert alert-secondary py-2 mb-0">

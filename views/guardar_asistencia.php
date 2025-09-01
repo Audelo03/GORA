@@ -14,7 +14,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $id_grupo = $_POST['id_grupo'] ?? null;
 $asistencias = $_POST['asistencias'] ?? [];
-$fecha = date('Y-m-d');
+$fecha = $_POST['fecha'];
 
 if(!$id_grupo) {
     echo json_encode(['success' => false, 'error' => 'No se especificó el grupo']);

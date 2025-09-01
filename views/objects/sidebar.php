@@ -16,6 +16,8 @@ if (!function_exists('active')) {
 </button>
   </div>
 
+  <div id = "slow" class = "slow">
+
   <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item">
       <a href="dashboard.php" class="nav-link text-white <?php echo active(['dashboard.php']); ?>">
@@ -38,6 +40,7 @@ if (!function_exists('active')) {
       </a>
     </li>
   </ul>
+  </div>
 
 
 </nav>

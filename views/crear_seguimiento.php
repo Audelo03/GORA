@@ -26,7 +26,7 @@ if (!$id_alumno) {
 
 $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId($id_alumno);
-echo var_dump($alumno);
+
 
 if (!$alumno) {
     header("Location: listas.php?error=alumno_not_found");
@@ -123,9 +123,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="fecha_movimiento" class="form-label">Fecha Seguimiento</label>
+                                <label for="fecha_movimiento" class="form-label" >Fecha de Creación</label>
                                 <input type="date" class="form-control" id="fecha_movimiento"
-                                       name="fecha_movimiento" value="<?= htmlspecialchars($fecha_movimiento) ?>">
+                                       name="fecha_movimiento" disabled value="<?= htmlspecialchars($fecha_movimiento) ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="fecha_compromiso" class="form-label">Fecha Compromiso</label>
@@ -135,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <a href="ver_seguimientos.php?id_alumno=<?= htmlspecialchars($id_alumno) ?>"
+                            <a href="ver_seguimientos.php?id_alumno=<?=$id_alumno ?>"
                                class="btn btn-outline-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>

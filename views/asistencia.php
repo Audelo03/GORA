@@ -34,6 +34,7 @@ foreach ($asistencias_guardadas as $id_alumno => $estatus) {
 $page_title = "Toma de Asistencia - " . htmlspecialchars($nombre_grupo);
 include 'objects/header.php';
 include 'objects/navbar.php';
+
 ?>
 
 <div class="container mt-5">
@@ -72,7 +73,6 @@ include 'objects/navbar.php';
                         </thead>
                         <tbody>
                             <?php foreach ($alumnos_del_grupo as $alumno): 
-                                // 4. Verificar si el alumno actual está en la lista de presentes.
                                 $asistio = in_array($alumno['id_alumno'], $alumnos_presentes_ids);
                             ?>
                                 <tr>
@@ -99,7 +99,7 @@ include 'objects/navbar.php';
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Sincronizar el checkbox "Todos" al cargar la página
+    // Sincronizar el checkbox todos al cargar la página
     const toggleAll = document.getElementById('toggleAllCheckbox');
     const asistenciaCheckboxes = document.querySelectorAll('.asistencia-checkbox');
 
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleAll.checked = allChecked;
     }
 
-    updateToggleAll(); // Llamar al cargar la página
+    updateToggleAll();
 
     // Guardar asistencia con fetch
     document.getElementById('asistenciaForm').addEventListener('submit', async function(e) {
@@ -118,8 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const id_grupo = <?= json_encode($id_grupo) ?>;
         formData.append('id_grupo', id_grupo);
         
-        // La fecha ya está en el formData desde el input hidden
-
         try {
             const response = await fetch('guardar_asistencia.php', {
                 method: 'POST',
