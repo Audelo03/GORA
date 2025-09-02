@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'diego/itsa',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'cdf7b8098e54b0a321ccce99dc24143148f07595',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'diego/itsa' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'cdf7b8098e54b0a321ccce99dc24143148f07595',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
