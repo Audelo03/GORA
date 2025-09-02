@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"]) && isset($_P
     $email = eemail($email);
     $password = $_POST["password"];
     if ($auth->login($email, $password)) {
-        header("Location: listas.php");
+        header("Location: dashboard.php");
         exit;
     } else {
         $error = "Correo o contraseña incorrectos.";

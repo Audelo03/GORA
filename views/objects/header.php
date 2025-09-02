@@ -7,6 +7,9 @@
     <link href="../public/css/sidebar.css" rel="stylesheet">
     <link href="../vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../node_modules/sweetalert2/dist/sweetalert2.min.css">
+    <link rel="stylesheet" type="text/css" href="../vendor/datatables/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" href="../public/css/sidebar.css">
   </head>
 <body>
 
