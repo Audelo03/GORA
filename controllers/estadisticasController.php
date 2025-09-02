@@ -24,13 +24,13 @@ class EstadisticasController {
         $datos['alumnos_por_estatus'] = $this->estadisticas->alumnosPorEstatus();
         $datos['grupos_por_modalidad'] = $this->estadisticas->gruposPorModalidad();
         $datos['tasa_asistencia'] = $this->estadisticas->tasaDeAsistenciaGeneral();
-        
+        $datos['seguimientos_por_estatus'] = $this->estadisticas->seguimientosPorEstatus();
+        $datos['seguimientos_por_tipo'] = $this->estadisticas->seguimientosPorTipo();
+
         return $datos;
     }
 }
 
-// Este bloque se puede usar para probar el controlador directamente
-// o para una API si se necesita.
 if (isset($_GET['accion']) && $_GET['accion'] == 'obtener_datos') {
     header('Content-Type: application/json');
     $controller = new EstadisticasController($conn);

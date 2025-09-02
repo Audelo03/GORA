@@ -60,12 +60,23 @@ $datos = $estadisticasController->obtenerEstadisticas();
         </div>
     </div>
 
+
+    
+
     <div class="row mt-4">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="card">
-                <div class="card-header">Alumnos por Carrera</div>
+                <div class="card-header">Seguimientos por Estatus</div>
                 <div class="card-body">
-                    <canvas id="alumnosPorCarreraChart"></canvas>
+                    <canvas id="seguimientosPorEstatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Seguimientos por Tipo</div>
+                <div class="card-body">
+                    <canvas id="seguimientosPorTipoChart"></canvas>
                 </div>
             </div>
         </div>
@@ -80,69 +91,66 @@ $datos = $estadisticasController->obtenerEstadisticas();
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">Grupos por Modalidad</div>
-                <div class="card-body">
-                    <canvas id="gruposPorModalidadChart"></canvas>
-                </div>
-            </div>
-        </div>
+ 
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Datos desde PHP
-    const alumnosPorCarrera = <?php echo json_encode($datos['alumnos_por_carrera']); ?>;
-    const alumnosPorEstatus = <?php echo json_encode($datos['alumnos_por_estatus']); ?>;
-    const gruposPorModalidad = <?php echo json_encode($datos['grupos_por_modalidad']); ?>;
+<script id="estadisticas-script">
+const alumnosPorCarrera = <?php echo json_encode($datos['alumnos_por_carrera']); ?>;
+const alumnosPorEstatus = <?php echo json_encode($datos['alumnos_por_estatus']); ?>;
+const gruposPorModalidad = <?php echo json_encode($datos['grupos_por_modalidad']); ?>;
+const seguimientosPorEstatus = <?php echo json_encode($datos['seguimientos_por_estatus']); ?>;
+const seguimientosPorTipo = <?php echo json_encode($datos['seguimientos_por_tipo']); ?>;
 
-    // --- GRÁFICA 1: Alumnos por Carrera (Existente) ---
-    new Chart(document.getElementById('alumnosPorCarreraChart').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: alumnosPorCarrera.map(item => item.nombre),
-            datasets: [{
-                label: 'Número de Alumnos',
-                data: alumnosPorCarrera.map(item => item.total),
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-    });
 
-    // --- GRÁFICA 2: Alumnos por Estatus (Nueva - Pastel) ---
-    new Chart(document.getElementById('alumnosPorEstatusChart').getContext('2d'), {
-        type: 'pie',
-        data: {
-            labels: alumnosPorEstatus.map(item => item.estatus_nombre),
-            datasets: [{
-                data: alumnosPorEstatus.map(item => item.total),
-                backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(153, 102, 255, 0.7)'],
-                borderColor: ['#fff'],
-                borderWidth: 2
-            }]
-        }
-    });
 
-    new Chart(document.getElementById('gruposPorModalidadChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: gruposPorModalidad.map(item => item.nombre),
-            datasets: [{
-                data: gruposPorModalidad.map(item => item.total),
-                backgroundColor: ['rgba(255, 159, 64, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(201, 203, 207, 0.7)'],
-                borderColor: ['#fff'],
-                borderWidth: 2
-            }]
-        }
-    });
+// --- GRÁFICA 2: Alumnos por Estatus (Nueva - Pastel) ---
+new Chart(document.getElementById('alumnosPorEstatusChart').getContext('2d'), {
+    type: 'pie',
+    data: {
+        labels: alumnosPorEstatus.map(item => item.estatus_nombre),
+        datasets: [{
+            data: alumnosPorEstatus.map(item => item.total),
+            backgroundColor: ['rgba(40, 167, 69, 0.7)', 'rgba(220, 53, 69, 0.7)', 'rgba(255, 193, 7, 0.7)', 'rgba(108, 117, 125, 0.7)'],
+            borderColor: ['#fff'],
+            borderWidth: 2
+        }]
+    }
 });
+
+
+
+// --- GRÁFICA 4: Seguimientos por Estatus (Dona) ---
+new Chart(document.getElementById('seguimientosPorEstatusChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+        labels: seguimientosPorEstatus.map(item => item.estatus_nombre),
+        datasets: [{
+            data: seguimientosPorEstatus.map(item => item.total),
+            backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)'],
+            borderColor: ['#fff'],
+            borderWidth: 2
+        }]
+    }
+});
+
+// --- GRÁFICA 5: Seguimientos por Tipo (Barra polar) ---
+new Chart(document.getElementById('seguimientosPorTipoChart').getContext('2d'), {
+    type: 'polarArea',
+    data: {
+        labels: seguimientosPorTipo.map(item => item.nombre),
+        datasets: [{
+            label: 'Número de Seguimientos',
+            data: seguimientosPorTipo.map(item => item.total),
+            backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)'],
+        }]
+    }
+});
+
+
+
 </script>
 
 <?php

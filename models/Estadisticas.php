@@ -85,5 +85,36 @@ class Estadisticas {
         // Retorna el porcentaje redondeado a 2 decimales, o 0 si no hay datos.
         return $resultado ? round($resultado['porcentaje'], 2) : 0;
     }
+
+    /**
+     * Obtiene el número de seguimientos agrupados por su estatus.
+     */
+    public function seguimientosPorEstatus() {
+        $sql = "SELECT CASE 
+                        WHEN estatus = 1 THEN 'Abierto'
+                        WHEN estatus = 2 THEN 'En Progreso'
+                        WHEN estatus = 3 THEN 'Cerrado'
+                        ELSE 'Desconocido'
+                    END as estatus_nombre, 
+                    COUNT(id_seguimiento) as total
+                FROM seguimientos
+                GROUP BY estatus";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtiene el número de seguimientos agrupados por tipo.
+     */
+    public function seguimientosPorTipo() {
+        $sql = "SELECT ts.nombre, COUNT(s.id_seguimiento) as total
+                FROM tipo_seguimiento ts
+                LEFT JOIN seguimientos s ON ts.id_tipo_seguimiento = s.tipo_seguimiento_id
+                GROUP BY ts.nombre ORDER BY total DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
