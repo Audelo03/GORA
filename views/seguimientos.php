@@ -12,6 +12,9 @@ $page_title = "Seguimientos";
 include 'objects/header.php';
 include 'objects/navbar.php';
 
+
+
+
 $auth = new AuthController($conn);
 $auth->checkAuth();
 
@@ -35,7 +38,37 @@ function formatFecha(?string $fecha): string {
     return date("d/m/Y", strtotime($fecha));
 }
 ?>
+<style>
 
+#tabla-seguimientos {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Encabezado con estilo */
+#tabla-seguimientos thead th {
+    background: #f8f9fa;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+#tabla-seguimientos tbody tr:hover {
+    background: #f1f3f5;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+
+#tabla-seguimientos td:last-child,
+#tabla-seguimientos td .badge {
+    text-align: center;
+    vertical-align: middle;
+}
+
+</style>
 <div class="container py-5">
 
 
@@ -104,20 +137,47 @@ function formatFecha(?string $fecha): string {
 <?php include 'objects/footer.php'; ?>
 
 <script>
-     $(document).ready(function() {
- $('#tabla-seguimientos').DataTable({
-         dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-                 '<"row"<"col-sm-12"tr>>' +
-                 '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>' +
-                 '<"row"<"col-sm-12"B>>',
-            
-            // Definición de los botones que se mostrarán
-            buttons: [
-                { extend: 'copyHtml5', text: 'Copiar', className: 'btn-secondary' },
-                { extend: 'csvHtml5', text: 'CSV', className: 'btn-secondary' },
-                { extend: 'excelHtml5', text: 'Excel', className: 'btn-secondary' },
-                { extend: 'pdfHtml5', text: 'PDF', className: 'btn-secondary' },
-                { extend: 'print', text: 'Imprimir', className: 'btn-secondary' }
-            ],
-        });});
+$(document).ready(function() {
+    $('#tabla-seguimientos').DataTable({
+        dom: `
+            <'row mb-3'
+                <'col-sm-12 col-md-6'l>
+                <'col-sm-12 col-md-6 dt-action-buttons d-flex justify-content-md-end gap-2'Bf>
+            >
+            <'row'
+                <'col-sm-12 table-responsive'tr>
+            >
+            <'row mt-3'
+                <'col-sm-12 col-md-5'i>
+                <'col-sm-12 col-md-7'p>
+            >
+        `,
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="bi bi-file-earmark-excel-fill"></i> Excel',
+                className: 'btn btn-success btn-sm shadow-sm',
+                titleAttr: 'Exportar a Excel'
+            }
+        ],
+        language: {
+            search: "",
+            searchPlaceholder: "Buscar seguimiento...",
+            lengthMenu: "Mostrar _MENU_",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            paginate: {
+                first: "«",
+                last: "»",
+                next: "›",
+                previous: "‹"
+            }
+        }
+    });
+
+    // Input de búsqueda más compacto y moderno
+    $('.dataTables_filter input')
+        .addClass('form-control form-control-sm shadow-sm')
+        .css('width', '250px');
+});
+
 </script>

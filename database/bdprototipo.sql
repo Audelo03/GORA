@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-09-2025 a las 05:51:32
+-- Tiempo de generación: 02-09-2025 a las 08:01:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -74,11 +74,16 @@ CREATE TABLE `asistencias` (
 
 INSERT INTO `asistencias` (`id`, `id_alumno`, `id_grupo`, `fecha`, `estatus`, `fecha_registro`) VALUES
 (496, 15, 2, '2025-09-01', 1, '2025-09-01 03:24:55'),
-(501, 13, 8, '2025-09-01', 1, '2025-09-01 03:30:08'),
-(502, 16, 1, '2025-09-01', 1, '2025-09-01 03:47:34'),
-(503, 3, 1, '2025-09-01', 1, '2025-09-01 03:47:34'),
-(504, 10, 1, '2025-09-01', 1, '2025-09-01 03:47:34'),
-(505, 8, 1, '2025-09-01', 0, '2025-09-01 03:47:34');
+(506, 13, 8, '2025-09-01', 1, '2025-09-01 04:04:48'),
+(564, 16, 1, '2025-09-01', 0, '2025-09-01 17:50:36'),
+(565, 3, 1, '2025-09-01', 1, '2025-09-01 17:50:36'),
+(566, 10, 1, '2025-09-01', 1, '2025-09-01 17:50:36'),
+(567, 8, 1, '2025-09-01', 1, '2025-09-01 17:50:36'),
+(600, 15, 2, '2025-09-02', 1, '2025-09-02 05:02:38'),
+(609, 16, 1, '2025-09-02', 1, '2025-09-02 05:07:42'),
+(610, 3, 1, '2025-09-02', 1, '2025-09-02 05:07:42'),
+(611, 10, 1, '2025-09-02', 1, '2025-09-02 05:07:42'),
+(612, 8, 1, '2025-09-02', 1, '2025-09-02 05:07:42');
 
 -- --------------------------------------------------------
 
@@ -209,16 +214,47 @@ CREATE TABLE `seguimientos` (
   `fecha_movimiento` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `fecha_compromiso` date DEFAULT NULL,
   `usuarios_id_usuario_movimiento` int(10) UNSIGNED DEFAULT NULL,
-  `alumnos_id_alumno` int(10) UNSIGNED NOT NULL
+  `alumnos_id_alumno` int(10) UNSIGNED NOT NULL,
+  `tutor_id` int(10) UNSIGNED DEFAULT NULL,
+  `tipo_seguimiento_id` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `seguimientos`
 --
 
-INSERT INTO `seguimientos` (`id_seguimiento`, `descripcion`, `estatus`, `fecha_creacion`, `fecha_movimiento`, `fecha_compromiso`, `usuarios_id_usuario_movimiento`, `alumnos_id_alumno`) VALUES
-(4, 'Revisión de servicio social. Documentación completa. Trámite finalizado.', 3, '2025-08-26 19:23:20', '2025-08-26 19:23:20', NULL, 4, 3),
-(9, 'Seguimiento de calificaciones. Se observa una mejora notable en el último parcial.', 3, '2025-08-26 19:23:20', '2025-08-26 19:23:20', NULL, 8, 8);
+INSERT INTO `seguimientos` (`id_seguimiento`, `descripcion`, `estatus`, `fecha_creacion`, `fecha_movimiento`, `fecha_compromiso`, `usuarios_id_usuario_movimiento`, `alumnos_id_alumno`, `tutor_id`, `tipo_seguimiento_id`) VALUES
+(4, 'Revisión de servicio social. Documentación completa. Trámite finalizado.', 3, '2025-08-26 19:23:20', '2025-08-26 19:23:20', NULL, 4, 3, NULL, NULL),
+(9, 'Seguimiento de calificaciones. Se observa una mejora notable en el último parcial.', 2, '2025-08-26 19:23:20', '2025-09-02 05:03:57', NULL, 8, 8, NULL, 1),
+(11, 'seguimiento de josé', 2, '2025-09-01 21:46:05', '2025-09-02 05:37:27', '2025-11-13', 3, 3, 3, NULL),
+(12, 'dfasdf', 3, '2025-09-01 21:50:09', '2025-09-02 05:37:30', NULL, 3, 3, 3, NULL),
+(13, 'dasd', 1, '2025-09-01 21:50:33', '2025-09-02 05:37:32', '2025-10-21', 3, 3, 3, NULL),
+(14, 'esta bien wey', 1, '2025-09-01 21:51:30', '2025-09-02 05:37:33', '2025-09-21', 3, 15, 3, NULL),
+(15, 'hola mundo, sdc', 1, '2025-09-01 21:55:32', '2025-09-02 05:37:35', '2025-09-21', 3, 3, 3, NULL),
+(16, 'el muchacho esta wey', 1, '2025-09-02 04:44:00', '2025-09-02 05:37:36', '2025-09-10', 3, 3, 3, 2),
+(17, 'alena', 1, '2025-09-02 04:49:14', '2025-09-02 05:37:39', '2025-09-21', 3, 8, 3, 2),
+(18, 'sdfasdf1232', 1, '2025-09-02 04:59:07', '2025-09-02 05:37:41', '2025-05-21', 3, 15, 3, 4);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tipo_seguimiento`
+--
+
+CREATE TABLE `tipo_seguimiento` (
+  `id_tipo_seguimiento` int(10) UNSIGNED NOT NULL,
+  `nombre` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tipo_seguimiento`
+--
+
+INSERT INTO `tipo_seguimiento` (`id_tipo_seguimiento`, `nombre`) VALUES
+(1, 'Académico'),
+(2, 'Administrativo'),
+(4, 'Canalización'),
+(3, 'Personal');
 
 -- --------------------------------------------------------
 
@@ -317,7 +353,16 @@ ALTER TABLE `niveles_usuarios`
 ALTER TABLE `seguimientos`
   ADD PRIMARY KEY (`id_seguimiento`),
   ADD KEY `fk_seguimientos_usuario_movimiento` (`usuarios_id_usuario_movimiento`),
-  ADD KEY `fk_seguimientos_alumnos` (`alumnos_id_alumno`);
+  ADD KEY `fk_seguimientos_alumnos` (`alumnos_id_alumno`),
+  ADD KEY `fk_seguimientos_tipo` (`tipo_seguimiento_id`),
+  ADD KEY `fk_seguimientos_tutor` (`tutor_id`);
+
+--
+-- Indices de la tabla `tipo_seguimiento`
+--
+ALTER TABLE `tipo_seguimiento`
+  ADD PRIMARY KEY (`id_tipo_seguimiento`),
+  ADD UNIQUE KEY `nombre` (`nombre`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -342,7 +387,7 @@ ALTER TABLE `alumnos`
 -- AUTO_INCREMENT de la tabla `asistencias`
 --
 ALTER TABLE `asistencias`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=506;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=613;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -372,7 +417,13 @@ ALTER TABLE `niveles_usuarios`
 -- AUTO_INCREMENT de la tabla `seguimientos`
 --
 ALTER TABLE `seguimientos`
-  MODIFY `id_seguimiento` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_seguimiento` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT de la tabla `tipo_seguimiento`
+--
+ALTER TABLE `tipo_seguimiento`
+  MODIFY `id_tipo_seguimiento` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -420,6 +471,8 @@ ALTER TABLE `grupos`
 --
 ALTER TABLE `seguimientos`
   ADD CONSTRAINT `fk_seguimientos_alumnos` FOREIGN KEY (`alumnos_id_alumno`) REFERENCES `alumnos` (`id_alumno`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_seguimientos_tipo` FOREIGN KEY (`tipo_seguimiento_id`) REFERENCES `tipo_seguimiento` (`id_tipo_seguimiento`),
+  ADD CONSTRAINT `fk_seguimientos_tutor` FOREIGN KEY (`tutor_id`) REFERENCES `usuarios` (`id_usuario`),
   ADD CONSTRAINT `fk_seguimientos_usuario_movimiento` FOREIGN KEY (`usuarios_id_usuario_movimiento`) REFERENCES `usuarios` (`id_usuario`);
 
 --
