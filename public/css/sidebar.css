@@ -14,8 +14,18 @@
 
 #app-content {
   margin-left: 260px;
-  transition: margin-left 0.3s ease-in-out;
+  transition: margin-left 0.2s ease-in-out;
 }
+#app-content .collapsed{
+
+ transition: margin-left 10s ease-in-out;
+
+
+
+
+
+}
+
 
 #app-sidebar .fs-5 {
   font-weight: 700 !important;
@@ -29,7 +39,7 @@
 #app-sidebar .slow{
 
 
-transition: width 0.5s ease-in-out;
+transition: width 10s ease-in-out;
 
 }
 
@@ -41,12 +51,12 @@ transition: width 0.5s ease-in-out;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
-  transition: background-color 3s ease, color 3s ease;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 #app-sidebar .nav-link i {
   font-size: 1.1rem;
-  transition: transform 3s ease;
+  transition: transform 0.5s ease;
 }
 
 #app-sidebar .nav-link:hover {
@@ -84,6 +94,12 @@ transition: width 0.5s ease-in-out;
     color: #fff;
 }
 
+#navbar1 .navbar{
+  transition: transform 10s ease;
+
+
+
+}
 
 #app-sidebar.collapsed {
   width: 90px;
@@ -119,6 +135,7 @@ transition: width 0.5s ease-in-out;
 
 #app-content.collapsed {
   margin-left: 90px;
+  transition: margin-left 1s ease-out;
 }
 
 #app-sidebar.collapsed .d-flex.justify-content-between {

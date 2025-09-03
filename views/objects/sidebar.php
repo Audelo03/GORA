@@ -16,7 +16,7 @@ if (isset($_SESSION))
 
 <nav id="app-sidebar" class="sidebar bg-dark text-white position-fixed h-100 p-3 collapsed">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <span class="fs-5 fw-bold">ITSADATA</span>
+    <span class="fs-5 fw-bold">GORA</span>
     <button id="btn-toggle-sidebar" class="btn btn-sm btn-outline-light">
   <i class="bi bi-list"></i>
 </button>

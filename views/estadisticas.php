@@ -8,6 +8,7 @@ $is_component_mode = isset($_GET['modo']) && $_GET['modo'] === 'componente';
 if (!$is_component_mode) {
     $auth = new AuthController($conn);
     $auth->checkAuth();
+    $page_title = 'Estadísticas';
     include 'objects/header.php';
     include "objects/navbar.php";
 }
@@ -17,7 +18,6 @@ $datos = $estadisticasController->obtenerEstadisticas();
 ?>
 
 <div class="container mt-4">
-    <h2>Estadísticas Generales</h2>
 
     <div class="row">
         <div class="col-md-4">

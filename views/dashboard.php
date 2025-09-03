@@ -1,6 +1,6 @@
 <?php
 session_start();
-$page_title = "Dashboard de Asistencia";
+$page_title = "Dashboard";
 include 'objects/header.php';
 include 'objects/navbar.php';
 ?>

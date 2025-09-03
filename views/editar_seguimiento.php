@@ -135,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <a href="ver_seguimientos.php?id_alumno=<?= $id_alumno ?>&success=edited" class="btn btn-outline-secondary me-2">Cancelar</a>
+                            <a href="ver_seguimientos.php?id_alumno=<?= $id_alumno ?>" class="btn btn-outline-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Actualizar</button>
                         </div>
                     </form>
