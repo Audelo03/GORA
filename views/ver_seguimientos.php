@@ -64,7 +64,7 @@ function formatFecha(?string $fecha): string {
                     <p class="mb-0">Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></p>
                 </div>
                 <a href="crear_seguimiento.php?id_alumno=<?= $id_alumno ?>" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Nuevo Seguimiento
+                    <i class="bi bi-plus-circle"></i>
                 </a>
             </div>
 
@@ -121,7 +121,7 @@ function formatFecha(?string $fecha): string {
 
             <div class="mt-4 text-end">
                 <a href="listas.php" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Volver a la Lista
+                    <i class="bi bi-arrow-bar-left"></i>Volver a la Lista
                 </a>
             </div>
 

@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $tutor_id = null;
-    if ($_SESSION['nivel_usuario'] == 3) { // Nivel 3 es tutor
+    if ($_SESSION['usuario_nivel'] == 3) { 
         $tutor_id = $id_usuario_movimiento;
     }
     

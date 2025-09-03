@@ -10,6 +10,25 @@ require_once __DIR__ . '/../controllers/alumnoController.php';
 try {
     $auth = new AuthController($conn);
     $auth->checkAuth();
+    $alumnoController = new AlumnoController($conn);
+
+    $action = $_GET['action'] ?? 'load_all';
+
+    if ($action === 'load_students') {
+        $id_grupo = isset($_GET['id_grupo']) ? (int)$_GET['id_grupo'] : 0;
+        $pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+        if ($id_grupo > 0) {
+            $html = $alumnoController->renderizarListaAlumnosPaginados($id_grupo, $pagina);
+            header('Content-Type: application/json');
+            echo json_encode(['html' => $html]);
+        } else {
+            http_response_code(400); // Bad Request
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'ID de grupo no válido.']);
+        }
+        exit; // Termina la ejecución para no procesar el resto del script
+    }
 
     $paginaActual = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $terminoBusqueda = $_GET['termino'] ?? '';
@@ -19,7 +38,6 @@ try {
     $nivelUsuario = $_SESSION['usuario_nivel'] ?? 0;
     $idUsuario = $_SESSION['usuario_id'] ?? 0;
 
-    $alumnoController = new AlumnoController($conn);
 
     $totalRegistros = 0;
     $dataParaRenderizar = [];

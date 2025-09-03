@@ -133,6 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <label for="fecha_compromiso" class="form-label">Fecha Compromiso</label>
                             <input type="date" class="form-control" id="fecha_compromiso" name="fecha_compromiso" value="<?= htmlspecialchars($fecha_compromiso) ?>">
                         </div>
+                        
 
                         <div class="d-flex justify-content-end">
                             <a href="ver_seguimientos.php?id_alumno=<?= $id_alumno ?>" class="btn btn-outline-secondary me-2">Cancelar</a>

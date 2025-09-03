@@ -31,6 +31,11 @@ if (isset($_SESSION))
         <i class="bi bi-speedometer2 me-2"></i> <span class="sidebar-text">Dashboard</span>
       </a>
     </li>
+    <li class="nav-item">
+      <a href="cruds.php" class="nav-link text-white <?php echo active(['cruds.php']); ?>">
+        <i class="bi bi-database-gear me-2" ></i><span class="sidebar-text">CRUDS</span>
+      </a>
+    </li>
     <?php endif; ?>
     <li>
       <a href="listas.php" class="nav-link text-white <?php echo active(['listas.php']); ?>">
