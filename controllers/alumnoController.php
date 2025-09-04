@@ -74,13 +74,24 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         return (int)$stmt->fetchColumn();
     }
 
-    public function contarTotalAlumnosPorGrupo($id_grupo) {
-        $sql = "SELECT COUNT(id_alumno) FROM alumnos WHERE grupos_id_grupo = :id_grupo";
-        $stmt = $this->alumno->conn->prepare($sql);
-        $stmt->bindParam(':id_grupo', $id_grupo, PDO::PARAM_INT);
-        $stmt->execute();
-        return (int)$stmt->fetchColumn();
+    public function contarTotalAlumnosPorGrupo($id_grupo, $terminoBusqueda = '') {
+    $sql = "SELECT COUNT(id_alumno) FROM alumnos WHERE grupos_id_grupo = :id_grupo";
+    if (!empty($terminoBusqueda)) {
+        $sql .= " AND (
+                    LOWER(nombre) LIKE LOWER(:termino)
+                    OR LOWER(apellido_paterno) LIKE LOWER(:termino)
+                    OR LOWER(apellido_materno) LIKE LOWER(:termino)
+                    OR LOWER(matricula) LIKE LOWER(:termino)
+                  )";
     }
+    $stmt = $this->alumno->conn->prepare($sql);
+    $stmt->bindParam(':id_grupo', $id_grupo, PDO::PARAM_INT);
+    if (!empty($terminoBusqueda)) {
+        $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+    }
+    $stmt->execute();
+    return (int)$stmt->fetchColumn();
+}
 
 
     public function obtenerAlumnosPaginadosPorGrupo($id_grupo, $offset, $limit, $terminoBusqueda = '') {
@@ -288,7 +299,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
                     $alumnosPorPagina = 5;
                     $paginaActualAlumnos = 1;
                     $offsetAlumnos = ($paginaActualAlumnos - 1) * $alumnosPorPagina;
-                    $totalAlumnos = $this->contarTotalAlumnosPorGrupo($id_grupo_id);
+                    $totalAlumnos = $this->contarTotalAlumnosPorGrupo($id_grupo_id, $terminoBusqueda);
                     $totalPagesAlumnos = ceil($totalAlumnos / $alumnosPorPagina);
                     $alumnos = $this->obtenerAlumnosPaginadosPorGrupo($id_grupo_id, $offsetAlumnos, $alumnosPorPagina, $terminoBusqueda);
                     $grupoUid = "grupo_" . $id_grupo_id . "_" . uniqid();

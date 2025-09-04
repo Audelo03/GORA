@@ -323,6 +323,32 @@ public function obtenerAlumnosParaDirLvl4($alumnoController, $conn) {
     $this->obtenerAlumnosParaAdminLv1($alumnoController, $conn);
 }
 
+public function getGruposIdByCarreraIdFiltered($carrera_id, $terminoBusqueda) {
+        if (empty($terminoBusqueda)) {
+             $sql = "SELECT id_grupo FROM grupos WHERE carreras_id_carrera = :carrera_id";
+             $stmt = $this->conn->prepare($sql);
+             $stmt->bindParam(":carrera_id", $carrera_id, PDO::PARAM_INT);
+             $stmt->execute();
+             return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        $sql = "SELECT DISTINCT g.id_grupo FROM grupos g
+                LEFT JOIN alumnos a ON a.grupos_id_grupo = g.id_grupo
+                WHERE g.carreras_id_carrera = :carrera_id
+                AND (
+                    LOWER(g.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.nombre) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_paterno) LIKE LOWER(:termino)
+                    OR LOWER(a.apellido_materno) LIKE LOWER(:termino)
+                    OR LOWER(a.matricula) LIKE LOWER(:termino)
+                )";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":carrera_id", $carrera_id, PDO::PARAM_INT);
+        $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
 }
 ?>
