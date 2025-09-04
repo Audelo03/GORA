@@ -10,7 +10,7 @@ if (!$is_component_mode) {
     $auth->checkAuth();
     $page_title = 'Estadísticas';
     include 'objects/header.php';
-    include "objects/navbar.php";
+    
 }
 
 $estadisticasController = new EstadisticasController($conn);

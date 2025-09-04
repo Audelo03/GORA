@@ -26,7 +26,7 @@ $historial = $asistenciaController->asistencia->getHistorialAsistenciaPorGrupo($
 
 $page_title = "Gestionar Asistencias: " . htmlspecialchars($nombre_grupo);
 include 'objects/header.php';
-include "objects/navbar.php";
+
 ?>
 
 <div class="container mt-5">

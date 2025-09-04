@@ -1,189 +1,192 @@
 <?php
-require_once __DIR__ . "/../../controllers/alumnoController.php";
 require_once __DIR__ . "/../../controllers/authController.php";
+require_once __DIR__ . "/../../config/db.php";
 
 $auth = new AuthController($conn);
 $auth->checkAuth();
 
+$carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
+$grupos = $conn->query("SELECT id_grupo, nombre FROM grupos ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
+$modificacion_ruta = "../";
+include "../objects/header.php"
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestión de Alumnos</title>
-    <link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css">
-</head>
-<body class="p-4">
+
+
     <div class="container">
         <h1 class="mb-4">Listado de Alumnos</h1>
+        
+        <button class="btn btn-success mb-3" id="btnNuevoAlumno">
+            <i class="bi bi-plus-circle"></i> Agregar Alumno
+        </button>
 
-        <!-- FORMULARIO DE EDICION -->
-        <div id="formularioEdicion" class="card mb-4 d-none">
-            <div class="card-body">
-                <h4 class="card-title">Editar Alumno</h4>
-                <form id="formEditar">
-                    <input type="hidden" id="editId" name="id_alumno">
-
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Matrícula</label>
-                            <input type="text" id="editMatricula" name="matricula" class="form-control" required>
-                        </div>
-                        <div class="col">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" id="editNombre" name="nombre" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Apellido Paterno</label>
-                            <input type="text" id="editApellidoP" name="apellido_paterno" class="form-control">
-                        </div>
-                        <div class="col">
-                            <label class="form-label">Apellido Materno</label>
-                            <input type="text" id="editApellidoM" name="apellido_materno" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Estatus</label>
-                            <input type="text" id="editEstatus" name="estatus" class="form-control">
-                        </div>
-                        <div class="col">
-                            <label class="form-label">Carrera</label>
-                            <input type="text" id="editCarrera" name="carrera" class="form-control">
-                        </div>
-                        <div class="col">
-                            <label class="form-label">Grupo</label>
-                            <input type="text" id="editGrupo" name="grupo" class="form-control">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                    <button type="button" id="cancelarEdicion" class="btn btn-secondary">Cancelar</button>
-                </form>
-            </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Matrícula</th>
+                        <th>Nombre Completo</th>
+                        <th>Carrera</th>
+                        <th>Grupo</th>
+                        <th>Estatus</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="alumnosBody"></tbody>
+            </table>
         </div>
-
-        <!-- BOTON Y TABLA -->
-    
-        <table class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Matrícula</th>
-                    <th>Nombre</th>
-                    <th>Apellido Paterno</th>
-                    <th>Apellido Materno</th>
-                    <th>Estatus</th>
-                    <th>Carrera</th>
-                    <th>Grupo</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="alumnosBody"></tbody>
-        </table>
     </div>
 
+    <div class="modal fade" id="alumnoModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Formulario de Alumno</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAlumno">
+                        <input type="hidden" id="id_alumno" name="id_alumno">
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="matricula" class="form-label">Matrícula</label>
+                                <input type="text" id="matricula" name="matricula" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">Nombre(s)</label>
+                                <input type="text" id="nombre" name="nombre" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="apellido_paterno" class="form-label">Apellido Paterno</label>
+                                <input type="text" id="apellido_paterno" name="apellido_paterno" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="apellido_materno" class="form-label">Apellido Materno</label>
+                                <input type="text" id="apellido_materno" name="apellido_materno" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="carrera" class="form-label">Carrera</label>
+                                <select id="carreras_id_carrera" name="carreras_id_carrera" class="form-select" required>
+                                    <option value="">Seleccione una carrera</option>
+                                    <?php foreach ($carreras as $carrera): ?>
+                                        <option value="<?= $carrera['id_carrera'] ?>"><?= htmlspecialchars($carrera['nombre']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                             <div class="col-md-4">
+                                <label for="grupo" class="form-label">Grupo</label>
+                                <select id="grupos_id_grupo" name="grupos_id_grupo" class="form-select" required>
+                                    <option value="">Seleccione un grupo</option>
+                                     <?php foreach ($grupos as $grupo): ?>
+                                        <option value="<?= $grupo['id_grupo'] ?>"><?= htmlspecialchars($grupo['nombre']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="estatus" class="form-label">Estatus</label>
+                                <select id="estatus" name="estatus" class="form-select">
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
-    import DataTable from 'datatables.net-dt';
-    
-    document.addEventListener("DOMContentLoaded", () => {
-        const btnCargar = document.getElementById("cargarAlumnos");
-        const tbody = document.getElementById("alumnosBody");
-
-        const formEdicion = document.getElementById("formularioEdicion");
-        const formEditar = document.getElementById("formEditar");
-        const btnCancelar = document.getElementById("cancelarEdicion");
-
-        async function cargarAlumnos() {
-            try {
-                const response = await fetch("../../controllers/alumnoController.php?action=index");
-                if (!response.ok) throw new Error("Error en la petición");
-                const data = await response.json();
-
-                tbody.innerHTML = "";
-                data.forEach(a =>  {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
+    $(document).ready(function() {
+        const alumnoModal = new bootstrap.Modal(document.getElementById('alumnoModal'));
+        
+        function cargarAlumnos() {
+            $.get("../../controllers/alumnoController.php?action=index", function(data) {
+                const alumnos = JSON.parse(data);
+                let rows = "";
+                alumnos.forEach(a => {
+                    const nombreCompleto = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno ?? ''}`;
+                    rows += `<tr>
                         <td>${a.id_alumno}</td>
-                        <td>${a.matricula ?? ''}</td>
-                        <td>${a.nombre}</td>
-                        <td>${a.apellido_paterno ?? ''}</td>
-                        <td>${a.apellido_materno ?? ''}</td>
-                        <td>${a.estatus ?? ''}</td>
-                        <td>${a.carrera ?? ''}</td>
-                        <td>${a.grupo ?? ''}</td>
+                        <td>${a.matricula}</td>
+                        <td>${nombreCompleto}</td>
+                        <td>${a.carrera ?? 'N/A'}</td>
+                        <td>${a.grupo ?? 'N/A'}</td>
+                        <td>${a.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm editar" data-alumno='${JSON.stringify(a)}'>Editar</button>
-                            <button class="btn btn-danger btn-sm eliminar" data-id="${a.id_alumno}">Eliminar</button>
+                            <button class="btn btn-warning btn-sm btn-editar" data-id='${a.id_alumno}'>Editar</button>
+                            <button class="btn btn-danger btn-sm btn-eliminar" data-id="${a.id_alumno}">Eliminar</button>
                         </td>
-                    `;
-                    tbody.appendChild(tr);
+                    </tr>`;
                 });
-
-                // Eliminar
-                document.querySelectorAll(".eliminar").forEach(btn => {
-                    btn.addEventListener("click", async (e) => {
-                        const id = e.target.dataset.id;
-                        if (confirm("¿Seguro que deseas eliminar este alumno?")) {
-                            const resp = await fetch("../../controllers/alumnoController.php?action=delete&id=" + id);
-                            if (resp.ok) cargarAlumnos();
-                        }
-                    });
-                });
-
-                // editar
-                document.querySelectorAll(".editar").forEach(btn => {
-                    btn.addEventListener("click", (e) => {
-                        const alumno = JSON.parse(e.target.dataset.alumno);
-                        document.getElementById("editId").value = alumno.id_alumno;
-                        document.getElementById("editMatricula").value = alumno.matricula ?? "";
-                        document.getElementById("editNombre").value = alumno.nombre ?? "";
-                        document.getElementById("editApellidoP").value = alumno.apellido_paterno ?? "";
-                        document.getElementById("editApellidoM").value = alumno.apellido_materno ?? "";
-                        document.getElementById("editEstatus").value = alumno.estatus ?? "";
-                        document.getElementById("editCarrera").value = alumno.carrera ?? "";
-                        document.getElementById("editGrupo").value = alumno.grupo ?? "";
-
-                        console.log(alumno);
-
-                        formEdicion.classList.remove("d-none");
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    });
-                });
-
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        cargarAlumnos();
-
-        formEditar.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const formData = new FormData(formEditar);
-            const resp = await fetch("../../controllers/alumnoController.php?action=update", {
-                method: "POST",
-                body: formData
+                $("#alumnosBody").html(rows);
+            }).fail(function() {
+                 $("#alumnosBody").html('<tr><td colspan="7" class="text-center">Error al cargar los datos.</td></tr>');
             });
-            console.log([...formData]);
+        }
+
+        $('#btnNuevoAlumno').on('click', function() {
+            $('#formAlumno')[0].reset();
+            $('#id_alumno').val('');
+            $('#modalLabel').text('Agregar Alumno');
+            alumnoModal.show();
+        });
+
+        $('#alumnosBody').on('click', '.btn-editar', function() {
+            const id = $(this).data('id');
+            $.get(`../../controllers/alumnoController.php?action=show&id=${id}`, function(data) {
+                const alumno = JSON.parse(data);
+                $('#id_alumno').val(alumno.id_alumno);
+                $('#matricula').val(alumno.matricula);
+                $('#nombre').val(alumno.nombre);
+                $('#apellido_paterno').val(alumno.apellido_paterno);
+                $('#apellido_materno').val(alumno.apellido_materno);
+                $('#carreras_id_carrera').val(alumno.carreras_id_carrera);
+                $('#grupos_id_grupo').val(alumno.grupos_id_grupo);
+                $('#estatus').val(alumno.estatus);
+                $('#modalLabel').text('Editar Alumno');
+                alumnoModal.show();
+            });
+        });
+
+        $('#btnGuardar').on('click', function() {
+            const id = $('#id_alumno').val();
+            const url = id ? `../../controllers/alumnoController.php?action=update` : `../../controllers/alumnoController.php?action=store`;
+            const data = $('#formAlumno').serialize();
             
-            console.log(resp);
-            if (resp.ok) {
-                alert("Alumno actualizado correctamente");
-                formEdicion.classList.add("d-none");
+            $.post(url, data, function(response) {
+                alumnoModal.hide();
                 cargarAlumnos();
-            } else {
-                alert("Error al actualizar alumno");
+                alert('Alumno guardado correctamente.');
+            }).fail(function() {
+                alert('Error al guardar el alumno.');
+            });
+        });
+
+        $('#alumnosBody').on('click', '.btn-eliminar', function() {
+            const id = $(this).data('id');
+            if (confirm('¿Estás seguro de que deseas eliminar este alumno?')) {
+                $.post(`../../controllers/alumnoController.php?action=delete`, { id: id }, function() {
+                    cargarAlumnos();
+                });
             }
         });
 
-        btnCancelar.addEventListener("click", () => {
-            formEdicion.classList.add("d-none");
-        });
+        cargarAlumnos();
     });
     </script>
-</body>
-</html>
+
+<?php include "../objects/footer.php";?>

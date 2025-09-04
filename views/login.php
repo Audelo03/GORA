@@ -3,7 +3,10 @@ include "../public/functions_util.php";
 require_once __DIR__ . "/../controllers/authController.php";
 
 $auth = new AuthController($conn);
-
+if(isset($_SESSION['error_message'])){
+    $iniciado = true;
+    include "logout.php";    
+}
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"]) && isset($_POST["password"])    ) {
     echo "<script>console.log('{$_POST["email"]}', '{$_POST["password"]}');</script>";
     $email = $_POST["email"];
@@ -57,6 +60,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"]) && isset($_P
     
     <main class="form-signin w-100 m-auto bg-white rounded-3 shadow">
         <form method="POST">
+            <?php if (isset($_SESSION['error_message'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($_SESSION['error_message']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        <?php unset($_SESSION['error_message']); endif; ?>
+
+
+
             <div class="text-center mb-4">
                 <p class="h3 mb-3 font-weight-bold">GORA</p>
                 <h2 class="h5 mb-4 fw-normal">Iniciar Sesión</h2>

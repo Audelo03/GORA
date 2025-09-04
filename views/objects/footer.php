@@ -1,6 +1,7 @@
 </main> </div> 
 <script>
 
+
     function initTooltips() {
         var oldTooltipList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         oldTooltipList.map(function (tooltipEl) {
@@ -21,8 +22,8 @@
         initTooltips();
         });
 </script>
-<script src="../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo $modificacion_ruta?>../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="<?php echo $modificacion_ruta?>../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -41,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script src="<?php echo $modificacion_ruta?>../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

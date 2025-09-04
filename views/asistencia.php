@@ -33,7 +33,7 @@ foreach ($asistencias_guardadas as $id_alumno => $estatus) {
 
 $page_title = "Toma de Asistencia - " . htmlspecialchars($nombre_grupo);
 include 'objects/header.php';
-include 'objects/navbar.php';
+
 
 ?>
 

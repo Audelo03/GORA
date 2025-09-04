@@ -10,7 +10,6 @@ require_once __DIR__ . "/../controllers/seguimientoController.php";
 
 $page_title = "Seguimientos";
 include 'objects/header.php';
-include 'objects/navbar.php';
 
 
 

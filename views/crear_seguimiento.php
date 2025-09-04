@@ -11,7 +11,6 @@ require_once __DIR__ . "/../controllers/seguimientoController.php";
 
 $page_title = "Nuevo Seguimiento";
 include 'objects/header.php';
-include 'objects/navbar.php';
 
 
 $auth = new AuthController($conn);

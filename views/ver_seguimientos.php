@@ -11,7 +11,7 @@ require_once __DIR__ . "/../models/Seguimiento.php";
 
 $page_title = "Historial de Seguimientos";
 include 'objects/header.php';
-include 'objects/navbar.php';
+
 
 $auth = new AuthController($conn);
 $auth->checkAuth();

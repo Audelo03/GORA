@@ -9,7 +9,6 @@ if (!$is_component_mode) {
     $auth->checkAuth();
     $page_title = "Listado de Alumnos";
     include 'objects/header.php';
-    include "objects/navbar.php";
 
 
 }

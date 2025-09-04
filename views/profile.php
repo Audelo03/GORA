@@ -33,7 +33,7 @@ $idUsuario = htmlspecialchars($usuario['id_usuario']);
 
 
 include 'objects/header.php'; 
-include "objects/navbar.php";
+
 
 ?>
 
