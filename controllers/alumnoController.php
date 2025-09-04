@@ -195,78 +195,71 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         return ob_get_clean();
     }
 
-    /**
-     * Función corregida para listar alumnos.
-     * Si $modo es true, muestra una lista simple de grupos y sus alumnos.
-     * Si $modo es false, muestra un acordeón anidado con grupos y alumnos.
-     */
     public function listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, $modo = false, string $parentUid = "root"): bool|string {
         ob_start();
 
-        if ($modo === true):
-            // MODO TRUE: Renderiza una lista simple de tarjetas para cada grupo.
-            foreach ($grupos_ids as $id_grupo_data) {
-                $id_grupo_id = $id_grupo_data["id_grupo"];
-                
-                // Obtener datos del grupo y alumnos (lógica similar al modo false)
-                $stmt = $conn->prepare("SELECT nombre FROM grupos WHERE id_grupo = :id_grupo");
-                $stmt->bindParam(':id_grupo', $id_grupo_id, PDO::PARAM_INT);
-                $stmt->execute();
-                $grupo_result = $stmt->fetch(PDO::FETCH_ASSOC);
-                $grupo_nombre = $grupo_result ? $grupo_result['nombre'] : "Grupo no encontrado (ID: " . htmlspecialchars($id_grupo_id) . ")";
+        if ($modo === true):?>
 
-                $alumnosPorPagina = 5;
-                $paginaActualAlumnos = 1;
-                $offsetAlumnos = ($paginaActualAlumnos - 1) * $alumnosPorPagina;
-                $totalAlumnos = $this->contarTotalAlumnosPorGrupo($id_grupo_id);
-                $totalPagesAlumnos = ceil($totalAlumnos / $alumnosPorPagina);
-                $alumnos = $this->obtenerAlumnosPaginadosPorGrupo($id_grupo_id, $offsetAlumnos, $alumnosPorPagina);
-                ?>
-                <div class="card shadow-sm rounded-3 mb-3">
-                    <div class="card-header fw-bold">
-                        <i class="bi bi-people-fill me-2 text-primary"></i>
-                        Grupo: <?= htmlspecialchars($grupo_nombre) ?>
-                        <span class="badge bg-primary ms-2"><?= $totalAlumnos ?> alumnos</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-2">
-                            <a href="gestionar_listas.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Gestionar Listas"><i class="bi bi-pencil-square"></i></a>
-                            <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo_id) ?>&fecha=<?= urlencode(date('Y-m-d')) ?>" class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" title="Tomar Asistencia"><i class="bi bi-list-check"></i></a>
-                        </div>
-                        <div id="lista-alumnos-<?= htmlspecialchars($id_grupo_id) ?>">
-                            <?php if (empty($alumnos)): ?>
-                                <div class="alert alert-secondary py-2 mb-0"><i class="bi bi-info-circle me-1"></i> No hay alumnos en este grupo.</div>
-                            <?php else: ?>
-                                <ul class="list-group list-group-flush">
-                                    <?php foreach ($alumnos as $a): ?>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <i class="bi bi-person-circle text-muted fs-5 me-2"></i>
-                                            <span><?= htmlspecialchars($a['nombre'] . ' ' . $a['apellido_paterno'] . ' ' . ($a['apellido_materno'] ?? '')) ?></span>
-                                        </div>
-                                        <div class="btn-group" role="group" aria-label="Acciones de alumno">
-                                            <a href="crear_seguimiento.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" class="btn btn-sm btn-outline-success" data-bs-toggle="tooltip" title="Crear nuevo seguimiento"><i class="bi bi-journal-plus"></i></a>
-                                            <a href="ver_seguimientos.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Ver seguimientos del alumno"><i class="bi bi-card-list"></i></a>
-                                        </div>
-                                    </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php endif; ?>
-                        </div>
-                        <?php if ($totalPagesAlumnos > 1): ?>
-                        <nav aria-label="Paginación de alumnos" class="mt-3">
-                            <ul class="pagination pagination-sm justify-content-end" data-id-grupo="<?= $id_grupo_id ?>" data-total-pages="<?= $totalPagesAlumnos ?>" data-current-page="1">
-                                <li class="page-item disabled" data-role="prev"><a class="page-link" href="#">&laquo;</a></li>
-                                <li class="page-item active" data-role="page-indicator"><span class="page-link"><?= $paginaActualAlumnos ?> de <?= $totalPagesAlumnos ?></span></li>
-                                <li class="page-item" data-role="next"><a class="page-link" href="#">&raquo;</a></li>
-                            </ul>
-                        </nav>
-                        <?php endif; ?>
-                    </div>
+
+            <ul class="list-group shadow-sm rounded-3 mb-3">
+<?php
+    foreach ($grupos_ids as $id_grupo_data) {
+    $id_grupo_id = $id_grupo_data["id_grupo"];
+
+    $stmt = $conn->prepare(
+        "SELECT g.nombre AS nombre_grupo, c.nombre AS nombre_carrera
+         FROM grupos g
+         JOIN carreras c ON g.carreras_id_carrera = c.id_carrera
+         WHERE g.id_grupo = :id_grupo"
+    );
+    $stmt->bindParam(':id_grupo', $id_grupo_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $info = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$info) {
+        continue;
+    }
+    $grupo_nombre = $info['nombre_grupo'];
+    $carrera_nombre = $info['nombre_carrera'];
+
+    $alumnosPorPagina = 5;
+    $offsetAlumnos = 0; 
+    $alumnos = $this->obtenerAlumnosPaginadosPorGrupo($id_grupo_id, $offsetAlumnos, $alumnosPorPagina);
+
+    if (!empty($alumnos)) {
+        foreach ($alumnos as $a) { ?>
+            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center py-3">
+                
+                <div>
+                    <strong class="d-block text-dark fs-5">
+                        <?= htmlspecialchars($a['nombre'] . ' ' . $a['apellido_paterno'] . ' ' . ($a['apellido_materno'] ?? '')) ?>
+                    </strong>
+                    <small class="text-muted">
+                        <i class="bi bi-mortarboard" title="Carrera"></i> <?= htmlspecialchars($carrera_nombre) ?>
+                        <span class="mx-2 text-secondary">|</span>
+                        <i class="bi bi-people" title="Grupo"></i> <?= htmlspecialchars($grupo_nombre) ?>
+                    </small>
                 </div>
-            <?php }
+                
+                <div class="btn-group mt-2 mt-md-0" role="group" aria-label="Acciones de alumno">
+                    <a href="crear_seguimiento.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" class="btn btn-sm btn-outline-success" data-bs-toggle="tooltip" title="Crear nuevo seguimiento">
+                        <i class="bi bi-journal-plus"></i>
+                    </a>
+                    <a href="ver_seguimientos.php?id_alumno=<?= htmlspecialchars($a['id_alumno']) ?>" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Ver seguimientos del alumno">
+                        <i class="bi bi-card-list"></i>
+                    </a>
+                </div>
+
+            </li>
+        <?php }
+    }
+}
+     
+?>
+</ul>
+<?php
         else:
-            // MODO FALSE: Renderiza el acordeón original
+            // Renderiza el acordeon original
             ?>
             <div class="accordion" id="accordion_<?= htmlspecialchars($parentUid) ?>">
                 <?php foreach ($grupos_ids as $id_grupo_data):
@@ -337,12 +330,6 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         endif;
         return ob_get_clean();
     }
-
-    /**
-     * Función corregida para renderizar la carrera.
-     * Si $modo es true, llama a listarAlumnosPorIdsDeGrupos en modo lista.
-     * Si $modo es false, llama a listarAlumnosPorIdsDeGrupos en modo acordeón.
-     */
     public function renderizarAcordeonCarrera($dataCarrera, $conn, $auth, $modo = false) {
         ob_start();
 

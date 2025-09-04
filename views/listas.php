@@ -118,7 +118,14 @@ $nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_patern
         clearTimeout(timeout);
         const termino = e.target.value.trim();
         timeout = setTimeout(() => {
-            cargarAlumnos(1, termino, true);
+            if (termino != "")
+                cargarAlumnos(1, termino, true);
+            else
+                cargarAlumnos(1, termino, false);
+            
+
+
+            
         }, 500);
     });
     cargarAlumnos(1); 

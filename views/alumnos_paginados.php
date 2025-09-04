@@ -13,7 +13,7 @@ try {
     $alumnoController = new AlumnoController($conn);
 
     $action = $_GET['action'] ?? 'load_all';
-    $modo = $_GET['modo'] ?? false;
+    $modo = isset($_GET['modo']) && $_GET['modo'] === 'true';
 
     if ($action === 'load_students') {
         $id_grupo = isset($_GET['id_grupo']) ? (int)$_GET['id_grupo'] : 0;
@@ -28,7 +28,7 @@ try {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'ID de grupo no válido.']);
         }
-        exit; // Termina la ejecución para no procesar el resto del script
+        exit; 
     }
 
     $paginaActual = isset($_GET['page']) ? (int)$_GET['page'] : 1;
