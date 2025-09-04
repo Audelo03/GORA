@@ -73,11 +73,14 @@ $nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_patern
     const paginacionControles = document.getElementById('paginacion-controles');
     let timeout = null;
 
-    async function cargarAlumnos(page = 1, termino = '') {
+    async function cargarAlumnos(page = 1, termino = '', modo_lista = false) {
+
+        
         contenedorAlumnos.classList.add('loading');
         contenedorAlumnos.innerHTML = `<div class="d-flex justify-content-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
         try {
-            const response = await fetch(`alumnos_paginados.php?page=${page}&termino=${encodeURIComponent(termino)}`);
+            console.log(modo_lista);
+            const response = await fetch(`alumnos_paginados.php?page=${page}&termino=${encodeURIComponent(termino)}&modo=${modo_lista}`);
             if (!response.ok) throw new Error('Error en la respuesta del servidor.');
             const data = await response.json();
             contenedorAlumnos.innerHTML = data.html;
@@ -115,7 +118,7 @@ $nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_patern
         clearTimeout(timeout);
         const termino = e.target.value.trim();
         timeout = setTimeout(() => {
-            cargarAlumnos(1, termino);
+            cargarAlumnos(1, termino, true);
         }, 500);
     });
     cargarAlumnos(1); 

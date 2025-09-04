@@ -13,6 +13,7 @@ try {
     $alumnoController = new AlumnoController($conn);
 
     $action = $_GET['action'] ?? 'load_all';
+    $modo = $_GET['modo'] ?? false;
 
     if ($action === 'load_students') {
         $id_grupo = isset($_GET['id_grupo']) ? (int)$_GET['id_grupo'] : 0;
@@ -66,7 +67,7 @@ try {
         case 1:
         case 4:
             foreach ($dataParaRenderizar as $carrera) {
-                echo $alumnoController->renderizarAcordeonCarrera($carrera, $conn, $auth);
+                echo $alumnoController->renderizarAcordeonCarrera($carrera, $conn, $auth, $modo);
             }
             break;
         case 2:
@@ -74,10 +75,10 @@ try {
             if ($dataCarrera) {
                 echo "<div class='alert alert-info'>Mostrando grupos para la carrera: <strong>".htmlspecialchars($dataCarrera['nombre'])."</strong></div>";
             }
-            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn);
+            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn, $modo);
             break;
         case 3:
-            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn);
+            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn, $modo);
             break;
     }
 
