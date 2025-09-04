@@ -77,78 +77,90 @@ document.addEventListener('DOMContentLoaded', function() {
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 
-    $(document).ready(function() {
+    const mainElement = document.querySelector('main');
+
+    if (mainElement) {
+        mainElement.addEventListener('click', async function(e) {
+            const pageLink = e.target.closest('.pagination[data-id-grupo] a.page-link');
+
+            if (!pageLink) {
+                return;
+            }
+
+            e.preventDefault();
+
+            const parentLi = pageLink.parentElement;
+
+            if (parentLi.classList.contains('disabled')) {
+                return;
+            }
+
+            const paginationUl = pageLink.closest('.pagination');
+            const id_grupo = paginationUl.dataset.idGrupo; // data-id-grupo se convierte en idGrupo
+            const totalPages = parseInt(paginationUl.dataset.totalPages, 10);
+            let currentPage = parseInt(paginationUl.dataset.currentPage, 10);
+            const studentListContainer = document.getElementById(`lista-alumnos-${id_grupo}`);
+
+            if (parentLi.dataset.role === 'prev') {
+                currentPage--;
+            } else if (parentLi.dataset.role === 'next') {
+                currentPage++;
+            }
+
+            studentListContainer.innerHTML = '<div class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
+
     
-    $('main').on('click', '.pagination[data-id-grupo] a.page-link', function(e) {
-        e.preventDefault();
 
-        const pageLink = $(this);
-        const parentLi = pageLink.parent();
-        
-        if (parentLi.hasClass('disabled')) {
-            return;
-        }
-
-        const paginationUl = pageLink.closest('.pagination');
-        const id_grupo = paginationUl.data('id-grupo');
-        const totalPages = parseInt(paginationUl.data('total-pages'));
-        let currentPage = parseInt(paginationUl.data('current-page'));
-        const studentListContainer = $('#lista-alumnos-' + id_grupo);
-
-        // Determinar la página a la que ir
-        if (parentLi.data('role') === 'prev') {
-            currentPage--;
-        } else if (parentLi.data('role') === 'next') {
-            currentPage++;
-        }
-
-        studentListContainer.html('<div class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>');
-
-        $.ajax({
-            url: 'alumnos_paginados.php',
-            type: 'GET',
-            data: {
+            const params = new URLSearchParams({
                 action: 'load_students',
                 id_grupo: id_grupo,
                 page: currentPage
-            },
-            dataType: 'json',
-            success: function(response) {
-                studentListContainer.html(response.html);
-                
-                // Actualizar el número de página actual en el atributo data
-                paginationUl.data('current-page', currentPage);
+            });
+            const url = `alumnos_paginados.php?${params.toString()}`;
 
-                // Actualizar el texto del indicador de página
-                const pageIndicator = paginationUl.find('li[data-role="page-indicator"] span.page-link');
-                if (pageIndicator.length) {
-                    pageIndicator.text(currentPage + ' de ' + totalPages);
+            try {
+                // Realizar la petición con fetch
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
                 }
 
-                // Actualizar el estado del botón "Anterior"
-                const prevButton = paginationUl.find('li[data-role="prev"]');
-                prevButton.toggleClass('disabled', currentPage === 1);
+                const data = await response.json();
 
-                // Actualizar el estado del botón "Siguiente"
-                const nextButton = paginationUl.find('li[data-role="next"]');
-                nextButton.toggleClass('disabled', currentPage === totalPages);
-                
-                // Re-inicializar tooltips para los nuevos elementos si es necesario
+                studentListContainer.innerHTML = data.html;
+
+                paginationUl.dataset.currentPage = currentPage;
+
+                const pageIndicator = paginationUl.querySelector('li[data-role="page-indicator"] span.page-link');
+                if (pageIndicator) {
+                    pageIndicator.textContent = `${currentPage} de ${totalPages}`;
+                }
+
+                const prevButton = paginationUl.querySelector('li[data-role="prev"]');
+                if (prevButton) {
+                    prevButton.classList.toggle('disabled', currentPage === 1);
+                }
+
+                const nextButton = paginationUl.querySelector('li[data-role="next"]');
+                if (nextButton) {
+                    nextButton.classList.toggle('disabled', currentPage === totalPages);
+                }
                 if (typeof initTooltips === 'function') {
                     initTooltips();
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                studentListContainer.html('<div class="alert alert-danger">Error al cargar la lista de alumnos.</div>');
-                console.error("Error de AJAX:", textStatus, errorThrown);
+
+            } catch (error) {
+                studentListContainer.innerHTML = '<div class="alert alert-danger">Error al cargar la lista de alumnos.</div>';
+                console.error("Error de Fetch:", error);
             }
+           
         });
-    });
+    }
 });
-
 </script>
-
 
 </body>
 </html>

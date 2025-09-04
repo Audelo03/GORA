@@ -73,7 +73,7 @@ try {
         case 2:
             $dataCarrera = $auth->usuario->getCarrreraDataByUsuarioId($idUsuario);
             if ($dataCarrera) {
-                echo "<div class='alert alert-info'>Mostrando grupos para la carrera: <strong>".htmlspecialchars($dataCarrera['nombre'])."</strong></div>";
+                echo "<div class='alert alert-info'><strong>".htmlspecialchars($dataCarrera['nombre'])."</strong></div>";
             }
             echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn, $modo, $terminoBusqueda);
             break;

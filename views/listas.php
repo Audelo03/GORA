@@ -48,7 +48,7 @@ $nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_patern
                 </span>
                 <input type="text" id="buscador" 
                        class="form-control border-0 shadow-none" 
-                       placeholder="Buscar alumno, matrícula, grupo o carrera...">
+                       placeholder="Buscar alumno por matrícula o nombre">
             </div>
         </div>
     </div>
