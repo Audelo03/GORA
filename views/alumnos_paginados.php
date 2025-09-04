@@ -67,7 +67,7 @@ try {
         case 1:
         case 4:
             foreach ($dataParaRenderizar as $carrera) {
-                echo $alumnoController->renderizarAcordeonCarrera($carrera, $conn, $auth, $modo);
+                echo $alumnoController->renderizarAcordeonCarrera($carrera, $conn, $auth, $modo, $terminoBusqueda);
             }
             break;
         case 2:
@@ -75,10 +75,10 @@ try {
             if ($dataCarrera) {
                 echo "<div class='alert alert-info'>Mostrando grupos para la carrera: <strong>".htmlspecialchars($dataCarrera['nombre'])."</strong></div>";
             }
-            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn, $modo);
+            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn, $modo, $terminoBusqueda);
             break;
         case 3:
-            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn, $modo);
+            echo $alumnoController->listarAlumnosPorIdsDeGrupos($dataParaRenderizar, $conn, $modo, $terminoBusqueda);
             break;
     }
 

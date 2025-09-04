@@ -83,18 +83,33 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
     }
 
 
-     public function obtenerAlumnosPaginadosPorGrupo($id_grupo, $offset, $limit) {
-        $sql = "SELECT * FROM alumnos
-                WHERE grupos_id_grupo = :id_grupo
-                ORDER BY apellido_paterno, apellido_materno, nombre
-                LIMIT :limit OFFSET :offset";
-        $stmt = $this->alumno->conn->prepare($sql);
-        $stmt->bindParam(':id_grupo', $id_grupo, PDO::PARAM_INT);
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function obtenerAlumnosPaginadosPorGrupo($id_grupo, $offset, $limit, $terminoBusqueda = '') {
+    $sql = "SELECT * FROM alumnos
+            WHERE grupos_id_grupo = :id_grupo";
+
+    if (!empty($terminoBusqueda)) {
+        $sql .= " AND (
+                    LOWER(nombre) LIKE LOWER(:termino)
+                    OR LOWER(apellido_paterno) LIKE LOWER(:termino)
+                    OR LOWER(apellido_materno) LIKE LOWER(:termino)
+                    OR LOWER(matricula) LIKE LOWER(:termino)
+                  )";
     }
+
+    $sql .= " ORDER BY apellido_paterno, apellido_materno, nombre
+            LIMIT :limit OFFSET :offset";
+    $stmt = $this->alumno->conn->prepare($sql);
+    $stmt->bindParam(':id_grupo', $id_grupo, PDO::PARAM_INT);
+    
+    if (!empty($terminoBusqueda)) {
+        $stmt->bindValue(':termino', '%' . $terminoBusqueda . '%');
+    }
+
+    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     public function obtenerGruposPaginadosPorCarrera($idCarrera, $terminoBusqueda, $offset, $limit) {
         $sql = "SELECT DISTINCT g.id_grupo, g.nombre
                 FROM grupos g
@@ -195,7 +210,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         return ob_get_clean();
     }
 
-    public function listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, $modo = false, string $parentUid = "root"): bool|string {
+    public function listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, $modo = false, string $parentUid = "root",$terminoBusqueda = ''): bool|string {
         ob_start();
 
         if ($modo === true):?>
@@ -224,7 +239,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
 
     $alumnosPorPagina = 5;
     $offsetAlumnos = 0; 
-    $alumnos = $this->obtenerAlumnosPaginadosPorGrupo($id_grupo_id, $offsetAlumnos, $alumnosPorPagina);
+    $alumnos = $this->obtenerAlumnosPaginadosPorGrupo($id_grupo_id, $offsetAlumnos, $alumnosPorPagina, $terminoBusqueda);
 
     if (!empty($alumnos)) {
         foreach ($alumnos as $a) { ?>
@@ -275,7 +290,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
                     $offsetAlumnos = ($paginaActualAlumnos - 1) * $alumnosPorPagina;
                     $totalAlumnos = $this->contarTotalAlumnosPorGrupo($id_grupo_id);
                     $totalPagesAlumnos = ceil($totalAlumnos / $alumnosPorPagina);
-                    $alumnos = $this->obtenerAlumnosPaginadosPorGrupo($id_grupo_id, $offsetAlumnos, $alumnosPorPagina);
+                    $alumnos = $this->obtenerAlumnosPaginadosPorGrupo($id_grupo_id, $offsetAlumnos, $alumnosPorPagina, $terminoBusqueda);
                     $grupoUid = "grupo_" . $id_grupo_id . "_" . uniqid();
                 ?>
                 <div class="accordion-item shadow-sm rounded-3 mb-2 border-0">
@@ -330,7 +345,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         endif;
         return ob_get_clean();
     }
-    public function renderizarAcordeonCarrera($dataCarrera, $conn, $auth, $modo = false) {
+    public function renderizarAcordeonCarrera($dataCarrera, $conn, $auth, $modo = false,$terminoBusqueda = '') {
         ob_start();
 
         $carreraid = $dataCarrera["id_carrera"];
@@ -341,8 +356,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         if ($modo === true) {
             // MODO TRUE: Solo muestra la lista de alumnos sin el acordeón de carrera.
             if (!empty($grupos_ids)) {
-                // CORRECCIÓN: Se imprime el resultado de la función.
-                echo $this->listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, true, $carreraUid);
+                echo $this->listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, true, $carreraUid, $terminoBusqueda);
             } else {
                 echo "<p>No hay grupos asignados a esta carrera.</p>";
             }
@@ -360,7 +374,7 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
                         <div class="accordion-body">
                             <?php
                             if (!empty($grupos_ids)) {
-                                echo $this->listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, false, $carreraUid);
+                                echo $this->listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, false, $carreraUid, $terminoBusqueda);
                             } else {
                                 echo "<p>No hay grupos asignados a esta carrera.</p>";
                             }
