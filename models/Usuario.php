@@ -96,19 +96,26 @@ class Usuario {
         foreach ($data as $key => $value) {
             $set_parts[] = "$key = :$key";
         }
+
         $set_clause = implode(", ", $set_parts);
 
         $query = "UPDATE " . $this->table . " SET " . $set_clause . " WHERE id_usuario = :id_usuario";
 
         $stmt = $this->conn->prepare($query);
 
-        foreach ($data as $key => &$value) {
-            $clean_value = htmlspecialchars(strip_tags($value));
-            $stmt->bindParam(":$key", $clean_value);
+
+
+        foreach ($data as $key => $value) {
+            $clean_value = htmlspecialchars(strip_tags((string)$value));
+            $stmt->bindValue(":$key", $clean_value);
+            
         }
         
         $id = htmlspecialchars(strip_tags($id));
         $stmt->bindParam(":id_usuario", $id);
+       
+
+        
 
         if ($stmt->execute()) {
             return true;
@@ -134,7 +141,7 @@ class Usuario {
 
         $id = htmlspecialchars(strip_tags($id));
 
-        $stmt->bindParam(":id_usuario", $id);
+        $stmt->bindValue(":id_usuario", $id);
 
         if ($stmt->execute()) {
             return true;
@@ -349,6 +356,13 @@ public function getGruposIdByCarreraIdFiltered($carrera_id, $terminoBusqueda) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
+    public function isActive($id_usuario) {
+        $sql = "SELECT estatus FROM " . $this->table . " WHERE id_usuario = :id_usuario LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return isset($result['estatus']) && $result['estatus'] === 1;
+    }
 }
 ?>

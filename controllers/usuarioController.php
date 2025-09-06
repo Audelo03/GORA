@@ -49,7 +49,9 @@ class UsuarioController {
     }
 
     public function update() {
+
         $id = $_POST['id_usuario'];
+    
         $data = [
             'nombre' => $_POST['nombre'],
             'apellido_paterno' => $_POST['apellido_paterno'],
@@ -59,11 +61,9 @@ class UsuarioController {
             'niveles_usuarios_id_nivel_usuario' => $_POST['niveles_usuarios_id_nivel_usuario'],
             'usuarios_id_usuario_movimiento' => $_SESSION['usuario_id'] ?? null
         ];
-
         if (!empty($_POST['password'])) {
             $data['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
         }
-        
         $this->usuario->update($id, $data);
         echo json_encode(["status" => "ok", "message" => "Usuario actualizado exitosamente"]);
     }
