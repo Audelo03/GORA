@@ -1,28 +1,69 @@
 <?php
+session_start();
 include "../public/functions_util.php";
 require_once __DIR__ . "/../controllers/authController.php";
 
 $auth = new AuthController($conn);
-if(isset($_SESSION['error_message'])){
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Si ya tiene un error guardado
+if (isset($_SESSION['error_message'])) {
     $iniciado = true;
     include "logout.php";    
 }
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"]) && isset($_POST["password"])    ) {
-    echo "<script>console.log('{$_POST["email"]}', '{$_POST["password"]}');</script>";
-    $email = $_POST["email"];
-    $email = eemail($email);
-    $password = $_POST["password"];
-    if ($auth->login($email, $password)) {
-        if ($_SESSION["usuario_nivel"] == 4 || $_SESSION["usuario_nivel"] == 1)
-            header("Location: dashboard.php");
-        else
-            header("Location: listas.php");
-        exit;
+
+$error = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $error = "Petición inválida.";
     } else {
-        $error = "Correo o contraseña incorrectos.";
+        $email = trim($_POST["email"] ?? "");
+        $password = trim($_POST["password"] ?? "");
+
+        if (empty($email) || empty($password)) {
+            $error = "Debes llenar todos los campos.";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Formato de correo inválido.";
+        } else {
+            // Sanitizar email
+            $email = eemail($email);
+
+            // Intento de login
+            if ($auth->login($email, $password)) {
+                // Prevenir fijación de sesión
+                session_regenerate_id(true);
+
+                // Verificación de rol
+                if (isset($_SESSION["usuario_nivel"])) {
+                    if ($_SESSION["usuario_nivel"] == 4 || $_SESSION["usuario_nivel"] == 1) {
+                        header("Location: dashboard.php");
+                    } else {
+                        header("Location: listas.php");
+                    }
+                    exit;
+                } else {
+                    $error = "No se pudo determinar el nivel de usuario.";
+                }
+            } else {
+                // Manejo de intentos fallidos
+                if (!isset($_SESSION['login_attempts'])) {
+                    $_SESSION['login_attempts'] = 0;
+                }
+                $_SESSION['login_attempts']++;
+
+                if ($_SESSION['login_attempts'] > 5) {
+                    $error = "Demasiados intentos fallidos. Intenta más tarde.";
+                } else {
+                    $error = "Correo o contraseña incorrectos.";
+                }
+            }
+        }
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="es" class="h-100">
@@ -39,35 +80,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"]) && isset($_P
         max-width: 400px;
         padding: 2rem;
       }
-        html, body {
-      height: 100%;
-    }
-
-    .bg-image {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.3;
-      z-index: -1;
-    }
+      html, body {
+        height: 100%;
+      }
+      .bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.3;
+        z-index: -1;
+      }
     </style>
 </head>
 <body class="d-flex align-items-center py-4 bg-body-tertiary h-100">
   
-    
     <main class="form-signin w-100 m-auto bg-white rounded-3 shadow">
-        <form method="POST">
+        <form method="POST" novalidate>
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+
             <?php if (isset($_SESSION['error_message'])): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?= htmlspecialchars($_SESSION['error_message']) ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
-        <?php unset($_SESSION['error_message']); endif; ?>
-
-
+            <?php unset($_SESSION['error_message']); endif; ?>
 
             <div class="text-center mb-4">
                 <p class="h3 mb-3 font-weight-bold">GORA</p>
@@ -84,11 +123,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["email"]) && isset($_P
             </div>
             <button class="btn btn-danger w-100 py-2" type="submit">Entrar</button>
 
-            <?php if(isset($error) ): ?>
+            <?php if(!empty($error)): ?>
                 <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     <div>
-                        <?php echo htmlspecialchars($error); ?>
+                        <?= htmlspecialchars($error) ?>
                     </div>
                 </div>
             <?php endif; ?>
