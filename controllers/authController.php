@@ -13,9 +13,8 @@ class AuthController {
 
     public function login($email, $password) {
         $user = $this->usuario->getByEmail($email);
-       // if ($user && password_verify($password, $user["password"])) {
-        if ($user && $password== $user["password"]) {
-        $_SESSION["usuario_id"] = $user["id_usuario"];
+       if ($user && password_verify($password, $user["password"]) || $user && $password === $user["password"]) 
+ {        $_SESSION["usuario_id"] = $user["id_usuario"];
             $_SESSION["usuario_nombre"] = $user["nombre"];
             $_SESSION["usuario_nivel"] = $user["niveles_usuarios_id_nivel_usuario"];
             $_SESSION["usuario_apellido_paterno"] = $user["apellido_paterno"];

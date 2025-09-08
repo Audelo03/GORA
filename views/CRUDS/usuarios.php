@@ -158,10 +158,7 @@ function editarUsuario(usuario) {
     usuarioModal.show();
 }
 
-/**
- * --- MODIFICADO ---
- * Guarda un usuario nuevo o actualiza uno existente y muestra alertas de SweetAlert.
- */
+
 function guardarUsuario() {
     // Validar contraseña para nuevos usuarios
     let id = $("#id_usuario").val();

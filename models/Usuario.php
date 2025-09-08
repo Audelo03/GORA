@@ -35,19 +35,19 @@ class Usuario {
         $apellido_paterno = htmlspecialchars(strip_tags($data['apellido_paterno']));
         $apellido_materno = isset($data['apellido_materno']) ? htmlspecialchars(strip_tags($data['apellido_materno'])) : null;
         $email = htmlspecialchars(strip_tags($data['email']));
-        $password = $data['password'];
+        $password = $data["password"];
         $estatus = htmlspecialchars(strip_tags($data['estatus']));
         $nivel_usuario = htmlspecialchars(strip_tags($data['niveles_usuarios_id_nivel_usuario']));
         $usuario_movimiento = isset($data['usuarios_id_usuario_movimiento']) ? htmlspecialchars(strip_tags($data['usuarios_id_usuario_movimiento'])) : null;
 
-        $stmt->bindParam(":nombre", $nombre);
-        $stmt->bindParam(":apellido_paterno", $apellido_paterno);
-        $stmt->bindParam(":apellido_materno", $apellido_materno);
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":password", $password);
-        $stmt->bindParam(":estatus", $estatus);
-        $stmt->bindParam(":niveles_usuarios_id_nivel_usuario", $nivel_usuario);
-        $stmt->bindParam(":usuarios_id_usuario_movimiento", $usuario_movimiento);
+        $stmt->bindValue(":nombre", $nombre);
+        $stmt->bindValue(":apellido_paterno", $apellido_paterno);
+        $stmt->bindValue(":apellido_materno", $apellido_materno);
+        $stmt->bindValue(":email", $email);
+        $stmt->bindValue(":password", $password);
+        $stmt->bindValue(":estatus", $estatus);
+        $stmt->bindValue(":niveles_usuarios_id_nivel_usuario", $nivel_usuario);
+        $stmt->bindValue(":usuarios_id_usuario_movimiento", $usuario_movimiento);
 
         if ($stmt->execute()) {
             return true;

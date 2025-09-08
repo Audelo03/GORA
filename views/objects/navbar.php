@@ -1,3 +1,8 @@
+<?php 
+if (!isset($modificacion_ruta)) {
+    $modificacion_ruta = "";
+}
+?>
 <nav id = "navbar1" class="navbar navbar-expand-lg navbar-light bg-white border-bottom"> <div class="container-fluid">
         <a class="navbar-brand fw-bold text-dark" href="#"><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?></a>
         
@@ -16,7 +21,7 @@
                         
                         
                         <li>
-                            <a class="dropdown-item text-danger" href="logout.php" id="logout-link">
+                            <a class="dropdown-item text-danger" href="<?php echo $modificacion_ruta?>logout.php" id="logout-link">
                                 <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                             </a>
                         </li>
