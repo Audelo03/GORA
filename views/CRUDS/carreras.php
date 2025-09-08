@@ -7,11 +7,11 @@ $auth->checkAuth();
 
 $coordinadores = $conn->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno) as nombre_completo FROM usuarios WHERE niveles_usuarios_id_nivel_usuario = 2 ORDER BY nombre_completo")->fetchAll(PDO::FETCH_ASSOC); 
 $modificacion_ruta= "../";
+$page_title = "Carreras";
 include "../objects/header.php";
 ?>
 
 <div class="container mt-4">
-    <h2 class="mb-4">Gestión de Carreras</h2>
     <button class="btn btn-success mb-3" id="btnNuevaCarrera">
         <i class="bi bi-plus-circle"></i> Agregar Carrera
     </button>
@@ -187,4 +187,3 @@ $(document).ready(function() {
 });
 </script>
 
-<?php include "../objects/footer.php";?>

@@ -9,11 +9,11 @@ $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombr
 $tutores = $conn->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno) as nombre_completo FROM usuarios WHERE niveles_usuarios_id_nivel_usuario = 3 ORDER BY nombre_completo")->fetchAll(PDO::FETCH_ASSOC); // Asumiendo que 3 es el ID para tutores
 $modalidades = $conn->query("SELECT id_modalidad, nombre FROM modalidades ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 $modificacion_ruta = "../";
+$page_title = "Modalidades";
 include "../objects/header.php";
 ?>
 
 <div class="container mt-4">
-    <h1 class="mb-4">Gestión de Grupos</h1>
     <button class="btn btn-success mb-3" id="btnNuevoGrupo">
         <i class="bi bi-plus-circle"></i> Agregar Grupo
     </button>
@@ -99,9 +99,10 @@ include "../objects/header.php";
     </div>
 </div>
 
-<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script>
+<?php
+include "../objects/footer.php";
+
+?><script>
     $(document).ready(function() {
         const grupoModal = new bootstrap.Modal(document.getElementById('grupoModal'));
 
@@ -246,4 +247,3 @@ include "../objects/header.php";
     });
 </script>
 
-<?php include "../objects/footer.php"; ?>

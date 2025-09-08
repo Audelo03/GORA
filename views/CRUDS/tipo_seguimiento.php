@@ -3,12 +3,12 @@ require_once __DIR__ . "/../../controllers/authController.php";
 require_once __DIR__ . "/../../config/db.php";
 $auth = new AuthController($conn);
 $auth->checkAuth();
+$page_title = "Seguimientos";
 $modificacion_ruta = "../";
 include "../objects/header.php";
 ?>
 
     <div class="container">
-        <h1 class="mb-4">Tipos de Seguimiento</h1>
         <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#tipoSeguimientoModal" id="btnNuevo">
             <i class="bi bi-plus-circle"></i> Agregar Tipo
         </button>
@@ -51,10 +51,10 @@ include "../objects/header.php";
         </div>
     </div>
 
-    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php
+include "../objects/footer.php";
 
+?>
     <script>
     $(document).ready(function() {
         const modal = new bootstrap.Modal(document.getElementById('tipoSeguimientoModal'));
@@ -174,4 +174,3 @@ include "../objects/header.php";
         cargarTipos();
     });
     </script>
-<?php include "../objects/footer.php"; ?>

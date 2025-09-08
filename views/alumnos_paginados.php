@@ -21,7 +21,9 @@ try {
 
         if ($id_grupo > 0) {
             $html = $alumnoController->renderizarListaAlumnosPaginados($id_grupo, $pagina);
+            
             header('Content-Type: application/json');
+             ob_clean();
             echo json_encode(['html' => $html]);
         } else {
             http_response_code(400); // Bad Request

@@ -8,12 +8,12 @@ $auth->checkAuth();
 $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 $grupos = $conn->query("SELECT id_grupo, nombre FROM grupos ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 $modificacion_ruta = "../";
+$page_title = "Alumnos";
 include "../objects/header.php"
 ?>
 
 
     <div class="container">
-        <h1 class="mb-4">Listado de Alumnos</h1>
         
         <button class="btn btn-success mb-3" id="btnNuevoAlumno">
             <i class="bi bi-plus-circle"></i> Agregar Alumno
@@ -107,9 +107,7 @@ include "../objects/header.php"
         </div>
     </div>
 
-    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-     <script>
+   <?php include "../objects/footer.php";?> <script>
     $(document).ready(function() {
         const alumnoModal = new bootstrap.Modal(document.getElementById('alumnoModal'));
         
@@ -238,4 +236,4 @@ include "../objects/header.php"
     });
     </script>
 
-<?php include "../objects/footer.php";?>
+

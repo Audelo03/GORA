@@ -4,11 +4,11 @@ require_once __DIR__ . "/../../config/db.php";
 $auth = new AuthController($conn);
 $auth->checkAuth();
 $modificacion_ruta = "../";
+$page_title = "Modalidades";
 include "../objects/header.php";
 ?>
 
 <div class="container mt-4">
-    <h1 class="mb-4">Gestión de Modalidades</h1>
     <button class="btn btn-success mb-3" id="btnNuevaModalidad">
         <i class="bi bi-plus-circle"></i> Agregar Modalidad
     </button>
@@ -52,10 +52,10 @@ include "../objects/header.php";
     </div>
 </div>
 
-<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<?php
+include "../objects/footer.php";
 
+?>
 <script>
 $(document).ready(function() {
     const modalidadModal = new bootstrap.Modal(document.getElementById('modalidadModal'));
@@ -172,4 +172,3 @@ $(document).ready(function() {
 });
 </script>
 
-<?php include "../objects/footer.php"; ?>
