@@ -60,6 +60,7 @@ $datos = $estadisticasController->obtenerEstadisticas();
     </div>
 
     <!-- BOTONES DE EXPORTACIÓN -->
+     <?php if (!$is_component_mode): ?>
     <div class="row mt-4">
         <div class="col-12 text-center">
             <button class="btn btn-success btn-lg mx-2" onclick="exportarTodoA_CSV('reporte_estadisticas_completo.csv')">
@@ -70,6 +71,7 @@ $datos = $estadisticasController->obtenerEstadisticas();
             </button>
         </div>
     </div>
+    <?php endif; ?>
 
     <div class="row mt-4">
         <div class="col-md-6">

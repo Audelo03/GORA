@@ -11,6 +11,7 @@ include "auth_check.php"
     <meta charset="UTF-8">
     <title><?php echo $page_title ?? 'ITSADATA'; ?></title>
        <link href= <?php echo  $modificacion_ruta."../vendor/bootstrap/css/bootstrap.min.css" ?>  rel="stylesheet">
+       <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href=<?php echo  $modificacion_ruta."../public/css/sidebar.css"?> rel="stylesheet">
     <link href=<?php echo  $modificacion_ruta."../vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css"?> rel="stylesheet">
     <link rel="stylesheet" href=<?php echo  $modificacion_ruta."../node_modules/sweetalert2/dist/sweetalert2.min.css"?>>
