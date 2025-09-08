@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../models/Grupo.php";
 
+// Iniciar sesión si no está activa
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
@@ -13,77 +14,106 @@ class GruposController {
         $this->grupo = new Grupo($conn);
     }
 
-    public function listar() {
-        $stmt = $this->grupo->read();
-        $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $grupos;
+    // Obtiene todos los grupos y los devuelve como JSON.
+    public function index() {
+        echo json_encode($this->grupo->getAll());
     }
 
-    public function crear($data) {
-        $this->grupo->nombre = $data['nombre'];
-        $this->grupo->estatus = $data['estatus'];
-        $this->grupo->usuarios_id_usuario_tutor = $data['tutor'];
-        $this->grupo->carreras_id_carrera = $data['carrera'];
-        $this->grupo->modalidades_id_modalidad = $data['modalidad'];
-        $this->grupo->usuarios_id_usuario_movimiento = $_SESSION['id_usuario']; // Asumiendo que el ID del usuario está en la sesión
+    public function store() {
+        // Asignar datos del formulario al objeto
+        error_log("Entrando al metodo store del controlador!!!!".print_r($_POST,true));
+        $this->grupo->nombre = $_POST['nombre'];
+        $this->grupo->estatus = $_POST['estatus'];
+        $this->grupo->usuarios_id_usuario_tutor = $_POST['usuarios_id_usuario_tutor'];
+        $this->grupo->carreras_id_carrera = $_POST['carreras_id_carrera'];
+        $this->grupo->modalidades_id_modalidad = $_POST['modalidades_id_modalidad'];
+        $this->grupo->usuarios_id_usuario_movimiento = $_SESSION['usuario_id'] ?? null;
 
-        if ($this->grupo->create()) {
-            return ["success" => true, "message" => "Grupo creado exitosamente."];
-        } else {
-            return ["success" => false, "message" => "No se pudo crear el grupo."];
+        // Intentar crear el grupo y devolver una respuesta JSON.
+        try {
+            $this->grupo->create();
+            return ["status" => "success", "message" => "Grupo creado exitosamente."];
+        } catch (Exception $e) {
+            return ["status" => "error", "message" => $e->getMessage()];
         }
     }
     
-    public function actualizar($data) {
-        $this->grupo->id_grupo = $data['id_grupo'];
-        $this->grupo->nombre = $data['nombre'];
-        $this->grupo->estatus = $data['estatus'];
-        $this->grupo->usuarios_id_usuario_tutor = $data['tutor'];
-        $this->grupo->carreras_id_carrera = $data['carrera'];
-        $this->grupo->modalidades_id_modalidad = $data['modalidad'];
-        $this->grupo->usuarios_id_usuario_movimiento = $_SESSION['id_usuario'];
+    public function update() {
+        error_log("Entrando al metodo update del controlador!!!!".print_r($_POST,true));
+        // Asignar datos del formulario al objeto
+        $this->grupo->id_grupo = $_POST['id_grupo'];
+        $this->grupo->nombre = $_POST['nombre'];
+        $this->grupo->estatus = $_POST['estatus'];
+        $this->grupo->usuarios_id_usuario_tutor = $_POST['usuarios_id_usuario_tutor'];
+        $this->grupo->carreras_id_carrera = $_POST['carreras_id_carrera'];
+        $this->grupo->modalidades_id_modalidad = $_POST['modalidades_id_modalidad'];
+        $this->grupo->usuarios_id_usuario_movimiento = $_SESSION['usuario_id'] ?? null;
 
-        if ($this->grupo->update()) {
-            return ["success" => true, "message" => "Grupo actualizado exitosamente."];
-        } else {
-            return ["success" => false, "message" => "No se pudo actualizar el grupo."];
+        // Intentar actualizar y devolver una respuesta JSON.
+        try {
+            $this->grupo->update();
+            return ["status" => "success", "message" => "Grupo actualizado exitosamente."];
+        } catch (Exception $e) {
+            return ["status" => "error", "message" => $e->getMessage()];
         }
     }
 
-    public function eliminar($id) {
+    // Elimina un grupo.
+    public function delete($id) {
         $this->grupo->id_grupo = $id;
-        if ($this->grupo->delete()) {
-            return ["success" => true, "message" => "Grupo eliminado exitosamente."];
-        } else {
-            return ["success" => false, "message" => "No se pudo eliminar el grupo."];
+        // Intentar eliminar y devolver una respuesta JSON.
+        try {
+            $this->grupo->delete();
+            return ["status" => "success", "message" => "Grupo eliminado exitosamente."];
+        } catch (Exception $e) {
+            return ["status" => "error", "message" => $e->getMessage()];
         }
     }
 }
 
-// Manejo de la solicitud
-if (isset($_GET['accion'])) {
-    header('Content-Type: application/json');
-    $controller = new GruposController($conn);
+// --- Enrutador de Acciones ---
+// Define el tipo de contenido para todas las respuestas
+header('Content-Type: application/json');
+$action = $_GET['action'] ?? null;
+$controller = new GruposController($conn);
+$response = [];
 
-    switch ($_GET['accion']) {
-        case 'listar':
-            echo json_encode($controller->listar());
+// Usamos el método de la petición para decidir qué hacer
+$method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'GET' && $action === 'index') {
+    // La función index ya hace 'echo', por lo que no necesita ser capturada.
+    $controller->index();
+    exit;
+} elseif ($method === 'POST') {
+    switch ($action) {
+        case 'store':
+            $response = $controller->store($_POST);
             break;
-        case 'crear':
-            $data = json_decode(file_get_contents('php://input'), true);
-            echo json_encode($controller->crear($data));
+        case 'update':
+            $response = $controller->update($_POST);
             break;
-        case 'actualizar':
-            $data = json_decode(file_get_contents('php://input'), true);
-            echo json_encode($controller->actualizar($data));
-            break;
-        case 'eliminar':
-            if (isset($_GET['id'])) {
-                echo json_encode($controller->eliminar($_GET['id']));
+        case 'delete':
+            // Asegurarse de que el ID se está enviando
+            if (isset($_POST['id'])) {
+                $response = $controller->delete($_POST['id']);
             } else {
-                echo json_encode(["success" => false, "message" => "ID no proporcionado."]);
+                $response = ["status" => "error", "message" => "ID no proporcionado para eliminar."];
             }
             break;
+        default:
+            $response = ["status" => "error", "message" => "Acción POST no válida."];
+            break;
     }
+} else {
+    if($action){
+         $response = ["status" => "error", "message" => "Método HTTP no soportado para esta acción."];
+    }
+    // Si no hay acción, no hacer nada para evitar errores innecesarios.
+}
+
+// Solo imprimir la respuesta si no está vacía
+if (!empty($response)) {
+    echo json_encode($response);
 }
 ?>

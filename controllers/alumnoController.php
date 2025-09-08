@@ -13,7 +13,79 @@ class AlumnoController {
         $this->alumno = new Alumno($conn);
     }
 
-    // --- MÉTODOS DE PAGINACION Y CONTEO (Sin cambios) ---
+    public function index() {
+        echo json_encode($this->alumno->getAll());
+    }
+
+
+    public function show() {
+        if (isset($_GET['id']))
+            echo json_encode($this->alumno->getById($_GET['id']));
+        else 
+            echo json_encode(["error" => "ID no proporcionado"]);
+    }
+    
+    public function update(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_alumno'])) {
+            $id = $_POST['id_alumno'];
+            $data = [
+                'matricula' => $_POST['matricula'],
+                'nombre' => $_POST['nombre'],
+                'apellido_paterno' => $_POST['apellido_paterno'],
+                'apellido_materno' => $_POST['apellido_materno'],
+                'estatus' => $_POST['estatus'],
+                'usuarios_id_usuario_movimiento' => $_SESSION['usuario_id'],
+                'carreras_id_carrera' => $_POST['carreras_id_carrera'],
+                'grupos_id_grupo' => $_POST['grupos_id_grupo']
+            ];
+            if ($this->alumno->update($id, $data)) {
+                echo json_encode(["success" => "Alumno actualizado correctamente"]);
+            } else {
+                echo json_encode(["error" => "Error al actualizar el alumno"]);
+            }
+        } else {
+            echo json_encode(["error" => "Datos incompletos"]);
+        }
+
+    }
+
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'matricula' => $_POST['matricula'],
+                'nombre' => $_POST['nombre'],
+                'apellido_paterno' => $_POST['apellido_paterno'],
+                'apellido_materno' => $_POST['apellido_materno'],
+                'estatus' => $_POST['estatus'],
+                'usuarios_id_usuario_movimiento' => $_SESSION['usuario_id'],
+                'carreras_id_carrera' => $_POST['carreras_id_carrera'],
+                'grupos_id_grupo' => $_POST['grupos_id_grupo']
+            ];
+            if ($this->alumno->create($data)) {
+                echo json_encode(["success" => "Alumno creado correctamente"]);
+            } else {
+                echo json_encode(["error" => "Error al crear el alumno"]);
+            }
+        } else {
+            echo json_encode(["error" => "Método no permitido"]);
+        }
+    }
+
+    public function delete() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+            $id = $_POST['id'];
+            $sql = "DELETE FROM alumnos WHERE id_alumno = :id";
+            $stmt = $this->alumno->conn->prepare($sql);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                echo json_encode(["success" => "Alumno eliminado correctamente"]);
+            } else {
+                echo json_encode(["error" => "Error al eliminar el alumno"]);
+            }
+        } else {
+            echo json_encode(["error" => "Datos incompletos"]);
+        }
+    }
     public function contarTotalCarreras($terminoBusqueda) {
     $sql = "SELECT COUNT(DISTINCT c.id_carrera) 
             FROM carreras c
@@ -285,7 +357,6 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
 </ul>
 <?php
         else:
-            // Renderiza el acordeon original
             ?>
             <div class="accordion" id="accordion_<?= htmlspecialchars($parentUid) ?>">
                 <?php foreach ($grupos_ids as $id_grupo_data):
@@ -365,14 +436,12 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         $grupos_ids = $auth->usuario->getGruposIdByCarreraId($carreraid);
 
         if ($modo === true) {
-            // MODO TRUE: Solo muestra la lista de alumnos sin el acordeón de carrera.
             if (!empty($grupos_ids)) {
                 echo $this->listarAlumnosPorIdsDeGrupos($grupos_ids, $conn, true, $carreraUid, $terminoBusqueda);
             } else {
                 echo "<p>No hay grupos asignados a esta carrera.</p>";
             }
         } else {
-            // MODO FALSE: Muestra el acordeón de la carrera que contiene los grupos.
             ?>
             <div class="accordion mb-3" id="<?= $carreraUid ?>">
                 <div class="accordion-item">
@@ -436,6 +505,21 @@ public function obtenerCarrerasPaginadas($terminoBusqueda, $offset, $limit) {
         $stmt->bindParam(':id_alumno', $idAlumno, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    
+}
+
+
+if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+    $controller = new AlumnoController($conn);
+
+    if (method_exists($controller, $action)) {
+        $controller->$action();
+    } else {
+        echo json_encode(["error" => "Método $action no encontrado"]);
     }
 }
 ?>

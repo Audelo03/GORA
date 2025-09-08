@@ -185,7 +185,7 @@ $.post(url, datos, function(response) {
         Swal.fire({
             icon: 'success',
             title: '¡Éxito!',
-            text: mensaje, // Usas el mensaje que vino del servidor
+            text: mensaje,
             timer: 2000,
             showConfirmButton: false
         });

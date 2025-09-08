@@ -5,7 +5,7 @@ require_once __DIR__ . "/../../config/db.php";
 $auth = new AuthController($conn);
 $auth->checkAuth();
 
-$coordinadores = $conn->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno) as nombre_completo FROM usuarios WHERE niveles_usuarios_id_nivel_usuario = 2 ORDER BY nombre_completo")->fetchAll(PDO::FETCH_ASSOC); // Asumiendo que 2 es el ID para coordinadores
+$coordinadores = $conn->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno) as nombre_completo FROM usuarios WHERE niveles_usuarios_id_nivel_usuario = 2 ORDER BY nombre_completo")->fetchAll(PDO::FETCH_ASSOC); 
 $modificacion_ruta= "../";
 include "../objects/header.php";
 ?>
@@ -64,9 +64,8 @@ include "../objects/header.php";
         </div>
     </div>
 </div>
+<?php include "../objects/footer.php";?>
 
-<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function() {
     const carreraModal = new bootstrap.Modal(document.getElementById('carreraModal'));
@@ -75,20 +74,32 @@ $(document).ready(function() {
         $.get("../../controllers/carrerasController.php?action=index", function(data) {
             let carreras = JSON.parse(data);
             let rows = "";
-            carreras.forEach(c => {
-                const coordinadorNombre = c.coordinador_nombre ? `${c.coordinador_nombre} ${c.coordinador_apellido_paterno}` : 'N/A';
-                rows += `<tr>
-                    <td>${c.id_carrera}</td>
-                    <td>${c.nombre}</td>
-                    <td>${coordinadorNombre}</td>
-                    <td>${c.fecha_creacion}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm btn-editar" data-id='${JSON.stringify(c)}'>Editar</button>
-                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${c.id_carrera}">Eliminar</button>
-                    </td>
-                </tr>`;
-            });
+            if(carreras.length > 0) {
+                carreras.forEach(c => {
+                    const coordinadorNombre = c.coordinador_nombre ? `${c.coordinador_nombre} ${c.coordinador_apellido_paterno}` : 'N/A';
+                    rows += `<tr>
+                        <td>${c.id_carrera}</td>
+                        <td>${c.nombre}</td>
+                        <td>${coordinadorNombre}</td>
+                        <td>${c.fecha_creacion}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm btn-editar" data-id='${JSON.stringify(c)}'><i class="bi bi-pencil-square"></i> </button>
+                            <button class="btn btn-danger btn-sm btn-eliminar" data-id="${c.id_carrera}"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            } else {
+                 rows = `<tr><td colspan="5" class="text-center">No hay carreras registradas.</td></tr>`;
+            }
             $("#tablaCarreras tbody").html(rows);
+        }).fail(function() {
+            // SweetAlert para error al cargar
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de Carga',
+                text: 'No se pudieron cargar los datos de las carreras.'
+            });
+            $("#tablaCarreras tbody").html('<tr><td colspan="5" class="text-center">Error al cargar los datos.</td></tr>');
         });
     }
 
@@ -106,6 +117,19 @@ $(document).ready(function() {
         $.post(url, $('#formCarrera').serialize(), function() {
             cargarCarreras();
             carreraModal.hide();
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'La carrera se ha guardado correctamente.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }).fail(function() {
+             Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Hubo un error al guardar la carrera.'
+            });
         });
     });
 
@@ -119,14 +143,48 @@ $(document).ready(function() {
     });
 
     $("#tablaCarreras").on('click', '.btn-eliminar', function() {
-        if(confirm("¿Desea eliminar esta carrera?")) {
-            $.post("../../controllers/carrerasController.php?action=delete", { id: $(this).data('id') }, function() {
-                cargarCarreras();
+    const idParaEliminar = $(this).data('id');
+    
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esta acción!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, ¡eliminar!',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../controllers/carrerasController.php?action=delete", { id: idParaEliminar }, function(response) {
+                if (response.status === 'success') {
+                    Swal.fire(
+                        '¡Eliminada!',
+                        response.message,
+                        'success'
+                    );
+                    cargarCarreras();
+                } else {
+                    Swal.fire(
+                        'Error',
+                        response.message, 
+                        'error'
+                    );
+                }
+            }, 'json') 
+            .fail(function() {
+                Swal.fire(
+                    'Error de Conexión',
+                    'No se pudo comunicar con el servidor. Inténtalo de nuevo.',
+                    'error'
+                );
             });
         }
     });
+});
 
     cargarCarreras();
 });
 </script>
+
 <?php include "../objects/footer.php";?>

@@ -39,29 +39,60 @@ class Alumno {
 
     // Crear alumno
       public function create($data) {
-        $sql = "INSERT INTO $this->table 
-                (matricula, nombre, apellido_paterno, apellido_materno, estatus, usuarios_id_usuario_movimiento, carreras_id_carrera, grupos_id_grupo)
-                VALUES (:matricula, :nombre, :apellido_paterno, :apellido_materno, :estatus, :usuarios_id_usuario_movimiento, :carreras_id_carrera, :grupos_id_grupo)";
+        $columns = array_keys($data);
+        $placeholders = array_map(fn($col) => ":$col", $columns);
+
+        $sql = "INSERT INTO " . $this->table . " (" . implode(", ", $columns) . ") 
+                VALUES (" . implode(", ", $placeholders) . ")";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute($data);
+
+        foreach ($data as $key => $value) {
+            $clean_value = htmlspecialchars(strip_tags((string)$value));
+            $stmt->bindValue(":$key", $clean_value);
+        }
+
+        if ($stmt->execute()) {
+            return $this->conn->lastInsertId();
+        }
+
+        printf("Error: %s.\n", $stmt->error);
+        return false;
+       
     }
 
     public function update($id, $data) {
-        echo $data;
-        $sql = "UPDATE $this->table SET 
-                    matricula=:matricula, 
-                    nombre=:nombre, 
-                    apellido_paterno=:apellido_paterno, 
-                    apellido_materno=:apellido_materno, 
-                    estatus=:estatus, 
-                    usuarios_id_usuario_movimiento=:usuarios_id_usuario_movimiento, 
-                    carreras_id_carrera=:carreras_id_carrera, 
-                    grupos_id_grupo=:grupos_id_grupo
-                WHERE id_alumno=:id";
-        $stmt = $this->conn->prepare($sql);
-        $data['id_alumno'] = $id;
-        return $stmt->execute($data);
+
+         $set_parts = [];
+
+         foreach ($data as $key => $value) {
+            $set_parts[] = "$key = :$key";
+        }
+
+        $set_clause = implode(", ", $set_parts);
+
+        $query = "UPDATE " . $this->table . " SET " . $set_clause . " WHERE id_alumno = :id_alumno";
+        $stmt = $this->conn->prepare($query);
+
+            foreach ($data as $key => $value) {
+                $clean_value = htmlspecialchars(strip_tags((string)$value));
+                $stmt->bindValue(":$key", $clean_value);
+                
+            }
+            
+            $id = htmlspecialchars(strip_tags($id));
+            $stmt->bindParam(":id_alumno", $id);
+        
+
+            if ($stmt->execute()) {
+                return true;
+            }
+
+            printf("Error: %s.\n", $stmt->error);
+            return false;
     }
+
+
+
 
     public function delete($id) {
         $sql = "DELETE FROM $this->table WHERE id_alumno=:id";

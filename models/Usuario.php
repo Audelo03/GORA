@@ -103,8 +103,6 @@ class Usuario {
 
         $stmt = $this->conn->prepare($query);
 
-
-
         foreach ($data as $key => $value) {
             $clean_value = htmlspecialchars(strip_tags((string)$value));
             $stmt->bindValue(":$key", $clean_value);
@@ -114,8 +112,6 @@ class Usuario {
         $id = htmlspecialchars(strip_tags($id));
         $stmt->bindParam(":id_usuario", $id);
        
-
-        
 
         if ($stmt->execute()) {
             return true;

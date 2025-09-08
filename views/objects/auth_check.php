@@ -1,13 +1,10 @@
 <?php
-include "usuario.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 if (!isset($_SESSION['usuario_id'])) {
-    // Guardar un mensaje de error para mostrarlo en el login.
-    $_SESSION['error_message'] = "Acceso denegado. Por favor, inicia sesión.";
     
     header("Location: ".$modificacion_ruta."../views/login.php");
     exit(); 

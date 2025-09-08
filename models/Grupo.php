@@ -16,14 +16,26 @@ class Grupo {
     }
 
     // Leer todos los grupos
-    public function read() {
-        $query = "SELECT g.id_grupo, g.nombre, g.estatus, u.nombre as tutor, c.nombre as carrera, m.nombre as modalidad FROM " . $this->table_name . " g
+    public function getAll() {
+        $query = "SELECT 
+                    g.id_grupo, 
+                    g.nombre, 
+                    g.estatus,
+                    g.usuarios_id_usuario_tutor,    -- ID del tutor (necesario para editar)
+                    g.carreras_id_carrera,          -- ID de la carrera (necesario para editar)
+                    g.modalidades_id_modalidad,     -- ID de la modalidad (necesario para editar)
+                    CONCAT(u.nombre, ' ', u.apellido_paterno) as tutor_nombre, -- Nombre para mostrar
+                    c.nombre as carrera_nombre,     -- Nombre para mostrar
+                    m.nombre as modalidad_nombre    -- Nombre para mostrar
+                  FROM " . $this->table_name . " g
                   LEFT JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
                   LEFT JOIN carreras c ON g.carreras_id_carrera = c.id_carrera
-                  LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt;
+                  LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad
+                  ORDER BY g.nombre ASC";
+      
+         $stmt = $this->conn->prepare($query);
+         $stmt->execute();
+         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     // Leer un solo grupo por ID
@@ -44,70 +56,82 @@ class Grupo {
     // Crear un nuevo grupo
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " SET nombre=:nombre, estatus=:estatus, usuarios_id_usuario_tutor=:tutor, carreras_id_carrera=:carrera, modalidades_id_modalidad=:modalidad, usuarios_id_usuario_movimiento=:usuario_movimiento";
-        $stmt = $this->conn->prepare($query);
+        
+        try {
+            $stmt = $this->conn->prepare($query);
 
-        // Sanitizar datos
-        $this->nombre=htmlspecialchars(strip_tags($this->nombre));
-        $this->estatus=htmlspecialchars(strip_tags($this->estatus));
-        $this->usuarios_id_usuario_tutor=htmlspecialchars(strip_tags($this->usuarios_id_usuario_tutor));
-        $this->carreras_id_carrera=htmlspecialchars(strip_tags($this->carreras_id_carrera));
-        $this->modalidades_id_modalidad=htmlspecialchars(strip_tags($this->modalidades_id_modalidad));
-        $this->usuarios_id_usuario_movimiento=htmlspecialchars(strip_tags($this->usuarios_id_usuario_movimiento));
+            // Sanitizar y enlazar parámetros
+            $stmt->bindValue(":nombre", htmlspecialchars(strip_tags($this->nombre)));
+            $stmt->bindValue(":estatus", htmlspecialchars(strip_tags($this->estatus)));
+            $stmt->bindValue(":tutor", htmlspecialchars(strip_tags($this->usuarios_id_usuario_tutor)));
+            $stmt->bindValue(":carrera", htmlspecialchars(strip_tags($this->carreras_id_carrera)));
+            $stmt->bindValue(":modalidad", htmlspecialchars(strip_tags($this->modalidades_id_modalidad)));
+            $stmt->bindValue(":usuario_movimiento", htmlspecialchars(strip_tags($this->usuarios_id_usuario_movimiento)));
 
-        // Enlazar parámetros
-        $stmt->bindParam(":nombre", $this->nombre);
-        $stmt->bindParam(":estatus", $this->estatus);
-        $stmt->bindParam(":tutor", $this->usuarios_id_usuario_tutor);
-        $stmt->bindParam(":carrera", $this->carreras_id_carrera);
-        $stmt->bindParam(":modalidad", $this->modalidades_id_modalidad);
-        $stmt->bindParam(":usuario_movimiento", $this->usuarios_id_usuario_movimiento);
-
-        if($stmt->execute()){
+            $stmt->execute();
             return true;
-        }
-        return false;
-    }
 
+        } catch (PDOException $e) {
+            // Si el error es por una clave única duplicada (ej. el nombre del grupo ya existe)
+            if ($e->getCode() == '23000') {
+                throw new Exception("El nombre del grupo ya existe. Por favor, elija otro.");
+            }
+            // Para cualquier otro error
+            throw new Exception("Error al crear el grupo: " . $e->getMessage());
+        }
+    }
     // Actualizar un grupo
-    public function update() {
+   public function update() {
         $query = "UPDATE " . $this->table_name . " SET nombre=:nombre, estatus=:estatus, usuarios_id_usuario_tutor=:tutor, carreras_id_carrera=:carrera, modalidades_id_modalidad=:modalidad, usuarios_id_usuario_movimiento=:usuario_movimiento WHERE id_grupo = :id";
-        $stmt = $this->conn->prepare($query);
+        
+        try {
+            $stmt = $this->conn->prepare($query);
 
-        // Sanitizar datos
-        $this->nombre=htmlspecialchars(strip_tags($this->nombre));
-        $this->estatus=htmlspecialchars(strip_tags($this->estatus));
-        $this->usuarios_id_usuario_tutor=htmlspecialchars(strip_tags($this->usuarios_id_usuario_tutor));
-        $this->carreras_id_carrera=htmlspecialchars(strip_tags($this->carreras_id_carrera));
-        $this->modalidades_id_modalidad=htmlspecialchars(strip_tags($this->modalidades_id_modalidad));
-        $this->usuarios_id_usuario_movimiento=htmlspecialchars(strip_tags($this->usuarios_id_usuario_movimiento));
-        $this->id_grupo=htmlspecialchars(strip_tags($this->id_grupo));
+            // Sanitizar y enlazar parámetros
+            $stmt->bindValue(":nombre", htmlspecialchars(strip_tags($this->nombre)));
+            $stmt->bindValue(":estatus", htmlspecialchars(strip_tags($this->estatus)));
+            $stmt->bindValue(":tutor", htmlspecialchars(strip_tags($this->usuarios_id_usuario_tutor)));
+            $stmt->bindValue(":carrera", htmlspecialchars(strip_tags($this->carreras_id_carrera)));
+            $stmt->bindValue(":modalidad", htmlspecialchars(strip_tags($this->modalidades_id_modalidad)));
+            $stmt->bindValue(":usuario_movimiento", htmlspecialchars(strip_tags($this->usuarios_id_usuario_movimiento)));
+            $stmt->bindValue(":id", htmlspecialchars(strip_tags($this->id_grupo)));
 
-        // Enlazar parámetros
-        $stmt->bindParam(":nombre", $this->nombre);
-        $stmt->bindParam(":estatus", $this->estatus);
-        $stmt->bindParam(":tutor", $this->usuarios_id_usuario_tutor);
-        $stmt->bindParam(":carrera", $this->carreras_id_carrera);
-        $stmt->bindParam(":modalidad", $this->modalidades_id_modalidad);
-        $stmt->bindParam(":usuario_movimiento", $this->usuarios_id_usuario_movimiento);
-        $stmt->bindParam(":id", $this->id_grupo);
-
-        if($stmt->execute()){
+            $stmt->execute();
+            if ($stmt->rowCount() == 0) {
+                throw new Exception("No se encontró el grupo para actualizar o no se realizaron cambios en los datos.");
+            }
             return true;
+
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                throw new Exception("El nombre del grupo ya existe en otro registro.");
+            }
+            throw new Exception("Error al actualizar el grupo: " . $e->getMessage());
         }
-        return false;
     }
+
 
     // Eliminar un grupo
     public function delete() {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id_grupo = ?";
-        $stmt = $this->conn->prepare($query);
-        $this->id_grupo=htmlspecialchars(strip_tags($this->id_grupo));
-        $stmt->bindParam(1, $this->id_grupo);
+        $query = "DELETE FROM " . $this->table_name . " WHERE id_grupo = :id";
+        
+        try {
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(":id", htmlspecialchars(strip_tags($this->id_grupo)));
+            $stmt->execute();
 
-        if($stmt->execute()){
+            if ($stmt->rowCount() == 0) {
+                throw new Exception("No se encontró el grupo para eliminar.");
+            }
             return true;
+
+        } catch (PDOException $e) {
+            // Error por restricción de llave foránea
+            if ($e->getCode() == '23000') {
+                throw new Exception("No se puede eliminar el grupo porque tiene alumnos u otros registros asociados.");
+            }
+            throw new Exception("Error al eliminar el grupo: " . $e->getMessage());
         }
-        return false;
     }
 }
 ?>

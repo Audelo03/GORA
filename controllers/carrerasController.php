@@ -40,20 +40,27 @@ class CarrerasController {
 
     public function update() {
         $id = $_POST['id'];
+        error_log("Datos recibidos: " . print_r($_POST, true));
          $data = [
             'nombre' => $_POST['nombre'],
-            'fecha_creacion' => $_POST['fecha_creacion'],
-            'usuarios_id_usuario_movimiento' => $_POST['usuarios_id_movimiento'] ?? null,
             'usuarios_id_usuario_coordinador' => $_POST['usuario_id'],
         ];
-        $this->carrera->update($id, $data);
-        echo json_encode(["status" => "ok"]);
+        if($this->carrera->update($id, $data)===true);
+            echo json_encode(["status" => "ok"]);
     }
 
-    public function delete() {
+   public function delete() {
+    try {
+    
         $this->carrera->delete($_POST['id']);
-        echo json_encode(["status" => "ok"]);
+
+        echo json_encode(['status' => 'success', 'message' => 'La carrera ha sido eliminada correctamente.']);
+
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
     }
+    exit; 
+}
 }
 
 
