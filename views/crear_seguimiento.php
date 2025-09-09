@@ -26,48 +26,40 @@ if (!$alumno) {
     exit;
 }
 
-$page_title = "Nuevo Seguimiento";
-include 'objects/header.php';
-
-$seguimientoController = new SeguimientoController($conn);
-$tipos_seguimiento = $seguimientoController->obtenerTiposSeguimiento();
-
-
+// Procesar el formulario ANTES de incluir el header
 $errors = [];
-$descripcion = "";
-$estatus = 1;
-$fecha_movimiento = date('Y-m-d');
-$fecha_compromiso = "";
-$tipo_seguimiento_id = null;
+$success = false;
 
-// --- PROCESAR FORMULARIO ---
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_usuario_movimiento = $_SESSION['usuario_id'];
     $descripcion = trim($_POST['descripcion'] ?? '');
     $estatus = filter_input(INPUT_POST, 'estatus', FILTER_VALIDATE_INT);
     $fecha_movimiento = $_POST['fecha_movimiento'] ?? date('Y-m-d');
     $fecha_compromiso = $_POST['fecha_compromiso'] ?? null;
     $tipo_seguimiento_id = filter_input(INPUT_POST, 'tipo_seguimiento_id', FILTER_VALIDATE_INT);
-    $id_usuario_movimiento = $_SESSION['usuario_id'] ?? null;
 
+    // Validaciones
     if (empty($descripcion)) {
         $errors['descripcion'] = "La descripción es obligatoria.";
     }
-
     if ($estatus === false || !in_array($estatus, [1, 2, 3])) {
         $errors['estatus'] = "Selecciona un estatus válido.";
     }
-
-    $tutor_id = null;
-    if ($_SESSION['usuario_nivel'] == 3) { 
-        $tutor_id = $id_usuario_movimiento;
+    if (empty($fecha_movimiento)) {
+        $errors['fecha_movimiento'] = "La fecha de movimiento es obligatoria.";
     }
-    
     if (empty($tipo_seguimiento_id)) {
         $errors['tipo_seguimiento_id'] = "Selecciona un tipo de seguimiento.";
     }
 
+    // Manejar tutor_id según el nivel del usuario
+    $tutor_id = null;
+    if ($_SESSION['usuario_nivel'] == 3) { 
+        $tutor_id = $id_usuario_movimiento;
+    }
 
     if (empty($errors)) {
+        $seguimientoController = new SeguimientoController($conn);
         $resultado = $seguimientoController->crear(
             $id_alumno,
             $id_usuario_movimiento,
@@ -87,6 +79,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 }
+
+$page_title = "Nuevo Seguimiento";
+include 'objects/header.php';
+
+$seguimientoController = new SeguimientoController($conn);
+$tipos_seguimiento = $seguimientoController->obtenerTiposSeguimiento();
+
+// Inicializar variables para el formulario (usar valores del POST si hay errores)
+$descripcion = $_POST['descripcion'] ?? "";
+$estatus = $_POST['estatus'] ?? 1;
+$fecha_movimiento = $_POST['fecha_movimiento'] ?? date('Y-m-d');
+$fecha_compromiso = $_POST['fecha_compromiso'] ?? "";
+$tipo_seguimiento_id = $_POST['tipo_seguimiento_id'] ?? null;
 
 
 ?>
