@@ -6,7 +6,7 @@ $page_title = "Perfil";
 
 $userId = $_SESSION['usuario_id'] ?? null;
 if (!$userId) {
-    header("Location: login.php");
+    header("Location: /ITSAdata/login");
     exit;
 }
 
@@ -16,10 +16,8 @@ $usuario = $userController->obtenerUsuarioPorId($userId);
 $niveles_autorizados = [1 => "Admin", 2 => "Coordinador", 3 => "Tutor", 4 => "Director"];
 $nivel_nombre  = $niveles_autorizados[$_SESSION['usuario_nivel']] ?? "Desconocido"; 
 
-
 if (!$usuario) {
-
-    header("Location: login.php?error=usernotfound");
+    header("Location: /ITSAdata/login?error=usernotfound");
     exit;
 }
 

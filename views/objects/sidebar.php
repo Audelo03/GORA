@@ -27,28 +27,28 @@ if (!isset($modificacion_ruta)) {
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li class="nav-item">
-        <a href="<?= $modificacion_ruta ?>dashboard.php" class="nav-link text-white <?= active(['dashboard.php']); ?>">
+        <a href="/ITSAdata/dashboard" class="nav-link text-white <?= active(['dashboard.php']); ?>">
           <i class="bi bi-speedometer2 me-2"></i> <span class="sidebar-text">Dashboard</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>listas.php" class="nav-link text-white <?= active(['listas.php']); ?>">
+        <a href="/ITSAdata/listas" class="nav-link text-white <?= active(['listas.php']); ?>">
           <i class="bi bi-people me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li>
-        <a href="<?= $modificacion_ruta ?>estadisticas.php" class="nav-link text-white <?= active(['estadisticas.php']); ?>">
+        <a href="/ITSAdata/estadisticas" class="nav-link text-white <?= active(['estadisticas.php']); ?>">
           <i class="bi bi-bar-chart-fill me-2"></i> <span class="sidebar-text">Estadísticas</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>seguimientos.php" class="nav-link text-white <?= active(['seguimientos.php']); ?>">
+        <a href="/ITSAdata/seguimientos" class="nav-link text-white <?= active(['seguimientos.php']); ?>">
           <i class="bi bi-journal-text me-2"></i> <span class="sidebar-text">Seguimientos</span>
         </a>
       </li>
@@ -58,37 +58,37 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Gestión</h6>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>CRUDS/usuarios.php" class="nav-link text-white <?= active(['usuarios.php']); ?>">
+        <a href="/ITSAdata/usuarios" class="nav-link text-white <?= active(['usuarios.php']); ?>">
           <i class="bi bi-person-vcard me-2"></i> <span class="sidebar-text">Usuarios</span>
         </a>
       </li>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>CRUDS/alumnos.php" class="nav-link text-white <?= active(['alumnos.php']); ?>">
+        <a href="/ITSAdata/alumnos" class="nav-link text-white <?= active(['alumnos.php']); ?>">
           <i class="bi bi-person-workspace me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>CRUDS/carreras.php" class="nav-link text-white <?= active(['carreras.php']); ?>">
+        <a href="/ITSAdata/carreras" class="nav-link text-white <?= active(['carreras.php']); ?>">
           <i class="bi bi-book me-2"></i> <span class="sidebar-text">Carreras</span>
         </a>
       </li>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>CRUDS/grupos.php" class="nav-link text-white <?= active(['grupos.php']); ?>">
+        <a href="/ITSAdata/grupos" class="nav-link text-white <?= active(['grupos.php']); ?>">
           <i class="bi bi-person-video2 me-2"></i> <span class="sidebar-text">Grupos</span>
         </a>
       </li>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>CRUDS/modalidades.php" class="nav-link text-white <?= active(['modalidades.php']); ?>">
+        <a href="/ITSAdata/modalidades" class="nav-link text-white <?= active(['modalidades.php']); ?>">
           <i class="bi bi-person-video3 me-2"></i> <span class="sidebar-text">Modalidades</span>
         </a>
       </li>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>CRUDS/tipo_seguimiento.php" class="nav-link text-white <?= active(['tipo_seguimiento.php']); ?>">
+        <a href="/ITSAdata/tipo-seguimiento" class="nav-link text-white <?= active(['tipo_seguimiento.php']); ?>">
           <i class="bi bi-person-rolodex me-2"></i> <span class="sidebar-text">Tipo de Seguimientos</span>
         </a>
       </li>
@@ -97,7 +97,7 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Tú</h6>
 
       <li>
-        <a href="<?= $modificacion_ruta ?>profile.php" class="nav-link text-white <?= active(['profile.php']); ?>">
+        <a href="/ITSAdata/profile" class="nav-link text-white <?= active(['profile.php']); ?>">
           <i class="bi bi-person-circle me-2"></i> <span class="sidebar-text">Perfil</span>
         </a>
       </li>

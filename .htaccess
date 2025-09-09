@@ -1,0 +1,24 @@
+RewriteEngine On
+
+# Allow access to vendor directory for CSS/JS files
+RewriteCond %{REQUEST_URI} ^/ITSAdata/vendor/
+RewriteRule ^(.*)$ - [L]
+
+# Allow access to public directory
+RewriteCond %{REQUEST_URI} ^/ITSAdata/public/
+RewriteRule ^(.*)$ - [L]
+
+# Allow direct access to controllers
+RewriteCond %{REQUEST_URI} ^/ITSAdata/controllers/
+RewriteRule ^(.*)$ - [L]
+
+# Allow direct access to models
+RewriteCond %{REQUEST_URI} ^/ITSAdata/models/
+RewriteRule ^(.*)$ - [L]
+
+# Allow direct access to config
+RewriteCond %{REQUEST_URI} ^/ITSAdata/config/
+RewriteRule ^(.*)$ - [L]
+
+# Redirect all other requests to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]

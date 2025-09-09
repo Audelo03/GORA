@@ -1,5 +1,5 @@
 <?php
-session_start();
+// Remove session_start() as it's already started in index.php
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../controllers/authController.php";
 require_once __DIR__ . "/../controllers/alumnoController.php";

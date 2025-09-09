@@ -9,16 +9,12 @@ require_once __DIR__ . "/../controllers/authController.php";
 require_once __DIR__ . "/../controllers/alumnoController.php";
 require_once __DIR__ . "/../controllers/seguimientoController.php";
 
-$page_title = "Editar Seguimiento";
-include 'objects/header.php';
-
-
 $auth = new AuthController($conn);
 $auth->checkAuth();
 
 $id_seguimiento = filter_input(INPUT_GET, 'id_seguimiento', FILTER_VALIDATE_INT);
 if (!$id_seguimiento) {
-    header("Location: listas.php?error=invalid_id");
+    header("Location: /ITSAdata/listas?error=invalid_id");
     exit;
 }
 
@@ -26,9 +22,12 @@ $seguimientoController = new SeguimientoController($conn);
 $seguimiento = $seguimientoController->obtenerPorId($id_seguimiento);
 
 if (!$seguimiento) {
-    header("Location: listas.php?error=seguimiento_not_found");
+    header("Location: /ITSAdata/listas?error=seguimiento_not_found");
     exit;
 }
+
+$page_title = "Editar Seguimiento";
+include 'objects/header.php';
 
 $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId((int)$seguimiento['alumnos_id_alumno']);
@@ -64,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
 
         if ($resultado) {
-            header("Location: ver_seguimientos.php?id_alumno=$id_alumno&success=edited");
+            header("Location: /ITSAdata/ver_seguimientos.php?id_alumno=$id_alumno&success=edited");
             exit;
         } else {
             $errors['general'] = "Hubo un error al actualizar el seguimiento.";

@@ -1,5 +1,5 @@
 <?php
-session_start();
+// Remove session_start() as it's already started in index.php
 require_once "../config/db.php";
 require_once "../controllers/alumnoController.php";
 require_once "../controllers/asistenciaController.php";

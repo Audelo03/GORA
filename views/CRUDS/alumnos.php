@@ -9,7 +9,7 @@ $carreras = $conn->query("SELECT id_carrera, nombre FROM carreras ORDER BY nombr
 $grupos = $conn->query("SELECT id_grupo, nombre FROM grupos ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 $modificacion_ruta = "../";
 $page_title = "Alumnos";
-include "../objects/header.php"
+include __DIR__ . "/../objects/header.php"
 ?>
 
 
@@ -107,13 +107,13 @@ include "../objects/header.php"
         </div>
     </div>
 
-   <?php include "../objects/footer.php";?> <script>
-    $(document).ready(function() {
+   <?php include __DIR__ . "/../objects/footer.php";?> <script>
+    window.addEventListener('load', function() {
         const alumnoModal = new bootstrap.Modal(document.getElementById('alumnoModal'));
         let alumnosTable;
 
         function cargarAlumnos() {
-            $.get("../../controllers/alumnoController.php?action=index", function(data) {
+            $.get("/ITSAdata/controllers/alumnoController.php?action=index", function(data) {
                 const alumnos = JSON.parse(data);
                 
                 if (alumnosTable) {
@@ -164,7 +164,7 @@ include "../objects/header.php"
 
         $('#alumnosTable tbody').on('click', '.btn-editar', function() {
             const id = $(this).data('id');
-            $.get(`../../controllers/alumnoController.php?action=show&id=${id}`, function(data) {
+            $.get(`/ITSAdata/controllers/alumnoController.php?action=show&id=${id}`, function(data) {
                 const alumno = JSON.parse(data);
                 $('#id_alumno').val(alumno.id_alumno);
                 $('#matricula').val(alumno.matricula);
@@ -187,7 +187,7 @@ include "../objects/header.php"
 
         $('#btnGuardar').on('click', function() {
             const id = $('#id_alumno').val();
-            const url = id ? `../../controllers/alumnoController.php?action=update` : `../../controllers/alumnoController.php?action=store`;
+            const url = id ? `/ITSAdata/controllers/alumnoController.php?action=update` : `/ITSAdata/controllers/alumnoController.php?action=store`;
             const data = $('#formAlumno').serialize();
             
             $.post(url, data, function(response) {
@@ -223,7 +223,7 @@ include "../objects/header.php"
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.post(`../../controllers/alumnoController.php?action=delete`, { id: id }, function() {
+                    $.post(`/ITSAdata/controllers/alumnoController.php?action=delete`, { id: id }, function() {
                         Swal.fire(
                             '¡Eliminado!',
                             'El alumno ha sido eliminado.',
@@ -242,5 +242,5 @@ include "../objects/header.php"
         });
 
         cargarAlumnos();
-    });
+    }); // Close window load
     </script>

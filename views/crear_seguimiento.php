@@ -9,27 +9,25 @@ require_once __DIR__ . "/../controllers/authController.php";
 require_once __DIR__ . "/../controllers/alumnoController.php";
 require_once __DIR__ . "/../controllers/seguimientoController.php";
 
-$page_title = "Nuevo Seguimiento";
-include 'objects/header.php';
-
-
 $auth = new AuthController($conn);
 $auth->checkAuth();
 
 $id_alumno = filter_input(INPUT_GET, 'id_alumno', FILTER_VALIDATE_INT);
 if (!$id_alumno) {
-    header("Location: listas.php?error=invalid_id");
+    header("Location: /ITSAdata/listas?error=invalid_id");
     exit;
 }
 
 $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId($id_alumno);
 
-
 if (!$alumno) {
-    header("Location: listas.php?error=alumno_not_found");
+    header("Location: /ITSAdata/listas?error=alumno_not_found");
     exit;
 }
+
+$page_title = "Nuevo Seguimiento";
+include 'objects/header.php';
 
 $seguimientoController = new SeguimientoController($conn);
 $tipos_seguimiento = $seguimientoController->obtenerTiposSeguimiento();
@@ -82,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
 
         if ($resultado) {
-            header("Location: ver_seguimientos.php?id_alumno=$id_alumno&success=created");
+            header("Location: /ITSAdata/ver_seguimientos.php?id_alumno=$id_alumno&success=created");
             exit;
         } else {
             $errors['general'] = "Hubo un error al guardar el seguimiento.";

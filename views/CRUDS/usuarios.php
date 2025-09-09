@@ -1,12 +1,12 @@
 <?php
+// Remove session_start() as it's already started in index.php
 require_once __DIR__ . "/../../controllers/authController.php";
 require_once __DIR__ . "/../../config/db.php";
 
 $auth = new AuthController($conn);
 $auth->checkAuth();
 $page_title = "Usuarios";
-$modificacion_ruta = "../";
-include "../objects/header.php";
+include __DIR__ . "/../objects/header.php";
 
 ?>
 
@@ -90,11 +90,13 @@ include "../objects/header.php";
     </div>
 </div>
 <?php
-include "../objects/footer.php";
+include __DIR__ . "/../objects/footer.php";
 
 ?>
 <script>
-const usuarioModal = new bootstrap.Modal(document.getElementById('usuarioModal'));
+// Wait for Bootstrap to load
+window.addEventListener('load', function() {
+    const usuarioModal = new bootstrap.Modal(document.getElementById('usuarioModal'));
 const estatusMap = {
     1: '<span class="badge bg-success">Activo</span>',
     0: '<span class="badge bg-danger">Inactivo</span>'
@@ -102,7 +104,7 @@ const estatusMap = {
 
 function cargarNiveles() {
     // Usamos 'json' para que jQuery parsee la respuesta automáticamente
-    $.get("../../controllers/nivelesusuariosController.php?accion=listar", function(niveles) {
+    $.get("/ITSAdata/controllers/nivelesusuariosController.php?accion=listar", function(niveles) {
         let options = "";
         niveles.forEach(n => {
             options += `<option value="${n.id_nivel_usuario}">${n.nombre}</option>`;
@@ -112,7 +114,7 @@ function cargarNiveles() {
 }
 
 function cargarUsuarios() {
-    $.get("../../controllers/usuarioController.php?action=index", function(data) {
+    $.get("/ITSAdata/controllers/usuarioController.php?action=index", function(data) {
         let usuarios = typeof data === 'string' ? JSON.parse(data) : data;
         let rows = "";
         usuarios.forEach(u => {
@@ -139,9 +141,22 @@ $('#btnNuevoUsuario').click(function() {
     $('#modalLabel').text('Agregar Usuario');
     // Se requiere contraseña para nuevos usuarios
     $('#password').prop('required', true); 
-    usuarioModal.show();
+    $('#usuarioModal').modal('show');
 });
 
+    // Add event listener for modal close - reset form when modal is hidden
+    $('#usuarioModal').on('hidden.bs.modal', function() {
+        $('#formUsuario')[0].reset();
+        $('#id_usuario').val('');
+    });
+
+    $(document).ready(function() {
+        cargarNiveles();
+        cargarUsuarios();
+    });
+}); // Close window load
+
+// Global functions
 function editarUsuario(usuario) {
     $('#formUsuario')[0].reset();
     $('#id_usuario').val(usuario.id_usuario);
@@ -155,9 +170,35 @@ function editarUsuario(usuario) {
     $('#niveles_usuarios_id_nivel_usuario').val(usuario.niveles_usuarios_id_nivel_usuario);
     $('#estatus').val(usuario.estatus);
     $('#modalLabel').text('Editar Usuario');
-    usuarioModal.show();
+    // Show modal using jQuery
+    $('#usuarioModal').modal('show');
 }
 
+function cargarUsuarios() {
+    $.get("/ITSAdata/controllers/usuarioController.php?action=index", function(data) {
+        let usuarios = typeof data === 'string' ? JSON.parse(data) : data;
+        let rows = "";
+        const estatusMap = {
+            1: '<span class="badge bg-success">Activo</span>',
+            0: '<span class="badge bg-danger">Inactivo</span>'
+        };
+        usuarios.forEach(u => {
+            const nombreCompleto = `${u.nombre} ${u.apellido_paterno} ${u.apellido_materno ?? ''}`.trim();
+            rows += `<tr>
+                <td>${u.id_usuario}</td>
+                <td>${nombreCompleto}</td>
+                <td>${u.email}</td>
+                <td>${u.nivel_usuario ?? 'N/A'}</td>
+                <td>${estatusMap[u.estatus] ?? 'Desconocido'}</td>
+                <td>
+                    <button onclick='editarUsuario(${JSON.stringify(u)})' class="btn btn-sm btn-warning" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                    <button onclick="eliminarUsuario(${u.id_usuario})" class="btn btn-sm btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                </td>
+            </tr>`;
+        });
+        $("#tablaUsuarios tbody").html(rows);
+    });
+}
 
 function guardarUsuario() {
     // Validar contraseña para nuevos usuarios
@@ -172,7 +213,7 @@ function guardarUsuario() {
     }
 
     let datos = $("#formUsuario").serialize();
-    let url = id ? "../../controllers/usuarioController.php?action=update" : "../../controllers/usuarioController.php?action=store";
+    let url = id ? "/ITSAdata/controllers/usuarioController.php?action=update" : "/ITSAdata/controllers/usuarioController.php?action=store";
 
 $.post(url, datos, function(response) {
     let estado = response.status;
@@ -187,8 +228,9 @@ $.post(url, datos, function(response) {
             showConfirmButton: false
         });
         
-     
-        usuarioModal.hide();
+        // Close modal and reset form
+        $('#usuarioModal').modal('hide');
+        $('#formUsuario')[0].reset();
         cargarUsuarios();
 
     } else {
@@ -206,7 +248,8 @@ $.post(url, datos, function(response) {
         title: 'Error de comunicación',
         text: 'No se pudo conectar con el servidor. Por favor, inténtelo de nuevo.'
     });
-});}
+});
+}
 
 function eliminarUsuario(id) {
     Swal.fire({
@@ -220,7 +263,9 @@ function eliminarUsuario(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../controllers/usuarioController.php?action=delete", { id_usuario: id }, function(response) {
+            $.post("/ITSAdata/controllers/usuarioController.php?action=delete", { id_usuario: id }, function(response) {
+                // Close any open modal
+                $('#usuarioModal').modal('hide');
                 cargarUsuarios();
                 Swal.fire(
                     '¡Eliminado!',
@@ -237,9 +282,4 @@ function eliminarUsuario(id) {
         }
     });
 }
-
-$(document).ready(function() {
-    cargarNiveles();
-    cargarUsuarios();
-});
 </script>

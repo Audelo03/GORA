@@ -1,6 +1,6 @@
 <?php
-session_start();
-include "../public/functions_util.php";
+// Remove session_start() as it's already started in index.php
+// functions_util.php is already included in index.php
 require_once __DIR__ . "/../controllers/authController.php";
 
 $auth = new AuthController($conn);
@@ -12,7 +12,7 @@ if (empty($_SESSION['csrf_token'])) {
 // Si ya tiene un error guardado
 if (isset($_SESSION['error_message'])) {
     $iniciado = true;
-    include "logout.php";    
+    include __DIR__ . "/logout.php";    
 }
 
 $error = "";
@@ -40,9 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 // Verificación de rol
                 if (isset($_SESSION["usuario_nivel"])) {
                     if ($_SESSION["usuario_nivel"] == 4 || $_SESSION["usuario_nivel"] == 1) {
-                        header("Location: dashboard.php");
+                        header("Location: /ITSAdata/dashboard");
                     } else {
-                        header("Location: listas.php");
+                        header("Location: /ITSAdata/listas");
                     }
                     exit;
                 } else {
@@ -72,8 +72,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     
-    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
 
     <style>
       .form-signin {

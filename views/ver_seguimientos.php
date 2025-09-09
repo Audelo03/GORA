@@ -9,16 +9,12 @@ require_once __DIR__ . "/../controllers/authController.php";
 require_once __DIR__ . "/../controllers/alumnoController.php";
 require_once __DIR__ . "/../models/Seguimiento.php";
 
-$page_title = "Historial de Seguimientos";
-include 'objects/header.php';
-
-
 $auth = new AuthController($conn);
 $auth->checkAuth();
 
 $id_alumno = filter_input(INPUT_GET, 'id_alumno', FILTER_VALIDATE_INT);
 if (!$id_alumno) {
-    header("Location: listas.php?error=invalid_id");
+    header("Location: /ITSAdata/listas?error=invalid_id");
     exit;
 }
 
@@ -26,9 +22,12 @@ $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId($id_alumno);
 
 if (!$alumno) {
-    header("Location: listas.php?error=alumno_not_found");
+    header("Location: /ITSAdata/listas?error=alumno_not_found");
     exit;
 }
+
+$page_title = "Historial de Seguimientos";
+include 'objects/header.php';
 
 $seguimientoModel = new Seguimiento($conn);
 $seguimientos = $seguimientoModel->getByAlumno($id_alumno);

@@ -5,8 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['usuario_id'])) {
-    
-    header("Location: ".$modificacion_ruta."../views/login.php");
+    header("Location: /ITSAdata/login");
     exit(); 
 }
 
@@ -50,12 +49,12 @@ if (isset($page_permissions[$currentPage])) {
 
     if (!in_array($userLevel, $allowedLevels)) {
         $_SESSION['error_message'] = "No tienes los permisos necesarios para acceder a esta página.";
-    header("Location: ".$modificacion_ruta."../views/login.php");
+        header("Location: /ITSAdata/login");
         exit();
     }
 } else {
     $_SESSION['error_message'] = "Acceso denegado a recurso no definido.";
-    header("Location: ".$modificacion_ruta."../views/login.php");
+    header("Location: /ITSAdata/login");
     exit();
 }
 

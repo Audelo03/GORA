@@ -1,15 +1,8 @@
 <?php
-if(!isset($_SESSION["usuario_id"])){
-
-session_start();
-
-
-}
-
+// Remove session_start() as it's already started in index.php
 session_unset();
 session_destroy();
 
-
-header("Location: login.php");
+header("Location: /ITSAdata/login");
 exit;
 ?>

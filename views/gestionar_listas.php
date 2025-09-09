@@ -1,5 +1,5 @@
 <?php
-session_start();
+// Remove session_start() as it's already started in index.php
 require_once __DIR__ . '/../controllers/authController.php';
 require_once __DIR__ . '/../controllers/alumnoController.php';
 require_once __DIR__ . '/../controllers/asistenciaController.php';
@@ -10,7 +10,7 @@ $auth->checkAuth();
 
 $id_grupo = isset($_GET['id_grupo']) ? (int)$_GET['id_grupo'] : 0;
 if ($id_grupo === 0) {
-    header('Location: dashboard.php');
+    header('Location: /ITSAdata/dashboard');
     exit();
 }
 

@@ -10,7 +10,7 @@ $tutores = $conn->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno
 $modalidades = $conn->query("SELECT id_modalidad, nombre FROM modalidades ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 $modificacion_ruta = "../";
 $page_title = "Grupos";
-include "../objects/header.php";
+include __DIR__ . "/../objects/header.php";
 ?>
 
 <div class="container mt-4">
@@ -100,7 +100,7 @@ include "../objects/header.php";
 </div>
 
 <?php
-include "../objects/footer.php";
+include __DIR__ . "/../objects/footer.php";
 
 ?><script>
     $(document).ready(function() {
@@ -108,7 +108,7 @@ include "../objects/footer.php";
 
         function cargarGrupos() {
 
-            $.get("../../controllers/gruposController.php?action=index", function(data) {
+            $.get("/ITSAdata/controllers/gruposController.php?action=index", function(data) {
                 console.log(data);
                 const grupos = data;
                  // Depuración
@@ -157,7 +157,7 @@ include "../objects/footer.php";
             } else {
                 console.log("Creando nuevo grupo");
             }
-            let url = id ? "../../controllers/gruposController.php?action=update" : "../../controllers/gruposController.php?action=store";
+            let url = id ? "/ITSAdata/controllers/gruposController.php?action=update" : "/ITSAdata/controllers/gruposController.php?action=store";
     
 
             $.post(url, $('#formGrupo').serialize())
@@ -216,7 +216,7 @@ include "../objects/footer.php";
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.post("../../controllers/gruposController.php?action=delete", { id: idParaEliminar }, function(response) {
+                    $.post("/ITSAdata/controllers/gruposController.php?action=delete", { id: idParaEliminar }, function(response) {
                         if (response.status === 'success') {
                             Swal.fire(
                                 '¡Eliminado!',

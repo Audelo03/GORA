@@ -5,7 +5,7 @@ $auth = new AuthController($conn);
 $auth->checkAuth();
 $modificacion_ruta = "../";
 $page_title = "Modalidades";
-include "../objects/header.php";
+include __DIR__ . "/../objects/header.php";
 ?>
 
 <div class="container mt-4">
@@ -53,7 +53,7 @@ include "../objects/header.php";
 </div>
 
 <?php
-include "../objects/footer.php";
+include __DIR__ . "/../objects/footer.php";
 
 ?>
 <script>
@@ -61,7 +61,7 @@ $(document).ready(function() {
     const modalidadModal = new bootstrap.Modal(document.getElementById('modalidadModal'));
 
     function cargarModalidades() {
-        $.get("../../controllers/modalidadesController.php?action=index", function(data) {
+        $.get("/ITSAdata/controllers/modalidadesController.php?action=index", function(data) {
             let rows = "";
             if (data && data.length > 0) {
                 data.forEach(m => {
@@ -98,7 +98,7 @@ $(document).ready(function() {
 
     $('#btnGuardar').click(function() {
         let id = $("#id_modalidad").val();
-        let url = id ? "../../controllers/modalidadesController.php?action=update" : "../../controllers/modalidadesController.php?action=store";
+        let url = id ? "/ITSAdata/controllers/modalidadesController.php?action=update" : "/ITSAdata/controllers/modalidadesController.php?action=store";
 
         $.post(url, $('#formModalidad').serialize())
             .done(function(response) {
@@ -154,7 +154,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 // ** MEJORA: Se usa 'action=delete' **
-                $.post("../../controllers/modalidadesController.php?action=delete", { id: idParaEliminar }, function(response) {
+                $.post("/ITSAdata/controllers/modalidadesController.php?action=delete", { id: idParaEliminar }, function(response) {
                     if (response.status === 'success') {
                         Swal.fire('¡Eliminado!', response.message, 'success');
                         cargarModalidades();

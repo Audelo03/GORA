@@ -1,5 +1,11 @@
 <?php
-session_start();
+// Remove session_start() as it's already started in index.php
+require_once __DIR__ . '/../controllers/authController.php';
+require_once __DIR__ . '/../config/db.php';
+
+$auth = new AuthController($conn);
+$auth->checkAuth();
+
 $page_title = "Dashboard";
 include 'objects/header.php';
 
@@ -40,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
   
-    fetch('estadisticas.php?modo=componente')
+    fetch('/ITSAdata/estadisticas?modo=componente')
         .then(response => response.text())
         .then(html => {
             document.getElementById('estadisticas-container').innerHTML = html;
@@ -52,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     // Cargar la lista de alumnos (añadimos ?modo=componente)
-    fetch('listas.php?modo=componente')
+    fetch('/ITSAdata/listas?modo=componente')
         .then(response => response.text())
         .then(html => {
             document.getElementById('lista-alumnos-container').innerHTML = html;

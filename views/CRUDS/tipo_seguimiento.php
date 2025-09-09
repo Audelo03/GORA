@@ -5,7 +5,7 @@ $auth = new AuthController($conn);
 $auth->checkAuth();
 $page_title = "Seguimientos";
 $modificacion_ruta = "../";
-include "../objects/header.php";
+include __DIR__ . "/../objects/header.php";
 ?>
 
     <div class="container">
@@ -52,7 +52,7 @@ include "../objects/header.php";
     </div>
 
     <?php
-include "../objects/footer.php";
+include __DIR__ . "/../objects/footer.php";
 
 ?>
     <script>
@@ -60,7 +60,7 @@ include "../objects/footer.php";
         const modal = new bootstrap.Modal(document.getElementById('tipoSeguimientoModal'));
 
         function cargarTipos() {
-            $.get("../../controllers/tipoSeguimientoController.php?action=index", function(data) {
+            $.get("/ITSAdata/controllers/tipoSeguimientoController.php?action=index", function(data) {
                 const tipos = data;
                 let rows = "";
                 if (tipos.length === 0) {
@@ -99,7 +99,7 @@ include "../objects/footer.php";
             const miModal = document.getElementById('tipoSeguimientoModal');
                 
             const id = $("#id_tipo_seguimiento").val();
-            const url = id ? `../../controllers/tipoSeguimientoController.php?action=update` : `../../controllers/tipoSeguimientoController.php?action=store`;
+            const url = id ? `/ITSAdata/controllers/tipoSeguimientoController.php?action=update` : `/ITSAdata/controllers/tipoSeguimientoController.php?action=store`;
             const data = $('#formTipo').serialize();
 
             $.post(url, data).done(function(response) {
@@ -124,7 +124,7 @@ include "../objects/footer.php";
 
         $("#tiposBody").on('click', '.btn-editar', function() {
             const id = $(this).data('id');
-            $.get(`../../controllers/tipoSeguimientoController.php?action=show&id=${id}`, function(data) {
+            $.get(`/ITSAdata/controllers/tipoSeguimientoController.php?action=show&id=${id}`, function(data) {
                 console.log(data);
                 const tipo = (data);
                 $("#id_tipo_seguimiento").val(tipo.id_tipo_seguimiento);
@@ -153,7 +153,7 @@ include "../objects/footer.php";
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.post(`../../controllers/tipoSeguimientoController.php?action=delete`, { id: id }, function(response) {
+                    $.post(`/ITSAdata/controllers/tipoSeguimientoController.php?action=delete`, { id: id }, function(response) {
                         Swal.fire(
                             '¡Eliminado!',
                             'El registro ha sido eliminado.',

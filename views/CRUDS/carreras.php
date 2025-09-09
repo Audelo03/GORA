@@ -8,7 +8,7 @@ $auth->checkAuth();
 $coordinadores = $conn->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno) as nombre_completo FROM usuarios WHERE niveles_usuarios_id_nivel_usuario = 2 ORDER BY nombre_completo")->fetchAll(PDO::FETCH_ASSOC); 
 $modificacion_ruta= "../";
 $page_title = "Carreras";
-include "../objects/header.php";
+include __DIR__ . "/../objects/header.php";
 ?>
 
 <div class="container mt-4">
@@ -64,14 +64,15 @@ include "../objects/header.php";
         </div>
     </div>
 </div>
-<?php include "../objects/footer.php";?>
+<?php include __DIR__ . "/../objects/footer.php";?>
 
 <script>
-$(document).ready(function() {
-    const carreraModal = new bootstrap.Modal(document.getElementById('carreraModal'));
+window.addEventListener('load', function() {
+    $(document).ready(function() {
+        const carreraModal = new bootstrap.Modal(document.getElementById('carreraModal'));
 
     function cargarCarreras() {
-        $.get("../../controllers/carrerasController.php?action=index", function(data) {
+        $.get("/ITSAdata/controllers/carrerasController.php?action=index", function(data) {
             let carreras = JSON.parse(data);
             let rows = "";
             if(carreras.length > 0) {
@@ -112,7 +113,7 @@ $(document).ready(function() {
 
     $('#btnGuardar').click(function() {
         let id = $("#id_carrera").val();
-        let url = id ? "../../controllers/carrerasController.php?action=update" : "../../controllers/carrerasController.php?action=store";
+        let url = id ? "/ITSAdata/controllers/carrerasController.php?action=update" : "/ITSAdata/controllers/carrerasController.php?action=store";
         
         $.post(url, $('#formCarrera').serialize(), function() {
             cargarCarreras();
@@ -156,7 +157,7 @@ $(document).ready(function() {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../controllers/carrerasController.php?action=delete", { id: idParaEliminar }, function(response) {
+            $.post("/ITSAdata/controllers/carrerasController.php?action=delete", { id: idParaEliminar }, function(response) {
                 if (response.status === 'success') {
                     Swal.fire(
                         '¡Eliminada!',
@@ -184,6 +185,7 @@ $(document).ready(function() {
 });
 
     cargarCarreras();
-});
+    });
+}); // Close window load
 </script>
 

@@ -1,0 +1,32 @@
+RewriteEngine On
+
+# Redirect all requests to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Prevent access to sensitive files
+<Files "composer.json">
+    Require all denied
+</Files>
+
+<Files "composer.lock">
+    Require all denied
+</Files>
+
+<Files ".htaccess">
+    Require all denied
+</Files>
+
+# Prevent access to sensitive directories
+<Directory "config">
+    Require all denied
+</Directory>
+
+<Directory "models">
+    Require all denied
+</Directory>
+
+<Directory "controllers">
+    Require all denied
+</Directory>
