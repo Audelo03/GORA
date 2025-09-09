@@ -24,8 +24,11 @@ class Alumno {
         $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo, g.usuarios_id_usuario_tutor AS id_tutor
                 FROM alumnos a
                 LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
-                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo";
-         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
+                ORDER BY a.nombre ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getById($id) {
@@ -37,6 +40,15 @@ class Alumno {
     }
 
     public function create($data) {
+        // Validaciones básicas de entrada
+        if (empty($data['nombre']) || empty($data['apellido_paterno']) || empty($data['matricula'])) {
+            throw new InvalidArgumentException("Los campos nombre, apellido paterno y matrícula son obligatorios.");
+        }
+        
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException("El formato del email no es válido.");
+        }
+        
         $columns = array_keys($data);
         $placeholders = array_map(fn($col) => ":$col", $columns);
 
@@ -45,7 +57,16 @@ class Alumno {
         $stmt = $this->conn->prepare($sql);
 
         foreach ($data as $key => $value) {
-            $clean_value = htmlspecialchars(strip_tags((string)$value));
+            // Sanitización mejorada por tipo de campo
+            if (in_array($key, ['nombre', 'apellido_paterno', 'apellido_materno'])) {
+                $clean_value = htmlspecialchars(strip_tags(trim((string)$value)), ENT_QUOTES, 'UTF-8');
+            } elseif ($key === 'email' && !empty($value)) {
+                $clean_value = filter_var(trim($value), FILTER_SANITIZE_EMAIL);
+            } elseif (in_array($key, ['carreras_id_carrera', 'grupos_id_grupo', 'estatus'])) {
+                $clean_value = (int)$value;
+            } else {
+                $clean_value = htmlspecialchars(strip_tags(trim((string)$value)), ENT_QUOTES, 'UTF-8');
+            }
             $stmt->bindValue(":$key", $clean_value);
         }
 
@@ -53,34 +74,53 @@ class Alumno {
             return $this->conn->lastInsertId();
         }
 
-        printf("Error: %s.\n", $stmt->errorInfo()[2]);
+        error_log("Error en Alumno::create: " . implode(', ', $stmt->errorInfo()));
         return false;
     }
 
     public function update($id, $data) {
-       $set_parts = [];
-       foreach ($data as $key => $value) {
-           $set_parts[] = "$key = :$key";
-       }
+        // Validar ID
+        $id = (int)$id;
+        if ($id <= 0) {
+            throw new InvalidArgumentException("ID de alumno no válido.");
+        }
+        
+        // Validaciones de entrada
+        if (isset($data['email']) && !empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException("El formato del email no es válido.");
+        }
+        
+        $set_parts = [];
+        foreach ($data as $key => $value) {
+            $set_parts[] = "$key = :$key";
+        }
 
-       $set_clause = implode(", ", $set_parts);
-       $query = "UPDATE " . $this->table . " SET " . $set_clause . " WHERE id_alumno = :id_alumno";
-       $stmt = $this->conn->prepare($query);
+        $set_clause = implode(", ", $set_parts);
+        $query = "UPDATE " . $this->table . " SET " . $set_clause . " WHERE id_alumno = :id_alumno";
+        $stmt = $this->conn->prepare($query);
 
-       foreach ($data as $key => $value) {
-           $clean_value = htmlspecialchars(strip_tags((string)$value));
-           $stmt->bindValue(":$key", $clean_value);
-       }
+        foreach ($data as $key => $value) {
+            // Sanitización mejorada por tipo de campo
+            if (in_array($key, ['nombre', 'apellido_paterno', 'apellido_materno'])) {
+                $clean_value = htmlspecialchars(strip_tags(trim((string)$value)), ENT_QUOTES, 'UTF-8');
+            } elseif ($key === 'email' && !empty($value)) {
+                $clean_value = filter_var(trim($value), FILTER_SANITIZE_EMAIL);
+            } elseif (in_array($key, ['carreras_id_carrera', 'grupos_id_grupo', 'estatus'])) {
+                $clean_value = (int)$value;
+            } else {
+                $clean_value = htmlspecialchars(strip_tags(trim((string)$value)), ENT_QUOTES, 'UTF-8');
+            }
+            $stmt->bindValue(":$key", $clean_value);
+        }
        
-       $id = htmlspecialchars(strip_tags($id));
-       $stmt->bindParam(":id_alumno", $id);
+        $stmt->bindParam(":id_alumno", $id, PDO::PARAM_INT);
        
-       if ($stmt->execute()) {
-           return true;
-       }
+        if ($stmt->execute()) {
+            return $stmt->rowCount() > 0;
+        }
 
-       printf("Error: %s.\n", $stmt->errorInfo()[2]);
-       return false;
+        error_log("Error en Alumno::update: " . implode(', ', $stmt->errorInfo()));
+        return false;
     }
 
     public function delete($id) {
@@ -113,12 +153,37 @@ class Alumno {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function listByGroupId($group_id) {
-        $sql = "SELECT * FROM " . $this->table . " WHERE grupos_id_grupo = :group_id";
+    public function listByGroupId($group_id, $limit = null, $offset = 0) {
+        $sql = "SELECT a.*, c.nombre AS carrera_nombre, g.nombre AS grupo_nombre 
+                FROM " . $this->table . " a
+                LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
+                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
+                WHERE a.grupos_id_grupo = :group_id
+                ORDER BY a.nombre ASC";
+        
+        if ($limit) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":group_id", $group_id, PDO::PARAM_INT);
+        
+        if ($limit) {
+            $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
+            $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function countByGroupId($group_id) {
+        $sql = "SELECT COUNT(*) as total FROM " . $this->table . " WHERE grupos_id_grupo = :group_id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":group_id", $group_id, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
     }
     
     public function listByCarreraId($career_id) {

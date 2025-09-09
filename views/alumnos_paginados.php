@@ -85,7 +85,7 @@ try {
     }
 
     if (empty($dataParaRenderizar) && $totalRegistros === 0) {
-        echo '<div class="alert alert-warning">No se encontraron resultados para "'.htmlspecialchars($terminoBusqueda).'".</div>';
+        echo '<div class="alert alert-warning">No se encontraron resultados para "'.htmlspecialchars($terminoBusqueda, ENT_QUOTES, 'UTF-8').'".</div>';
     }
 
     $html = ob_get_clean();
@@ -98,12 +98,12 @@ try {
     ]);
 
 } catch (Throwable $e) {
+    // Log del error para debugging interno
+    error_log("Error en alumnos_paginados.php: " . $e->getMessage() . " en " . $e->getFile() . " línea " . $e->getLine());
+    
     http_response_code(500); // Código de error del servidor
     header('Content-Type: application/json');
     echo json_encode([
-        'error' => 'Ocurrió un error en el servidor.',
-        'message' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine()
+        'error' => 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo.'
     ]);
 }
