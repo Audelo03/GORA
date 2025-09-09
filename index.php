@@ -1,66 +1,97 @@
 <?php
-// Simple routing system for ITSADATA
+/**
+ * SISTEMA DE ENRUTAMIENTO PRINCIPAL - ITSADATA
+ * 
+ * Este archivo maneja todas las rutas de la aplicación usando URLs limpias.
+ * Procesa las solicitudes HTTP y redirige a las vistas correspondientes.
+ */
+
+// Iniciar sesión para mantener el estado del usuario
 session_start();
 
-// Include database connection
+// Incluir conexión a la base de datos
 require_once 'config/db.php';
 
-// Include utility functions
+// Incluir funciones utilitarias del sistema
 require_once 'public/functions_util.php';
 
-// Simple routing
+// ========================================
+// PROCESAMIENTO DE RUTAS
+// ========================================
+
+// Obtener la ruta de la URL solicitada
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = ltrim($path, '/');
 
-// Remove base path if exists
+// Remover la ruta base del proyecto si existe
 $basePath = dirname($_SERVER['SCRIPT_NAME']);
 if ($basePath !== '/') {
     $path = substr($path, strlen($basePath));
 }
 
-// Remove leading slash again after base path removal
+// Remover barra inicial después de remover la ruta base
 $path = ltrim($path, '/');
 
-// Handle .php files by removing .php extension
+// Manejar archivos .php removiendo la extensión
 if (substr($path, -4) === '.php') {
     $path = substr($path, 0, -4);
 }
 
-// If no path, default to login
+// Si no hay ruta, redirigir al login por defecto
 if (empty($path)) {
     $path = 'login';
 }
 
-// Map paths to view files
+// ========================================
+// MAPEO DE RUTAS A VISTAS
+// ========================================
+
+/**
+ * Mapeo de rutas URL limpias a archivos de vista
+ * Permite URLs amigables sin extensiones .php
+ */
 $viewMap = [
+    // Páginas principales
     'login' => 'views/login.php',
     'dashboard' => 'views/dashboard.php',
+    'profile' => 'views/profile.php',
+    'logout' => 'views/logout.php',
+    
+    // CRUDs de gestión
     'alumnos' => 'views/CRUDS/alumnos.php',
-    'alumnos-paginados' => 'views/alumnos_paginados.php',
-    'alumnos_paginados' => 'views/alumnos_paginados.php',
+    'usuarios' => 'views/CRUDS/usuarios.php',
     'carreras' => 'views/CRUDS/carreras.php',
     'grupos' => 'views/CRUDS/grupos.php',
     'modalidades' => 'views/CRUDS/modalidades.php',
     'tipo-seguimiento' => 'views/CRUDS/tipo_seguimiento.php',
-    'usuarios' => 'views/CRUDS/usuarios.php',
+    
+    // Páginas de funcionalidad
+    'alumnos-paginados' => 'views/alumnos_paginados.php',
+    'alumnos_paginados' => 'views/alumnos_paginados.php',
     'asistencia' => 'views/asistencia.php',
     'estadisticas' => 'views/estadisticas.php',
     'listas' => 'views/listas.php',
     'seguimientos' => 'views/seguimientos.php',
+    
+    // Gestión de seguimientos
     'crear-seguimiento' => 'views/crear_seguimiento.php',
     'crear_seguimiento' => 'views/crear_seguimiento.php',
     'editar-seguimiento' => 'views/editar_seguimiento.php',
     'editar_seguimiento' => 'views/editar_seguimiento.php',
     'ver-seguimientos' => 'views/ver_seguimientos.php',
     'ver_seguimientos' => 'views/ver_seguimientos.php',
+    
+    // Gestión de listas
     'gestionar-listas' => 'views/gestionar_listas.php',
     'gestionar_listas' => 'views/gestionar_listas.php',
-    'guardar_asistencia' => 'views/guardar_asistencia.php',
-    'profile' => 'views/profile.php',
-    'logout' => 'views/logout.php'
+    'guardar_asistencia' => 'views/guardar_asistencia.php'
 ];
 
-// Check if path exists in view map
+// ========================================
+// CARGA DE VISTAS
+// ========================================
+
+// Verificar si la ruta existe en el mapeo
 if (isset($viewMap[$path])) {
     $viewFile = $viewMap[$path];
     if (file_exists($viewFile)) {
@@ -69,16 +100,19 @@ if (isset($viewMap[$path])) {
     }
 }
 
-// Try to load view directly
+// Intentar cargar la vista directamente
 $viewFile = "views/{$path}.php";
 if (file_exists($viewFile)) {
     include $viewFile;
     exit;
 }
 
-// 404 Not Found
+// ========================================
+// PÁGINA 404 - NO ENCONTRADA
+// ========================================
+
 http_response_code(404);
-echo "<h1>404 - Page Not Found</h1>";
-echo "<p>The page you requested could not be found.</p>";
-echo "<a href='/'>Go to Home</a>";
+echo "<h1>404 - Página No Encontrada</h1>";
+echo "<p>La página que solicitaste no pudo ser encontrada.</p>";
+echo "<a href='/'>Ir al Inicio</a>";
 ?>

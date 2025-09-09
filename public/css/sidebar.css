@@ -1,4 +1,8 @@
+/* ========================================
+   ESTILOS DEL SIDEBAR - SISTEMA GORA
+   ======================================== */
 
+/* Contenedor principal del sidebar */
 #app-sidebar {
   width: 260px;
   background-color: #111827; 
@@ -6,43 +10,33 @@
   padding: 1.25rem !important;
   display: flex;
   flex-direction: column;
-}
-
-#app-sidebar {
   overflow: hidden;
 }
 
+/* Contenedor principal del contenido */
 #app-content {
   margin-left: 260px;
   transition: margin-left 0.2s ease-in-out;
 }
-#app-content .collapsed{
 
- transition: margin-left 10s ease-in-out;
-
-
-
-
-
-}
-
-
+/* Título del sidebar */
 #app-sidebar .fs-5 {
   font-weight: 700 !important;
   letter-spacing: 1px;
   color: #fff;
 }
 
+/* Botón para colapsar/expandir sidebar */
 #btn-toggle-sidebar {
   border-radius: 0.375rem;
 }
-#app-sidebar .slow{
 
-
-transition: width 10s ease-in-out;
-
+/* Contenedor de navegación con transición lenta */
+#app-sidebar .slow {
+  transition: width 10s ease-in-out;
 }
 
+/* Estilos base de los enlaces de navegación */
 #app-sidebar .nav-link {
   color: #aeb2d5;
   font-weight: 500;
@@ -54,20 +48,24 @@ transition: width 10s ease-in-out;
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
+/* Iconos de los enlaces */
 #app-sidebar .nav-link i {
   font-size: 1.1rem;
   transition: transform 0.5s ease;
 }
 
+/* Efecto hover en los enlaces */
 #app-sidebar .nav-link:hover {
   background-color: #1f2937; /* Fondo sutil al pasar el mouse */
   color: #ffffff;
 }
 
+/* Efecto hover en los iconos */
 #app-sidebar .nav-link:hover i {
   transform: scale(1.1); /* Agranda ligeramente el icono */
 }
 
+/* Estilo del enlace activo */
 #app-sidebar .nav-link.active {
   background-color: #3b82f6; /* Color de acento para el enlace activo */
   color: #ffffff !important;
@@ -76,76 +74,86 @@ transition: width 10s ease-in-out;
   border-left: 4px solid #1d4ed8;
 }
 
+/* Icono del enlace activo */
 #app-sidebar .nav-link.active i {
   color: #ffffff !important;
   transform: scale(1.1);
 }
 
+/* Ocultar separadores horizontales */
 #app-sidebar hr {
-  display: none; /* Ocultamos el <hr> para usar un borde en su lugar */
+  display: none;
 }
 
+/* Información del usuario en la parte inferior */
 .user-info {
   margin-top: auto; /* Empuja esta sección hacia abajo */
   padding-top: 1.25rem;
   border-top: 1px solid #374151; /* Separador sutil */
 }
 
+/* Botón de salir */
 #app-sidebar .btn-outline-light {
     border-color: #4b5563;
     color: #d1d5db;
 }
+
 #app-sidebar .btn-outline-light:hover {
     background-color: #dc3545; /* Color rojo para la acción de salir */
     border-color: #dc3545;
     color: #fff;
 }
 
-#navbar1 .navbar{
-  transition: transform 10s ease;
+/* ========================================
+   ESTILOS DEL SIDEBAR COLAPSADO
+   ======================================== */
 
-
-
-}
-
+/* Sidebar colapsado */
 #app-sidebar.collapsed {
   width: 90px;
   padding: 1.25rem 0.5rem !important; 
 }
 
+/* Ocultar texto cuando está colapsado */
 #app-sidebar.collapsed .sidebar-text,
 #app-sidebar.collapsed .fs-5,
 #app-sidebar.collapsed .small {
   display: none;
 }
 
+/* Centrar enlaces cuando está colapsado */
 #app-sidebar.collapsed .nav-link {
   justify-content: center;
   padding: 0.75rem;
 }
 
+/* Iconos más grandes cuando está colapsado */
 #app-sidebar.collapsed .nav-link i {
   margin-right: 0 !important;
-  font-size: 1.5rem; /* Iconos más grandes cuando está colapsado */
+  font-size: 1.5rem;
 }
 
+/* Ocultar información del usuario al colapsar */
 #app-sidebar.collapsed .user-info {
-  display: none !important; /* Oculta la info de usuario al colapsar */
+  display: none !important;
 }
 
+/* Ocultar texto del botón de salir */
 #app-sidebar.collapsed a[href*="logout.php"] span {
   display: none;
 }
+
 #app-sidebar.collapsed a[href*="logout.php"] {
   justify-content: center;
 }
 
+/* Ajustar margen del contenido cuando sidebar está colapsado */
 #app-content.collapsed {
   margin-left: 90px;
   transition: margin-left 1s ease-out;
 }
 
+/* Centrar botón de toggle cuando está colapsado */
 #app-sidebar.collapsed .d-flex.justify-content-between {
   justify-content: center !important;
 }
-

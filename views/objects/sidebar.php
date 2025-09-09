@@ -18,9 +18,14 @@ if (empty($current_page)) {
 }
 
 // Debug: Mostrar la página actual (remover en producción)
-echo "<!-- Página actual: " . $current_page . " -->";
+// echo "<!-- Página actual: " . $current_page . " -->";
 
 if (!function_exists('active')) {
+  /**
+   * Función para determinar si un enlace del sidebar está activo
+   * @param array|string $pages - Páginas a verificar
+   * @return string - Clase CSS 'active' si coincide, cadena vacía si no
+   */
   function active($pages) {
     global $current_page;
     $pages_array = (array)$pages;

@@ -1,4 +1,11 @@
 <?php
+/**
+ * CONTROLADOR DE GRUPOS - ITSADATA
+ * 
+ * Maneja todas las operaciones CRUD relacionadas con los grupos
+ * de estudiantes en el sistema.
+ */
+
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../models/Grupo.php";
 
@@ -10,17 +17,29 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 class GruposController {
     private $grupo;
 
+    /**
+     * Constructor del controlador de grupos
+     * @param PDO $conn - Conexión a la base de datos
+     */
     public function __construct($conn) {
         $this->grupo = new Grupo($conn);
     }
 
-    // Obtiene todos los grupos y los devuelve como JSON.
+    /**
+     * Obtiene todos los grupos y los devuelve como JSON
+     * @return void - Imprime JSON con todos los grupos
+     */
     public function index() {
         echo json_encode($this->grupo->getAll());
     }
 
+    /**
+     * Obtiene grupos paginados con búsqueda
+     * @return void - Imprime JSON con datos paginados
+     */
     public function paginated() {
         try {
+            // Obtener parámetros de paginación
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
             $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -57,6 +76,10 @@ class GruposController {
         }
     }
 
+    /**
+     * Crea un nuevo grupo
+     * @return array - Respuesta con estado y mensaje
+     */
     public function store() {
         // Asignar datos del formulario al objeto
         error_log("Entrando al metodo store del controlador!!!!".print_r($_POST,true));
@@ -67,7 +90,7 @@ class GruposController {
         $this->grupo->modalidades_id_modalidad = $_POST['modalidades_id_modalidad'];
         $this->grupo->usuarios_id_usuario_movimiento = $_SESSION['usuario_id'] ?? null;
 
-        // Intentar crear el grupo y devolver una respuesta JSON.
+        // Intentar crear el grupo y devolver una respuesta JSON
         try {
             $this->grupo->create();
             return ["status" => "success", "message" => "Grupo creado exitosamente."];
@@ -76,6 +99,10 @@ class GruposController {
         }
     }
     
+    /**
+     * Actualiza un grupo existente
+     * @return array - Respuesta con estado y mensaje
+     */
     public function update() {
         error_log("Entrando al metodo update del controlador!!!!".print_r($_POST,true));
         // Asignar datos del formulario al objeto
@@ -87,7 +114,7 @@ class GruposController {
         $this->grupo->modalidades_id_modalidad = $_POST['modalidades_id_modalidad'];
         $this->grupo->usuarios_id_usuario_movimiento = $_SESSION['usuario_id'] ?? null;
 
-        // Intentar actualizar y devolver una respuesta JSON.
+        // Intentar actualizar y devolver una respuesta JSON
         try {
             $this->grupo->update();
             return ["status" => "success", "message" => "Grupo actualizado exitosamente."];
@@ -96,10 +123,14 @@ class GruposController {
         }
     }
 
-    // Elimina un grupo.
+    /**
+     * Elimina un grupo
+     * @param int $id - ID del grupo a eliminar
+     * @return array - Respuesta con estado y mensaje
+     */
     public function delete($id) {
         $this->grupo->id_grupo = $id;
-        // Intentar eliminar y devolver una respuesta JSON.
+        // Intentar eliminar y devolver una respuesta JSON
         try {
             $this->grupo->delete();
             return ["status" => "success", "message" => "Grupo eliminado exitosamente."];
@@ -109,25 +140,33 @@ class GruposController {
     }
 }
 
-// --- Enrutador de Acciones ---
-// Define el tipo de contenido para todas las respuestas
+// ========================================
+// ENRUTADOR DE ACCIONES
+// ========================================
+
+// Definir el tipo de contenido para todas las respuestas
 header('Content-Type: application/json');
+
+// Obtener la acción solicitada y crear instancia del controlador
 $action = $_GET['action'] ?? null;
 $controller = new GruposController($conn);
 $response = [];
 
-// Usamos el método de la petición para decidir qué hacer
+// Obtener el método HTTP de la petición
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Procesar solicitudes GET
 if ($method === 'GET' && $action === 'index') {
-    // La función index ya hace 'echo', por lo que no necesita ser capturada.
+    // La función index ya hace 'echo', no necesita ser capturada
     $controller->index();
     exit;
 } elseif ($method === 'GET' && $action === 'paginated') {
-    // La función paginated ya hace 'echo', por lo que no necesita ser capturada.
+    // La función paginated ya hace 'echo', no necesita ser capturada
     $controller->paginated();
     exit;
-} elseif ($method === 'POST') {
+} 
+// Procesar solicitudes POST
+elseif ($method === 'POST') {
     switch ($action) {
         case 'store':
             $response = $controller->store($_POST);
@@ -136,7 +175,7 @@ if ($method === 'GET' && $action === 'index') {
             $response = $controller->update($_POST);
             break;
         case 'delete':
-            // Asegurarse de que el ID se está enviando
+            // Verificar que el ID se esté enviando
             if (isset($_POST['id'])) {
                 $response = $controller->delete($_POST['id']);
             } else {
@@ -148,13 +187,14 @@ if ($method === 'GET' && $action === 'index') {
             break;
     }
 } else {
+    // Manejar métodos HTTP no soportados
     if($action){
          $response = ["status" => "error", "message" => "Método HTTP no soportado para esta acción."];
     }
-    // Si no hay acción, no hacer nada para evitar errores innecesarios.
+    // Si no hay acción, no hacer nada para evitar errores innecesarios
 }
 
-// Solo imprimir la respuesta si no está vacía
+// Imprimir la respuesta solo si no está vacía
 if (!empty($response)) {
     echo json_encode($response);
 }

@@ -1,8 +1,16 @@
 <?php
+/**
+ * MODELO DE GRUPO - ITSADATA
+ * 
+ * Maneja todas las operaciones de base de datos relacionadas
+ * con los grupos de estudiantes.
+ */
+
 class Grupo {
     private $conn;
     private $table_name = "grupos";
 
+    // Propiedades del grupo
     public $id_grupo;
     public $nombre;
     public $estatus;
@@ -11,11 +19,18 @@ class Grupo {
     public $modalidades_id_modalidad;
     public $usuarios_id_usuario_movimiento;
 
+    /**
+     * Constructor del modelo de grupo
+     * @param PDO $db - Conexión a la base de datos
+     */
     public function __construct($db) {
         $this->conn = $db;
     }
 
-    // Leer todos los grupos
+    /**
+     * Obtiene todos los grupos con información relacionada
+     * @return array - Array con todos los grupos
+     */
     public function getAll() {
         $query = "SELECT 
                     g.id_grupo, 
@@ -38,6 +53,13 @@ class Grupo {
          return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Obtiene grupos paginados con búsqueda
+     * @param int $offset - Desplazamiento para la paginación
+     * @param int $limit - Límite de registros por página
+     * @param string $search - Término de búsqueda
+     * @return array - Array con grupos paginados
+     */
     public function getAllPaginated($offset, $limit, $search = '') {
         $sql = "SELECT 
                     g.id_grupo, 
@@ -79,6 +101,11 @@ class Grupo {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Cuenta el total de grupos con filtro de búsqueda
+     * @param string $search - Término de búsqueda
+     * @return int - Total de grupos que coinciden con la búsqueda
+     */
     public function countAll($search = '') {
         $sql = "SELECT COUNT(*) FROM " . $this->table_name . " g
                 LEFT JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
@@ -105,7 +132,10 @@ class Grupo {
         return (int)$stmt->fetchColumn();
     }
     
-    // Leer un solo grupo por ID
+    /**
+     * Lee un solo grupo por su ID
+     * @return void - Asigna los valores a las propiedades del objeto
+     */
     public function readOne() {
         $query = "SELECT * FROM " . $this->table_name . " WHERE id_grupo = ? LIMIT 0,1";
         $stmt = $this->conn->prepare($query);
@@ -120,7 +150,11 @@ class Grupo {
         $this->modalidades_id_modalidad = $row['modalidades_id_modalidad'];
     }
 
-    // Crear un nuevo grupo
+    /**
+     * Crea un nuevo grupo en la base de datos
+     * @return bool - True si se creó exitosamente
+     * @throws Exception - Si hay error en la creación
+     */
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " SET nombre=:nombre, estatus=:estatus, usuarios_id_usuario_tutor=:tutor, carreras_id_carrera=:carrera, modalidades_id_modalidad=:modalidad, usuarios_id_usuario_movimiento=:usuario_movimiento";
         
@@ -147,8 +181,12 @@ class Grupo {
             throw new Exception("Error al crear el grupo: " . $e->getMessage());
         }
     }
-    // Actualizar un grupo
-   public function update() {
+    /**
+     * Actualiza un grupo existente en la base de datos
+     * @return bool - True si se actualizó exitosamente
+     * @throws Exception - Si hay error en la actualización
+     */
+    public function update() {
         $query = "UPDATE " . $this->table_name . " SET nombre=:nombre, estatus=:estatus, usuarios_id_usuario_tutor=:tutor, carreras_id_carrera=:carrera, modalidades_id_modalidad=:modalidad, usuarios_id_usuario_movimiento=:usuario_movimiento WHERE id_grupo = :id";
         
         try {
@@ -178,7 +216,11 @@ class Grupo {
     }
 
 
-    // Eliminar un grupo
+    /**
+     * Elimina un grupo de la base de datos
+     * @return bool - True si se eliminó exitosamente
+     * @throws Exception - Si hay error en la eliminación
+     */
     public function delete() {
         $query = "DELETE FROM " . $this->table_name . " WHERE id_grupo = :id";
         
