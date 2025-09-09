@@ -131,24 +131,7 @@ $datos = $estadisticasController->obtenerEstadisticas();
     </div>
 
     <!-- BOTONES DE EXPORTACIÓN -->
-     <?php if (!$is_component_mode): ?>
-    <div class="row mt-4">
-        <div class="col-12 text-center">
-            <button class="btn btn-success btn-lg mx-2" onclick="exportarTodoA_Excel('reporte_estadisticas_completo.xlsx')">
-                <i class="fas fa-file-excel"></i> Exportar a Excel
-            </button>
-            <button class="btn btn-info btn-lg mx-2" onclick="exportarTodoA_CSV('reporte_estadisticas_completo.csv')">
-                <i class="fas fa-file-csv"></i> Exportar a CSV
-            </button>
-            <button id="exportPdfBtn" class="btn btn-danger btn-lg mx-2" onclick="exportarTodoA_PDF('reporte_graficas.pdf')">
-                <i class="fas fa-file-pdf"></i> Exportar Gráficas a PDF
-            </button>
-            <button class="btn btn-warning btn-lg mx-2" onclick="exportarGraficasComoImagenes()">
-                <i class="fas fa-image"></i> Exportar Gráficas como PNG
-            </button>
-        </div>
-    </div>
-    <?php endif; ?>
+    
 
     <!-- Gráficas Principales -->
     <div class="row mt-4">
@@ -307,7 +290,31 @@ $datos = $estadisticasController->obtenerEstadisticas();
         </div>
     </div>
 </div>
-
+<?php if (!$is_component_mode): ?>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0"><i class="bi bi-box-arrow-down"></i> Exportar</h4>
+                </div>
+                <div class="card-body text-center">
+                    <button class="btn btn-success btn-lg mx-2" onclick="exportarTodoA_Excel('reporte_estadisticas_completo.xlsx')">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                    <button class="btn btn-info btn-lg mx-2" onclick="exportarTodoA_CSV('reporte_estadisticas_completo.csv')">
+                        <i class="fas fa-file-csv"></i> CSV
+                    </button>
+                    <button id="exportPdfBtn" class="btn btn-danger btn-lg mx-2" onclick="exportarTodoA_PDF('reporte_graficas.pdf')">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    <button class="btn btn-warning btn-lg mx-2" onclick="exportarGraficasComoImagenes()">
+                        <i class="fas fa-image"></i> PNG
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 <!-- Estilos y librerías necesarias -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
@@ -449,7 +456,7 @@ async function exportarTodoA_PDF(nombreArchivo) {
     pdf.save(nombreArchivo);
 
     exportButton.disabled = false;
-    exportButton.innerHTML = '<i class="fas fa-file-pdf"></i> Exportar Gráficas a PDF';
+    exportButton.innerHTML = '<i class="fas fa-file-pdf"></i>PDF';
 }
 
 // --- FUNCIÓN DE EXPORTACIÓN A EXCEL ---
