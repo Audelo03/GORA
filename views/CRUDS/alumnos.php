@@ -13,11 +13,25 @@ include __DIR__ . "/../objects/header.php"
 ?>
 
 
-    <div class="container">
-        
-        <button class="btn btn-success mb-3" id="btnNuevoAlumno">
-            <i class="bi bi-plus-circle"></i> Agregar Alumno
-        </button>
+    <div class="container mt-4">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <button class="btn btn-success" id="btnNuevoAlumno">
+                    <i class="bi bi-plus-circle"></i> Agregar Alumno
+                </button>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar alumnos...">
+                    <button class="btn btn-outline-secondary" type="button" id="btnSearch">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary" type="button" id="btnClear">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <div class="table-responsive">
             <table id="alumnosTable" class="table table-bordered table-striped">
@@ -35,6 +49,29 @@ include __DIR__ . "/../objects/header.php"
                 <tbody id="alumnosBody"></tbody>
             </table>
         </div>
+
+        <!-- Controles de paginación -->
+        <nav aria-label="Paginación de alumnos" class="mt-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <label for="itemsPerPage" class="form-label me-2 mb-0">Mostrar:</label>
+                        <select class="form-select form-select-sm" id="itemsPerPage" style="width: auto;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span class="ms-2 text-muted" id="paginationInfo">Mostrando 0 de 0 registros</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="pagination justify-content-end mb-0" id="paginationControls">
+                        <!-- Los controles se generarán dinámicamente -->
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
 
     <div class="modal fade" id="alumnoModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
@@ -110,51 +147,144 @@ include __DIR__ . "/../objects/header.php"
    <?php include __DIR__ . "/../objects/footer.php";?> <script>
     window.addEventListener('load', function() {
         const alumnoModal = new bootstrap.Modal(document.getElementById('alumnoModal'));
-        let alumnosTable;
+        
+        // Variables de paginación
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let totalItems = 0;
+        let totalPages = 0;
+        let searchTerm = '';
+        let isLoading = false;
 
-        function cargarAlumnos() {
-            $.get("/ITSAdata/controllers/alumnoController.php?action=index", function(data) {
-                const alumnos = JSON.parse(data);
+        // Función para cargar alumnos con paginación
+        function cargarAlumnos(page = 1, search = '') {
+            if (isLoading) return;
+            
+            isLoading = true;
+            currentPage = page;
+            searchTerm = search;
+            
+            // Mostrar loading
+            $('#alumnosBody').html('<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
+            
+            const params = new URLSearchParams({
+                action: 'paginated',
+                page: page,
+                limit: itemsPerPage,
+                search: search
+            });
+            
+            $.get(`/ITSAdata/controllers/alumnoController.php?${params}`, function(response) {
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
                 
-                if (alumnosTable) {
-                    alumnosTable.destroy();
+                if (data.success) {
+                    totalItems = data.total;
+                    totalPages = data.totalPages;
+                    currentPage = data.currentPage;
+                    
+                    renderAlumnos(data.alumnos);
+                    updatePaginationInfo();
+                    renderPaginationControls();
+                } else {
+                    showError('Error al cargar los datos: ' + (data.message || 'Error desconocido'));
                 }
-
-                $('#alumnosBody').empty();
-
-                alumnos.forEach(a => {
-                    const nombreCompleto = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno ?? ''}`;
-                    const row = `<tr>
-                        <td>${a.id_alumno}</td>
-                        <td>${a.matricula}</td>
-                        <td>${nombreCompleto.trim()}</td>
-                        <td>${a.carrera ?? 'N/A'}</td>
-                        <td>${a.grupo ?? 'N/A'}</td>
-                        <td>${a.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm btn-editar" data-id='${a.id_alumno}' title="Editar"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn btn-danger btn-sm btn-eliminar" data-id="${a.id_alumno}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>`;
-                    $('#alumnosBody').append(row);
-                });
-
-                alumnosTable = $('#alumnosTable').DataTable({
-                    "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
-                    }
-                });
-
-            }).fail(function() {
-                 $("#alumnosBody").html('<tr><td colspan="7" class="text-center">Error al cargar los datos. Por favor, intente de nuevo.</td></tr>');
-                 Swal.fire({
-                     icon: 'error',
-                     title: 'Error de Carga',
-                     text: 'No se pudieron cargar los datos de los alumnos desde el servidor.'
-                 });
+            }).fail(function(xhr) {
+                showError('Error de conexión: ' + xhr.statusText);
+            }).always(function() {
+                isLoading = false;
             });
         }
 
+        // Función para renderizar la tabla de alumnos
+        function renderAlumnos(alumnos) {
+            $('#alumnosBody').empty();
+            
+            if (alumnos.length === 0) {
+                $('#alumnosBody').html('<tr><td colspan="7" class="text-center text-muted">No se encontraron alumnos</td></tr>');
+                return;
+            }
+            
+            alumnos.forEach(a => {
+                const nombreCompleto = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno ?? ''}`.trim();
+                const row = `<tr>
+                    <td>${a.id_alumno}</td>
+                    <td>${a.matricula}</td>
+                    <td>${nombreCompleto}</td>
+                    <td>${a.carrera ?? 'N/A'}</td>
+                    <td>${a.grupo ?? 'N/A'}</td>
+                    <td>${a.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm btn-editar" data-id='${a.id_alumno}' title="Editar"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${a.id_alumno}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                </tr>`;
+                $('#alumnosBody').append(row);
+            });
+        }
+
+        // Función para actualizar la información de paginación
+        function updatePaginationInfo() {
+            const start = ((currentPage - 1) * itemsPerPage) + 1;
+            const end = Math.min(currentPage * itemsPerPage, totalItems);
+            $('#paginationInfo').text(`Mostrando ${start}-${end} de ${totalItems} registros`);
+        }
+
+        // Función para renderizar los controles de paginación
+        function renderPaginationControls() {
+            const controls = $('#paginationControls');
+            controls.empty();
+            
+            if (totalPages <= 1) return;
+            
+            // Botón Anterior
+            const prevDisabled = currentPage === 1 ? 'disabled' : '';
+            controls.append(`<li class="page-item ${prevDisabled}">
+                <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo; Anterior</a>
+            </li>`);
+            
+            // Números de página
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                controls.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                if (startPage > 2) {
+                    controls.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const active = i === currentPage ? 'active' : '';
+                controls.append(`<li class="page-item ${active}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>`);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    controls.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                }
+                controls.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+            }
+            
+            // Botón Siguiente
+            const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+            controls.append(`<li class="page-item ${nextDisabled}">
+                <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente &raquo;</a>
+            </li>`);
+        }
+
+        // Función para mostrar errores
+        function showError(message) {
+            $('#alumnosBody').html(`<tr><td colspan="7" class="text-center text-danger">${message}</td></tr>`);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message
+            });
+        }
+
+        // Event Handlers
         $('#btnNuevoAlumno').on('click', function() {
             $('#formAlumno')[0].reset();
             $('#id_alumno').val('');
@@ -162,7 +292,41 @@ include __DIR__ . "/../objects/header.php"
             alumnoModal.show();
         });
 
-        $('#alumnosTable tbody').on('click', '.btn-editar', function() {
+        // Búsqueda
+        $('#btnSearch').on('click', function() {
+            const search = $('#searchInput').val().trim();
+            cargarAlumnos(1, search);
+        });
+
+        $('#searchInput').on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
+                const search = $(this).val().trim();
+                cargarAlumnos(1, search);
+            }
+        });
+
+        $('#btnClear').on('click', function() {
+            $('#searchInput').val('');
+            cargarAlumnos(1, '');
+        });
+
+        // Cambio de items por página
+        $('#itemsPerPage').on('change', function() {
+            itemsPerPage = parseInt($(this).val());
+            cargarAlumnos(1, searchTerm);
+        });
+
+        // Paginación
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            const page = parseInt($(this).data('page'));
+            if (page && page !== currentPage && page >= 1 && page <= totalPages) {
+                cargarAlumnos(page, searchTerm);
+            }
+        });
+
+        // Editar alumno
+        $(document).on('click', '.btn-editar', function() {
             const id = $(this).data('id');
             $.get(`/ITSAdata/controllers/alumnoController.php?action=show&id=${id}`, function(data) {
                 const alumno = JSON.parse(data);
@@ -177,14 +341,15 @@ include __DIR__ . "/../objects/header.php"
                 $('#modalLabel').text('Editar Alumno');
                 alumnoModal.show();
             }).fail(function() {
-                 Swal.fire({
-                     icon: 'error',
-                     title: 'Error',
-                     text: 'No se pudo obtener la información del alumno.'
-                 });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo obtener la información del alumno.'
+                });
             });
         });
 
+        // Guardar alumno
         $('#btnGuardar').on('click', function() {
             const id = $('#id_alumno').val();
             const url = id ? `/ITSAdata/controllers/alumnoController.php?action=update` : `/ITSAdata/controllers/alumnoController.php?action=store`;
@@ -192,7 +357,7 @@ include __DIR__ . "/../objects/header.php"
             
             $.post(url, data, function(response) {
                 alumnoModal.hide();
-                cargarAlumnos();
+                cargarAlumnos(currentPage, searchTerm); // Recargar la página actual
                 Swal.fire({
                     icon: 'success',
                     title: '¡Guardado!',
@@ -209,7 +374,8 @@ include __DIR__ . "/../objects/header.php"
             });
         });
 
-        $('#alumnosTable tbody').on('click', '.btn-eliminar', function() {
+        // Eliminar alumno
+        $(document).on('click', '.btn-eliminar', function() {
             const id = $(this).data('id');
             
             Swal.fire({
@@ -229,7 +395,7 @@ include __DIR__ . "/../objects/header.php"
                             'El alumno ha sido eliminado.',
                             'success'
                         );
-                        cargarAlumnos();
+                        cargarAlumnos(currentPage, searchTerm); // Recargar la página actual
                     }).fail(function() {
                         Swal.fire(
                             'Error',
@@ -241,6 +407,7 @@ include __DIR__ . "/../objects/header.php"
             });
         });
 
+        // Cargar datos iniciales
         cargarAlumnos();
     }); // Close window load
     </script>

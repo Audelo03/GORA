@@ -15,17 +15,30 @@ class EstadisticasController {
 
     public function obtenerEstadisticas() {
         $datos = [];
+        
+        // --- Estadísticas Básicas ---
         $datos['total_alumnos'] = $this->estadisticas->totalAlumnos();
         $datos['total_carreras'] = $this->estadisticas->totalCarreras();
         $datos['total_grupos'] = $this->estadisticas->totalGrupos();
         $datos['alumnos_por_carrera'] = $this->estadisticas->alumnosPorCarrera();
         
-        // --- Nuevas Estadísticas ---
+        // --- Estadísticas Existentes ---
         $datos['alumnos_por_estatus'] = $this->estadisticas->alumnosPorEstatus();
         $datos['grupos_por_modalidad'] = $this->estadisticas->gruposPorModalidad();
         $datos['tasa_asistencia'] = $this->estadisticas->tasaDeAsistenciaGeneral();
         $datos['seguimientos_por_estatus'] = $this->estadisticas->seguimientosPorEstatus();
         $datos['seguimientos_por_tipo'] = $this->estadisticas->seguimientosPorTipo();
+        
+        // --- Nuevas Estadísticas Avanzadas ---
+        $datos['usuarios_por_nivel'] = $this->estadisticas->usuariosPorNivel();
+        $datos['alumnos_por_grupo'] = $this->estadisticas->alumnosPorGrupo();
+        $datos['asistencia_por_mes'] = $this->estadisticas->asistenciaPorMes();
+        $datos['seguimientos_por_mes'] = $this->estadisticas->seguimientosPorMes();
+        $datos['productividad_tutores'] = $this->estadisticas->productividadTutores();
+        $datos['alumnos_por_anio_ingreso'] = $this->estadisticas->alumnosPorAnioIngreso();
+        $datos['carreras_mas_populares'] = $this->estadisticas->carrerasMasPopulares();
+        $datos['modalidades_mas_utilizadas'] = $this->estadisticas->modalidadesMasUtilizadas();
+        $datos['estadisticas_generales'] = $this->estadisticas->estadisticasGenerales();
 
         return $datos;
     }

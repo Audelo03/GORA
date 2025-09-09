@@ -14,9 +14,24 @@ include __DIR__ . "/../objects/header.php";
 ?>
 
 <div class="container mt-4">
-    <button class="btn btn-success mb-3" id="btnNuevoGrupo">
-        <i class="bi bi-plus-circle"></i> Agregar Grupo
-    </button>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <button class="btn btn-success" id="btnNuevoGrupo">
+                <i class="bi bi-plus-circle"></i> Agregar Grupo
+            </button>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchInput" placeholder="Buscar grupos...">
+                <button class="btn btn-outline-secondary" type="button" id="btnSearch">
+                    <i class="bi bi-search"></i>
+                </button>
+                <button class="btn btn-outline-secondary" type="button" id="btnClear">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover">
@@ -34,6 +49,29 @@ include __DIR__ . "/../objects/header.php";
             <tbody id="gruposBody"></tbody>
         </table>
     </div>
+
+    <!-- Controles de paginación -->
+    <nav aria-label="Paginación de grupos" class="mt-3">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center">
+                    <label for="itemsPerPage" class="form-label me-2 mb-0">Mostrar:</label>
+                    <select class="form-select form-select-sm" id="itemsPerPage" style="width: auto;">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="ms-2 text-muted" id="paginationInfo">Mostrando 0 de 0 registros</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <ul class="pagination justify-content-end mb-0" id="paginationControls">
+                    <!-- Los controles se generarán dinámicamente -->
+                </ul>
+            </div>
+        </div>
+    </nav>
 </div>
 
 <div class="modal fade" id="grupoModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
@@ -103,147 +141,271 @@ include __DIR__ . "/../objects/header.php";
 include __DIR__ . "/../objects/footer.php";
 
 ?><script>
-    $(document).ready(function() {
-        const grupoModal = new bootstrap.Modal(document.getElementById('grupoModal'));
-
-        function cargarGrupos() {
-
-            $.get("/ITSAdata/controllers/gruposController.php?action=index", function(data) {
-                console.log(data);
-                const grupos = data;
-                 // Depuración
-                let rows = "";
-                if (grupos.length > 0) {
-                    grupos.forEach(g => {
-                        // Se almacena el objeto completo en el data-attribute del botón editar
-                        rows += `<tr>
-                            <td>${g.id_grupo}</td>
-                            <td>${g.nombre}</td>
-                            <td>${g.tutor_nombre ?? 'N/A'}</td>
-                            <td>${g.carrera_nombre ?? 'N/A'}</td>
-                            <td>${g.modalidad_nombre ?? 'N/A'}</td>
-                            <td>${g.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm btn-editar" data-grupo='${JSON.stringify(g)}' title="Editar"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm btn-eliminar" data-id="${g.id_grupo}" title="Eliminar"><i class="bi bi-trash"></i></button>
-                            </td>
-                        </tr>`;
-                    });
-                } else {
-                    rows = `<tr><td colspan="7" class="text-center">No hay grupos registrados.</td></tr>`;
-                }
-                $("#gruposBody").html(rows);
-            }).fail(function() {
-                $("#gruposBody").html('<tr><td colspan="7" class="text-center">Error al cargar los datos.</td></tr>');
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de Carga',
-                    text: 'No se pudieron cargar los datos de los grupos.'
-                });
-            });
-        }
-
-        $('#btnNuevoGrupo').click(function() {
-            $('#formGrupo')[0].reset();
-            $('#id_grupo').val('');
-            $('#modalLabel').text('Agregar Grupo');
-            grupoModal.show();
-        });
-
-        $('#btnGuardar').click(function() {
-            let id = $("#id_grupo").val();
-            if (id) {
-                console.log("Actualizando grupo con ID:", id);
-            } else {
-                console.log("Creando nuevo grupo");
-            }
-            let url = id ? "/ITSAdata/controllers/gruposController.php?action=update" : "/ITSAdata/controllers/gruposController.php?action=store";
+window.addEventListener('load', function() {
+    const grupoModal = new bootstrap.Modal(document.getElementById('grupoModal'));
     
+    // Variables de paginación
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let totalItems = 0;
+    let totalPages = 0;
+    let searchTerm = '';
+    let isLoading = false;
 
-            $.post(url, $('#formGrupo').serialize())
-                .done(function(response) {
-                    if (response.status === 'success') {
-                        grupoModal.hide();
-                        cargarGrupos();
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    } else {
-                         Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message || 'No se pudo guardar el grupo.'
-                        });
-                    }
-                })
-                .fail(function() {
+    // Función para cargar grupos con paginación
+    function cargarGrupos(page = 1, search = '') {
+        if (isLoading) return;
+        
+        isLoading = true;
+        currentPage = page;
+        searchTerm = search;
+        
+        // Mostrar loading
+        $('#gruposBody').html('<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
+        
+        const params = new URLSearchParams({
+            action: 'paginated',
+            page: page,
+            limit: itemsPerPage,
+            search: search
+        });
+        
+        $.get(`/ITSAdata/controllers/gruposController.php?${params}`, function(response) {
+            const data = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            if (data.success) {
+                totalItems = data.total;
+                totalPages = data.totalPages;
+                currentPage = data.currentPage;
+                
+                renderGrupos(data.grupos);
+                updatePaginationInfo();
+                renderPaginationControls();
+            } else {
+                showError('Error al cargar los datos: ' + (data.message || 'Error desconocido'));
+            }
+        }).fail(function(xhr) {
+            showError('Error de conexión: ' + xhr.statusText);
+        }).always(function() {
+            isLoading = false;
+        });
+    }
+
+    // Función para renderizar la tabla de grupos
+    function renderGrupos(grupos) {
+        $('#gruposBody').empty();
+        
+        if (grupos.length === 0) {
+            $('#gruposBody').html('<tr><td colspan="7" class="text-center text-muted">No se encontraron grupos</td></tr>');
+            return;
+        }
+        
+        grupos.forEach(g => {
+            const row = `<tr>
+                <td>${g.id_grupo}</td>
+                <td>${g.nombre}</td>
+                <td>${g.tutor_nombre ?? 'N/A'}</td>
+                <td>${g.carrera_nombre ?? 'N/A'}</td>
+                <td>${g.modalidad_nombre ?? 'N/A'}</td>
+                <td>${g.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm btn-editar" data-grupo='${JSON.stringify(g)}' title="Editar"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${g.id_grupo}" title="Eliminar"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>`;
+            $('#gruposBody').append(row);
+        });
+    }
+
+    // Función para actualizar la información de paginación
+    function updatePaginationInfo() {
+        const start = ((currentPage - 1) * itemsPerPage) + 1;
+        const end = Math.min(currentPage * itemsPerPage, totalItems);
+        $('#paginationInfo').text(`Mostrando ${start}-${end} de ${totalItems} registros`);
+    }
+
+    // Función para renderizar los controles de paginación
+    function renderPaginationControls() {
+        const controls = $('#paginationControls');
+        controls.empty();
+        
+        if (totalPages <= 1) return;
+        
+        // Botón Anterior
+        const prevDisabled = currentPage === 1 ? 'disabled' : '';
+        controls.append(`<li class="page-item ${prevDisabled}">
+            <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo; Anterior</a>
+        </li>`);
+        
+        // Números de página
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+        
+        if (startPage > 1) {
+            controls.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+            if (startPage > 2) {
+                controls.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+            }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const active = i === currentPage ? 'active' : '';
+            controls.append(`<li class="page-item ${active}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`);
+        }
+        
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                controls.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+            }
+            controls.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+        }
+        
+        // Botón Siguiente
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        controls.append(`<li class="page-item ${nextDisabled}">
+            <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente &raquo;</a>
+        </li>`);
+    }
+
+    // Función para mostrar errores
+    function showError(message) {
+        $('#gruposBody').html(`<tr><td colspan="7" class="text-center text-danger">${message}</td></tr>`);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message
+        });
+    }
+
+    // Event Handlers
+    $('#btnNuevoGrupo').on('click', function() {
+        $('#formGrupo')[0].reset();
+        $('#id_grupo').val('');
+        $('#modalLabel').text('Agregar Grupo');
+        grupoModal.show();
+    });
+
+    // Búsqueda
+    $('#btnSearch').on('click', function() {
+        const search = $('#searchInput').val().trim();
+        cargarGrupos(1, search);
+    });
+
+    $('#searchInput').on('keypress', function(e) {
+        if (e.which === 13) { // Enter key
+            const search = $(this).val().trim();
+            cargarGrupos(1, search);
+        }
+    });
+
+    $('#btnClear').on('click', function() {
+        $('#searchInput').val('');
+        cargarGrupos(1, '');
+    });
+
+    // Cambio de items por página
+    $('#itemsPerPage').on('change', function() {
+        itemsPerPage = parseInt($(this).val());
+        cargarGrupos(1, searchTerm);
+    });
+
+    // Paginación
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = parseInt($(this).data('page'));
+        if (page && page !== currentPage && page >= 1 && page <= totalPages) {
+            cargarGrupos(page, searchTerm);
+        }
+    });
+
+    // Modal events
+    $('#grupoModal').on('hidden.bs.modal', function() {
+        $('#formGrupo')[0].reset();
+        $('#id_grupo').val('');
+    });
+
+    // Guardar grupo
+    $('#btnGuardar').on('click', function() {
+        let id = $("#id_grupo").val();
+        let url = id ? "/ITSAdata/controllers/gruposController.php?action=update" : "/ITSAdata/controllers/gruposController.php?action=store";
+        
+        $.post(url, $('#formGrupo').serialize())
+            .done(function(response) {
+                if (response.status === 'success') {
+                    grupoModal.hide();
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: response.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    // Recargar la página actual
+                    cargarGrupos(currentPage, searchTerm);
+                } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
-                        text: 'Hubo un error de comunicación con el servidor.'
-                    });
-                });
-        });
-
-        $("#gruposBody").on('click', '.btn-editar', function() {
-            const grupo = $(this).data('grupo');
-            
-            $("#id_grupo").val(grupo.id_grupo);
-            $("#nombre").val(grupo.nombre);
-            $("#usuarios_id_usuario_tutor").val(grupo.usuarios_id_usuario_tutor);
-            $("#carreras_id_carrera").val(grupo.carreras_id_carrera);
-            $("#modalidades_id_modalidad").val(grupo.modalidades_id_modalidad);
-            $("#estatus").val(grupo.estatus);
-            $('#modalLabel').text('Editar Grupo');
-            grupoModal.show();
-        });
-
-        $("#gruposBody").on('click', '.btn-eliminar', function() {
-            const idParaEliminar = $(this).data('id');
-
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¡No podrás revertir esta acción!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, ¡eliminar!',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.post("/ITSAdata/controllers/gruposController.php?action=delete", { id: idParaEliminar }, function(response) {
-                        if (response.status === 'success') {
-                            Swal.fire(
-                                '¡Eliminado!',
-                                response.message,
-                                'success'
-                            );
-                            cargarGrupos();
-                        } else {
-                            Swal.fire(
-                                'Error',
-                                response.message,
-                                'error'
-                            );
-                        }
-                    }, 'json')
-                    .fail(function() {
-                        Swal.fire(
-                            'Error de Conexión',
-                            'No se pudo comunicar con el servidor.',
-                            'error'
-                        );
+                        title: 'Error',
+                        text: response.message || 'No se pudo guardar el grupo.'
                     });
                 }
+            })
+            .fail(function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Hubo un error de comunicación con el servidor.'
+                });
             });
-        });
-
-        cargarGrupos();
     });
+
+    // Editar grupo
+    $(document).on('click', '.btn-editar', function() {
+        const grupo = $(this).data('grupo');
+        
+        $("#id_grupo").val(grupo.id_grupo);
+        $("#nombre").val(grupo.nombre);
+        $("#usuarios_id_usuario_tutor").val(grupo.usuarios_id_usuario_tutor);
+        $("#carreras_id_carrera").val(grupo.carreras_id_carrera);
+        $("#modalidades_id_modalidad").val(grupo.modalidades_id_modalidad);
+        $("#estatus").val(grupo.estatus);
+        $('#modalLabel').text('Editar Grupo');
+        grupoModal.show();
+    });
+
+    // Eliminar grupo
+    $(document).on('click', '.btn-eliminar', function() {
+        const idParaEliminar = $(this).data('id');
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esta acción!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, ¡eliminar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post("/ITSAdata/controllers/gruposController.php?action=delete", { id: idParaEliminar }, function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire('¡Eliminado!', response.message, 'success');
+                        cargarGrupos(currentPage, searchTerm);
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                }, 'json').fail(function() {
+                    Swal.fire('Error de Conexión', 'No se pudo comunicar con el servidor.', 'error');
+                });
+            }
+        });
+    });
+
+    // Cargar datos iniciales
+    cargarGrupos();
+});
 </script>
 

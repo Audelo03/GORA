@@ -21,6 +21,44 @@ class TipoSeguimientoController {
         echo json_encode($this->tipoSeguimiento->getAll());
     }
 
+    public function paginated() {
+        try {
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+            $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+            
+            // Validar parámetros
+            if ($page < 1) $page = 1;
+            if ($limit < 1 || $limit > 100) $limit = 10;
+            
+            $offset = ($page - 1) * $limit;
+            
+            // Obtener total de registros
+            $total = $this->tipoSeguimiento->countAll($search);
+            $totalPages = ceil($total / $limit);
+            
+            // Obtener tipos de seguimiento paginados
+            $tiposSeguimiento = $this->tipoSeguimiento->getAllPaginated($offset, $limit, $search);
+            
+            echo json_encode([
+                'success' => true,
+                'tiposSeguimiento' => $tiposSeguimiento,
+                'total' => $total,
+                'totalPages' => $totalPages,
+                'currentPage' => $page,
+                'limit' => $limit
+            ]);
+            
+        } catch (Exception $e) {
+            error_log("Error en paginated: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al cargar los datos',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
     // Acción para mostrar un registro específico (GET)
     public function show() {
         if (isset($_GET['id'])) {

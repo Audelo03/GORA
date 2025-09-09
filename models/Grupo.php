@@ -37,6 +37,73 @@ class Grupo {
          $stmt->execute();
          return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getAllPaginated($offset, $limit, $search = '') {
+        $sql = "SELECT 
+                    g.id_grupo, 
+                    g.nombre, 
+                    g.estatus,
+                    g.usuarios_id_usuario_tutor,
+                    g.carreras_id_carrera,
+                    g.modalidades_id_modalidad,
+                    CONCAT(u.nombre, ' ', u.apellido_paterno) as tutor_nombre,
+                    c.nombre as carrera_nombre,
+                    m.nombre as modalidad_nombre
+                  FROM " . $this->table_name . " g
+                  LEFT JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
+                  LEFT JOIN carreras c ON g.carreras_id_carrera = c.id_carrera
+                  LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad";
+        
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " WHERE (LOWER(g.nombre) LIKE LOWER(:search) 
+                     OR LOWER(u.nombre) LIKE LOWER(:search) 
+                     OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
+                     OR LOWER(c.nombre) LIKE LOWER(:search)
+                     OR LOWER(m.nombre) LIKE LOWER(:search))";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $sql .= " ORDER BY g.nombre ASC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll($search = '') {
+        $sql = "SELECT COUNT(*) FROM " . $this->table_name . " g
+                LEFT JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
+                LEFT JOIN carreras c ON g.carreras_id_carrera = c.id_carrera
+                LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad";
+        
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " WHERE (LOWER(g.nombre) LIKE LOWER(:search) 
+                     OR LOWER(u.nombre) LIKE LOWER(:search) 
+                     OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
+                     OR LOWER(c.nombre) LIKE LOWER(:search)
+                     OR LOWER(m.nombre) LIKE LOWER(:search))";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
     
     // Leer un solo grupo por ID
     public function readOne() {

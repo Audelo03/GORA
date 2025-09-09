@@ -23,6 +23,49 @@ class TipoSeguimiento {
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAllPaginated($offset, $limit, $search = '') {
+        $sql = "SELECT id_tipo_seguimiento, nombre FROM " . $this->table;
+        
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " WHERE LOWER(nombre) LIKE LOWER(:search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $sql .= " ORDER BY nombre ASC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll($search = '') {
+        $sql = "SELECT COUNT(*) FROM " . $this->table;
+        
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " WHERE LOWER(nombre) LIKE LOWER(:search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
     /**
      * Obtener un solo tipo de seguimiento por su ID.
      */

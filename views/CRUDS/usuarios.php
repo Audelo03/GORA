@@ -10,28 +10,65 @@ include __DIR__ . "/../objects/header.php";
 
 ?>
 
-<div class="container mt-4">
+    <div class="container mt-4">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <button class="btn btn-success" id="btnNuevoUsuario">
+                    <i class="bi bi-person-plus-fill"></i> Agregar Usuario
+                </button>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar usuarios...">
+                    <button class="btn btn-outline-secondary" type="button" id="btnSearch">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary" type="button" id="btnClear">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <button class="btn btn-success mb-3" id="btnNuevoUsuario">
-        <i class="bi bi-person-plus-fill"></i> Agregar Usuario
-    </button>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="tablaUsuarios">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Email</th>
+                    <th>Nivel</th>
+                    <th>Estatus</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="usuariosBody"></tbody>
+            </table>
+        </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover" id="tablaUsuarios">
-            <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nombre Completo</th>
-                <th>Email</th>
-                <th>Nivel</th>
-                <th>Estatus</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <!-- Controles de paginación -->
+        <nav aria-label="Paginación de usuarios" class="mt-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <label for="itemsPerPage" class="form-label me-2 mb-0">Mostrar:</label>
+                        <select class="form-select form-select-sm" id="itemsPerPage" style="width: auto;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span class="ms-2 text-muted" id="paginationInfo">Mostrando 0 de 0 registros</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="pagination justify-content-end mb-0" id="paginationControls">
+                        <!-- Los controles se generarán dinámicamente -->
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
-</div>
 
 <div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -94,32 +131,73 @@ include __DIR__ . "/../objects/footer.php";
 
 ?>
 <script>
-// Wait for Bootstrap to load
 window.addEventListener('load', function() {
     const usuarioModal = new bootstrap.Modal(document.getElementById('usuarioModal'));
-const estatusMap = {
-    1: '<span class="badge bg-success">Activo</span>',
-    0: '<span class="badge bg-danger">Inactivo</span>'
-};
+    
+    // Variables de paginación
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let totalItems = 0;
+    let totalPages = 0;
+    let searchTerm = '';
+    let isLoading = false;
 
-function cargarNiveles() {
-    // Usamos 'json' para que jQuery parsee la respuesta automáticamente
-    $.get("/ITSAdata/controllers/nivelesusuariosController.php?accion=listar", function(niveles) {
-        let options = "";
-        niveles.forEach(n => {
-            options += `<option value="${n.id_nivel_usuario}">${n.nombre}</option>`;
+    const estatusMap = {
+        1: '<span class="badge bg-success">Activo</span>',
+        0: '<span class="badge bg-danger">Inactivo</span>'
+    };
+
+    // Función para cargar usuarios con paginación
+    function cargarUsuarios(page = 1, search = '') {
+        if (isLoading) return;
+        
+        isLoading = true;
+        currentPage = page;
+        searchTerm = search;
+        
+        // Mostrar loading
+        $('#usuariosBody').html('<tr><td colspan="6" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
+        
+        const params = new URLSearchParams({
+            action: 'paginated',
+            page: page,
+            limit: itemsPerPage,
+            search: search
         });
-        $("#niveles_usuarios_id_nivel_usuario").html(options);
-    }, 'json');
-}
+        
+        $.get(`/ITSAdata/controllers/usuarioController.php?${params}`, function(response) {
+            const data = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            if (data.success) {
+                totalItems = data.total;
+                totalPages = data.totalPages;
+                currentPage = data.currentPage;
+                
+                renderUsuarios(data.usuarios);
+                updatePaginationInfo();
+                renderPaginationControls();
+            } else {
+                showError('Error al cargar los datos: ' + (data.message || 'Error desconocido'));
+            }
+        }).fail(function(xhr) {
+            showError('Error de conexión: ' + xhr.statusText);
+        }).always(function() {
+            isLoading = false;
+        });
+    }
 
-function cargarUsuarios() {
-    $.get("/ITSAdata/controllers/usuarioController.php?action=index", function(data) {
-        let usuarios = typeof data === 'string' ? JSON.parse(data) : data;
-        let rows = "";
+    // Función para renderizar la tabla de usuarios
+    function renderUsuarios(usuarios) {
+        $('#usuariosBody').empty();
+        
+        if (usuarios.length === 0) {
+            $('#usuariosBody').html('<tr><td colspan="6" class="text-center text-muted">No se encontraron usuarios</td></tr>');
+            return;
+        }
+        
         usuarios.forEach(u => {
             const nombreCompleto = `${u.nombre} ${u.apellido_paterno} ${u.apellido_materno ?? ''}`.trim();
-            rows += `<tr>
+            const row = `<tr>
                 <td>${u.id_usuario}</td>
                 <td>${nombreCompleto}</td>
                 <td>${u.email}</td>
@@ -130,31 +208,135 @@ function cargarUsuarios() {
                     <button onclick="eliminarUsuario(${u.id_usuario})" class="btn btn-sm btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>`;
+            $('#usuariosBody').append(row);
         });
-        $("#tablaUsuarios tbody").html(rows);
+    }
+
+    // Función para actualizar la información de paginación
+    function updatePaginationInfo() {
+        const start = ((currentPage - 1) * itemsPerPage) + 1;
+        const end = Math.min(currentPage * itemsPerPage, totalItems);
+        $('#paginationInfo').text(`Mostrando ${start}-${end} de ${totalItems} registros`);
+    }
+
+    // Función para renderizar los controles de paginación
+    function renderPaginationControls() {
+        const controls = $('#paginationControls');
+        controls.empty();
+        
+        if (totalPages <= 1) return;
+        
+        // Botón Anterior
+        const prevDisabled = currentPage === 1 ? 'disabled' : '';
+        controls.append(`<li class="page-item ${prevDisabled}">
+            <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo; Anterior</a>
+        </li>`);
+        
+        // Números de página
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+        
+        if (startPage > 1) {
+            controls.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+            if (startPage > 2) {
+                controls.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+            }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const active = i === currentPage ? 'active' : '';
+            controls.append(`<li class="page-item ${active}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`);
+        }
+        
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                controls.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+            }
+            controls.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+        }
+        
+        // Botón Siguiente
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        controls.append(`<li class="page-item ${nextDisabled}">
+            <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente &raquo;</a>
+        </li>`);
+    }
+
+    // Función para mostrar errores
+    function showError(message) {
+        $('#usuariosBody').html(`<tr><td colspan="6" class="text-center text-danger">${message}</td></tr>`);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message
+        });
+    }
+
+    // Event Handlers
+    $('#btnNuevoUsuario').on('click', function() {
+        $('#formUsuario')[0].reset();
+        $('#id_usuario').val('');
+        $('#modalLabel').text('Agregar Usuario');
+        $('#password').prop('required', true); 
+        usuarioModal.show();
     });
-}
 
-$('#btnNuevoUsuario').click(function() {
-    $('#formUsuario')[0].reset();
-    $('#id_usuario').val('');
-    $('#modalLabel').text('Agregar Usuario');
-    // Se requiere contraseña para nuevos usuarios
-    $('#password').prop('required', true); 
-    $('#usuarioModal').modal('show');
-});
+    // Búsqueda
+    $('#btnSearch').on('click', function() {
+        const search = $('#searchInput').val().trim();
+        cargarUsuarios(1, search);
+    });
 
-    // Add event listener for modal close - reset form when modal is hidden
+    $('#searchInput').on('keypress', function(e) {
+        if (e.which === 13) { // Enter key
+            const search = $(this).val().trim();
+            cargarUsuarios(1, search);
+        }
+    });
+
+    $('#btnClear').on('click', function() {
+        $('#searchInput').val('');
+        cargarUsuarios(1, '');
+    });
+
+    // Cambio de items por página
+    $('#itemsPerPage').on('change', function() {
+        itemsPerPage = parseInt($(this).val());
+        cargarUsuarios(1, searchTerm);
+    });
+
+    // Paginación
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = parseInt($(this).data('page'));
+        if (page && page !== currentPage && page >= 1 && page <= totalPages) {
+            cargarUsuarios(page, searchTerm);
+        }
+    });
+
+    // Cargar niveles para el modal
+    function cargarNiveles() {
+        $.get("/ITSAdata/controllers/nivelesusuariosController.php?accion=listar", function(niveles) {
+            let options = "";
+            niveles.forEach(n => {
+                options += `<option value="${n.id_nivel_usuario}">${n.nombre}</option>`;
+            });
+            $("#niveles_usuarios_id_nivel_usuario").html(options);
+        }, 'json');
+    }
+
+    // Modal events
     $('#usuarioModal').on('hidden.bs.modal', function() {
         $('#formUsuario')[0].reset();
         $('#id_usuario').val('');
     });
 
-    $(document).ready(function() {
-        cargarNiveles();
-        cargarUsuarios();
-    });
-}); // Close window load
+    // Cargar datos iniciales
+    cargarNiveles();
+    cargarUsuarios();
+});
 
 // Global functions
 function editarUsuario(usuario) {
@@ -165,43 +347,14 @@ function editarUsuario(usuario) {
     $('#apellido_materno').val(usuario.apellido_materno);
     $('#email').val(usuario.email);
     $('#password').val('');
-    // La contraseña no es requerida al editar
     $('#password').prop('required', false);
     $('#niveles_usuarios_id_nivel_usuario').val(usuario.niveles_usuarios_id_nivel_usuario);
     $('#estatus').val(usuario.estatus);
     $('#modalLabel').text('Editar Usuario');
-    // Show modal using jQuery
     $('#usuarioModal').modal('show');
 }
 
-function cargarUsuarios() {
-    $.get("/ITSAdata/controllers/usuarioController.php?action=index", function(data) {
-        let usuarios = typeof data === 'string' ? JSON.parse(data) : data;
-        let rows = "";
-        const estatusMap = {
-            1: '<span class="badge bg-success">Activo</span>',
-            0: '<span class="badge bg-danger">Inactivo</span>'
-        };
-        usuarios.forEach(u => {
-            const nombreCompleto = `${u.nombre} ${u.apellido_paterno} ${u.apellido_materno ?? ''}`.trim();
-            rows += `<tr>
-                <td>${u.id_usuario}</td>
-                <td>${nombreCompleto}</td>
-                <td>${u.email}</td>
-                <td>${u.nivel_usuario ?? 'N/A'}</td>
-                <td>${estatusMap[u.estatus] ?? 'Desconocido'}</td>
-                <td>
-                    <button onclick='editarUsuario(${JSON.stringify(u)})' class="btn btn-sm btn-warning" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                    <button onclick="eliminarUsuario(${u.id_usuario})" class="btn btn-sm btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-                </td>
-            </tr>`;
-        });
-        $("#tablaUsuarios tbody").html(rows);
-    });
-}
-
 function guardarUsuario() {
-    // Validar contraseña para nuevos usuarios
     let id = $("#id_usuario").val();
     if (!id && !$("#password").val()) {
         Swal.fire({
@@ -215,40 +368,39 @@ function guardarUsuario() {
     let datos = $("#formUsuario").serialize();
     let url = id ? "/ITSAdata/controllers/usuarioController.php?action=update" : "/ITSAdata/controllers/usuarioController.php?action=store";
 
-$.post(url, datos, function(response) {
-    let estado = response.status;
-    let mensaje = response.message;
+    $.post(url, datos, function(response) {
+        let estado = response.status;
+        let mensaje = response.message;
 
-    if (estado === "ok") {
-        Swal.fire({
-            icon: 'success',
-            title: '¡Éxito!',
-            text: mensaje,
-            timer: 2000,
-            showConfirmButton: false
-        });
-        
-        // Close modal and reset form
-        $('#usuarioModal').modal('hide');
-        $('#formUsuario')[0].reset();
-        cargarUsuarios();
-
-    } else {
-    
+        if (estado === "ok") {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: mensaje,
+                timer: 2000,
+                showConfirmButton: false
+            });
+            
+            $('#usuarioModal').modal('hide');
+            $('#formUsuario')[0].reset();
+            // Recargar la página actual
+            const currentPage = window.currentPage || 1;
+            const searchTerm = window.searchTerm || '';
+            cargarUsuarios(currentPage, searchTerm);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ocurrió un error',
+                text: mensaje 
+            });
+        }
+    }, 'json').fail(function() {
         Swal.fire({
             icon: 'error',
-            title: 'Ocurrió un error',
-            text: mensaje 
+            title: 'Error de comunicación',
+            text: 'No se pudo conectar con el servidor. Por favor, inténtelo de nuevo.'
         });
-    }
-
-}, 'json').fail(function() {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error de comunicación',
-        text: 'No se pudo conectar con el servidor. Por favor, inténtelo de nuevo.'
     });
-});
 }
 
 function eliminarUsuario(id) {
@@ -264,9 +416,11 @@ function eliminarUsuario(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.post("/ITSAdata/controllers/usuarioController.php?action=delete", { id_usuario: id }, function(response) {
-                // Close any open modal
                 $('#usuarioModal').modal('hide');
-                cargarUsuarios();
+                // Recargar la página actual
+                const currentPage = window.currentPage || 1;
+                const searchTerm = window.searchTerm || '';
+                cargarUsuarios(currentPage, searchTerm);
                 Swal.fire(
                     '¡Eliminado!',
                     'El usuario ha sido eliminado.',

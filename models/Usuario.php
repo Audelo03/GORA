@@ -74,6 +74,68 @@ class Usuario {
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getAllPaginated($offset, $limit, $search = '') {
+        $sql = "SELECT 
+                    u.id_usuario, 
+                    u.nombre, 
+                    u.apellido_paterno, 
+                    u.apellido_materno, 
+                    u.email, 
+                    u.estatus, 
+                    u.niveles_usuarios_id_nivel_usuario,
+                    nu.nombre as nivel_usuario 
+                FROM " . $this->table . " u
+                LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario";
+        
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " WHERE (LOWER(u.nombre) LIKE LOWER(:search) 
+                     OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
+                     OR LOWER(u.apellido_materno) LIKE LOWER(:search) 
+                     OR LOWER(u.email) LIKE LOWER(:search)
+                     OR LOWER(nu.nombre) LIKE LOWER(:search))";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $sql .= " ORDER BY u.id_usuario DESC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll($search = '') {
+        $sql = "SELECT COUNT(*) FROM " . $this->table . " u
+                LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario";
+        
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " WHERE (LOWER(u.nombre) LIKE LOWER(:search) 
+                     OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
+                     OR LOWER(u.apellido_materno) LIKE LOWER(:search) 
+                     OR LOWER(u.email) LIKE LOWER(:search)
+                     OR LOWER(nu.nombre) LIKE LOWER(:search))";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
     public function getById($id) {
         $sql = "SELECT * FROM " . $this->table . " WHERE id_usuario = :id LIMIT 1";
         $stmt = $this->conn->prepare($sql);

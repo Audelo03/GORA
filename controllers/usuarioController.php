@@ -18,6 +18,44 @@ class UsuarioController {
         echo json_encode($this->usuario->getAll());
     }
 
+    public function paginated() {
+        try {
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+            $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+            
+            // Validar parámetros
+            if ($page < 1) $page = 1;
+            if ($limit < 1 || $limit > 100) $limit = 10;
+            
+            $offset = ($page - 1) * $limit;
+            
+            // Obtener total de registros
+            $total = $this->usuario->countAll($search);
+            $totalPages = ceil($total / $limit);
+            
+            // Obtener usuarios paginados
+            $usuarios = $this->usuario->getAllPaginated($offset, $limit, $search);
+            
+            echo json_encode([
+                'success' => true,
+                'usuarios' => $usuarios,
+                'total' => $total,
+                'totalPages' => $totalPages,
+                'currentPage' => $page,
+                'limit' => $limit
+            ]);
+            
+        } catch (Exception $e) {
+            error_log("Error en paginated: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al cargar los datos',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function listarUsuarios() {
         return $this->usuario->getAll();
     }
