@@ -121,7 +121,7 @@ class AlumnoController {
         }
     }
 
-    // --- MÉTODOS DE PAGINACIÓN Y BÚSQUEDA (SIN CAMBIOS, YA ERAN EFICIENTES) ---
+    // --- MÉTODOS DE PAGINACIÓN Y BÚSQUEDA ---
     public function contarTotalCarreras($terminoBusqueda) {
         $sql = "SELECT COUNT(DISTINCT c.id_carrera) 
                 FROM carreras c

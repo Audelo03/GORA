@@ -1,5 +1,4 @@
 <?php
-// Establece la cabecera para devolver contenido JSON
 header('Content-Type: application/json');
 
 require_once __DIR__ . "/../config/db.php";

@@ -1,15 +1,9 @@
 <?php
-/**
- * CONTROLADOR DE GRUPOS - GORA
- * 
- * Maneja todas las operaciones CRUD relacionadas con los grupos
- * de estudiantes en el sistema.
- */
+
 
 require_once __DIR__ . "/../config/db.php";
 require_once __DIR__ . "/../models/Grupo.php";
 
-// Iniciar sesión si no está activa
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
@@ -17,10 +11,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 class GruposController {
     private $grupo;
 
-    /**
-     * Constructor del controlador de grupos
-     * @param PDO $conn - Conexión a la base de datos
-     */
     public function __construct($conn) {
         $this->grupo = new Grupo($conn);
     }
