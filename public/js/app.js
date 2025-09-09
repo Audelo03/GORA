@@ -1,5 +1,5 @@
 /**
- * ARCHIVO PRINCIPAL DE JAVASCRIPT - ITSADATA
+ * ARCHIVO PRINCIPAL DE JAVASCRIPT - GORA
  * 
  * Este archivo contiene las funciones principales de JavaScript
  * para la funcionalidad del sistema.
@@ -13,7 +13,7 @@
  * Inicializa la aplicación cuando el DOM está listo
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Sistema ITSADATA cargado correctamente');
+    console.log('Sistema GORA cargado correctamente');
     
     // Inicializar funcionalidades del sidebar
     initializeSidebar();

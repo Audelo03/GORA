@@ -6,7 +6,7 @@ $page_title = "Perfil";
 
 $userId = $_SESSION['usuario_id'] ?? null;
 if (!$userId) {
-    header("Location: /ITSAdata/login");
+    header("Location: /GORA/login");
     exit;
 }
 
@@ -17,7 +17,7 @@ $niveles_autorizados = [1 => "Admin", 2 => "Coordinador", 3 => "Tutor", 4 => "Di
 $nivel_nombre  = $niveles_autorizados[$_SESSION['usuario_nivel']] ?? "Desconocido"; 
 
 if (!$usuario) {
-    header("Location: /ITSAdata/login?error=usernotfound");
+    header("Location: /GORA/login?error=usernotfound");
     exit;
 }
 
@@ -54,7 +54,7 @@ include 'objects/header.php';
                             </h4>
                             
                             <div class="d-flex align-items-center mb-3">
-                                 <i class="bi bi-person-lines-fill fs-4 text-muted me-3"></i>
+                                 <i class="bi bi-person-vcard fs-4 text-muted me-3"></i>
                                 
                                 <div>
                                     <strong class="d-block">Nombre completo</strong>
@@ -71,7 +71,7 @@ include 'objects/header.php';
                             </div>
 
                             <div class="d-flex align-items-center mb-4">
-                               <i class="bi bi-person-badge-fill fs-4 text-muted me-3"></i>
+                               <i class="bi bi-person-vcard fs-4 text-muted me-3"></i>
                                 <div>
                                     <strong class="d-block">Nivel de usuario</strong>
                                     <span><?php echo $nivel_nombre; ?></span>

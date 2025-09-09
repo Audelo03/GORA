@@ -10,7 +10,7 @@ $auth->checkAuth();
 
 $id_grupo = isset($_GET['id_grupo']) ? (int)$_GET['id_grupo'] : 0;
 if ($id_grupo === 0) {
-    header('Location: /ITSAdata/dashboard');
+    header('Location: /GORA/dashboard');
     exit();
 }
 
@@ -77,7 +77,7 @@ include 'objects/header.php';
                                     <div class="d-flex justify-content-end mb-3">
                                         <a href="asistencia.php?id_grupo=<?= $id_grupo ?>&fecha=<?= $fecha ?>" 
                                            class="btn btn-sm btn-outline-secondary">
-                                           <i class="bi bi-pencil-fill me-1"></i> Editar esta lista
+                                           <i class="bi bi-pencil-square me-1"></i> Editar esta lista
                                         </a>
                                     </div>
 

@@ -14,7 +14,7 @@ include __DIR__ . "/../objects/header.php";
         <div class="row mb-3">
             <div class="col-md-6">
                 <button class="btn btn-success" id="btnNuevoUsuario">
-                    <i class="bi bi-person-plus-fill"></i> Agregar Usuario
+                    <i class="bi bi-plus-circle"></i> Agregar Usuario
                 </button>
             </div>
             <div class="col-md-6">
@@ -131,24 +131,21 @@ include __DIR__ . "/../objects/footer.php";
 
 ?>
 <script>
-window.addEventListener('load', function() {
-    const usuarioModal = new bootstrap.Modal(document.getElementById('usuarioModal'));
-    
-    // Variables de paginación
-    let currentPage = 1;
-    let itemsPerPage = 10;
-    let totalItems = 0;
-    let totalPages = 0;
-    let searchTerm = '';
-    let isLoading = false;
+// Global variables
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalItems = 0;
+let totalPages = 0;
+let searchTerm = '';
+let isLoading = false;
 
-    const estatusMap = {
-        1: '<span class="badge bg-success">Activo</span>',
-        0: '<span class="badge bg-danger">Inactivo</span>'
-    };
+const estatusMap = {
+    1: '<span class="badge bg-success">Activo</span>',
+    0: '<span class="badge bg-danger">Inactivo</span>'
+};
 
-    // Función para cargar usuarios con paginación
-    function cargarUsuarios(page = 1, search = '') {
+// Global function for loading users
+function cargarUsuarios(page = 1, search = '') {
         if (isLoading) return;
         
         isLoading = true;
@@ -165,7 +162,7 @@ window.addEventListener('load', function() {
             search: search
         });
         
-        $.get(`/ITSAdata/controllers/usuarioController.php?${params}`, function(response) {
+        $.get(`/GORA/controllers/usuarioController.php?${params}`, function(response) {
             const data = typeof response === 'string' ? JSON.parse(response) : response;
             
             if (data.success) {
@@ -184,10 +181,10 @@ window.addEventListener('load', function() {
         }).always(function() {
             isLoading = false;
         });
-    }
+}
 
-    // Función para renderizar la tabla de usuarios
-    function renderUsuarios(usuarios) {
+// Global function for rendering users table
+function renderUsuarios(usuarios) {
         $('#usuariosBody').empty();
         
         if (usuarios.length === 0) {
@@ -210,17 +207,17 @@ window.addEventListener('load', function() {
             </tr>`;
             $('#usuariosBody').append(row);
         });
-    }
+}
 
-    // Función para actualizar la información de paginación
-    function updatePaginationInfo() {
+// Global function for updating pagination info
+function updatePaginationInfo() {
         const start = ((currentPage - 1) * itemsPerPage) + 1;
         const end = Math.min(currentPage * itemsPerPage, totalItems);
         $('#paginationInfo').text(`Mostrando ${start}-${end} de ${totalItems} registros`);
-    }
+}
 
-    // Función para renderizar los controles de paginación
-    function renderPaginationControls() {
+// Global function for rendering pagination controls
+function renderPaginationControls() {
         const controls = $('#paginationControls');
         controls.empty();
         
@@ -262,18 +259,33 @@ window.addEventListener('load', function() {
         controls.append(`<li class="page-item ${nextDisabled}">
             <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente &raquo;</a>
         </li>`);
-    }
+}
 
-    // Función para mostrar errores
-    function showError(message) {
+// Global function for showing errors
+function showError(message) {
         $('#usuariosBody').html(`<tr><td colspan="6" class="text-center text-danger">${message}</td></tr>`);
         Swal.fire({
             icon: 'error',
             title: 'Error',
             text: message
         });
-    }
+}
 
+// Global function for loading levels
+function cargarNiveles() {
+    $.get("/GORA/controllers/nivelesusuariosController.php?accion=listar", function(niveles) {
+        let options = "";
+        niveles.forEach(n => {
+            options += `<option value="${n.id_nivel_usuario}">${n.nombre}</option>`;
+        });
+        $("#niveles_usuarios_id_nivel_usuario").html(options);
+    }, 'json');
+}
+
+// Event listener for page load
+window.addEventListener('load', function() {
+    const usuarioModal = new bootstrap.Modal(document.getElementById('usuarioModal'));
+    
     // Event Handlers
     $('#btnNuevoUsuario').on('click', function() {
         $('#formUsuario')[0].reset();
@@ -316,17 +328,6 @@ window.addEventListener('load', function() {
         }
     });
 
-    // Cargar niveles para el modal
-    function cargarNiveles() {
-        $.get("/ITSAdata/controllers/nivelesusuariosController.php?accion=listar", function(niveles) {
-            let options = "";
-            niveles.forEach(n => {
-                options += `<option value="${n.id_nivel_usuario}">${n.nombre}</option>`;
-            });
-            $("#niveles_usuarios_id_nivel_usuario").html(options);
-        }, 'json');
-    }
-
     // Modal events
     $('#usuarioModal').on('hidden.bs.modal', function() {
         $('#formUsuario')[0].reset();
@@ -366,7 +367,7 @@ function guardarUsuario() {
     }
 
     let datos = $("#formUsuario").serialize();
-    let url = id ? "/ITSAdata/controllers/usuarioController.php?action=update" : "/ITSAdata/controllers/usuarioController.php?action=store";
+    let url = id ? "/GORA/controllers/usuarioController.php?action=update" : "/GORA/controllers/usuarioController.php?action=store";
 
     $.post(url, datos, function(response) {
         let estado = response.status;
@@ -415,7 +416,7 @@ function eliminarUsuario(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("/ITSAdata/controllers/usuarioController.php?action=delete", { id_usuario: id }, function(response) {
+            $.post("/GORA/controllers/usuarioController.php?action=delete", { id_usuario: id }, function(response) {
                 $('#usuarioModal').modal('hide');
                 // Recargar la página actual
                 const currentPage = window.currentPage || 1;

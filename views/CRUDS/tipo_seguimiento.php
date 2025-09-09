@@ -123,7 +123,7 @@ include __DIR__ . "/../objects/footer.php";
                 search: search
             });
             
-            $.get(`/ITSAdata/controllers/tipoSeguimientoController.php?${params}`, function(response) {
+            $.get(`/GORA/controllers/tipoSeguimientoController.php?${params}`, function(response) {
                 const data = typeof response === 'string' ? JSON.parse(response) : response;
                 
                 if (data.success) {
@@ -278,7 +278,7 @@ include __DIR__ . "/../objects/footer.php";
         // Guardar tipo
         $("#btnGuardar").on('click', function() {
             const id = $("#id_tipo_seguimiento").val();
-            const url = id ? `/ITSAdata/controllers/tipoSeguimientoController.php?action=update` : `/ITSAdata/controllers/tipoSeguimientoController.php?action=store`;
+            const url = id ? `/GORA/controllers/tipoSeguimientoController.php?action=update` : `/GORA/controllers/tipoSeguimientoController.php?action=store`;
             const data = $('#formTipo').serialize();
 
             $.post(url, data).done(function(response) {
@@ -304,7 +304,7 @@ include __DIR__ . "/../objects/footer.php";
         // Editar tipo
         $(document).on('click', '.btn-editar', function() {
             const id = $(this).data('id');
-            $.get(`/ITSAdata/controllers/tipoSeguimientoController.php?action=show&id=${id}`, function(data) {
+            $.get(`/GORA/controllers/tipoSeguimientoController.php?action=show&id=${id}`, function(data) {
                 const tipo = data;
                 $("#id_tipo_seguimiento").val(tipo.id_tipo_seguimiento);
                 $("#nombre").val(tipo.nombre);
@@ -333,7 +333,7 @@ include __DIR__ . "/../objects/footer.php";
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.post(`/ITSAdata/controllers/tipoSeguimientoController.php?action=delete`, { id: id }, function(response) {
+                    $.post(`/GORA/controllers/tipoSeguimientoController.php?action=delete`, { id: id }, function(response) {
                         Swal.fire('¡Eliminado!', 'El registro ha sido eliminado.', 'success');
                         cargarTipos(currentPage, searchTerm);
                     }).fail(function() {

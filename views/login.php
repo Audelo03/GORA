@@ -40,9 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 // Verificación de rol
                 if (isset($_SESSION["usuario_nivel"])) {
                     if ($_SESSION["usuario_nivel"] == 4 || $_SESSION["usuario_nivel"] == 1) {
-                        header("Location: /ITSAdata/dashboard");
+                        header("Location: /GORA/dashboard");
                     } else {
-                        header("Location: /ITSAdata/listas");
+                        header("Location: /GORA/listas");
                     }
                     exit;
                 } else {
@@ -72,8 +72,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     
-    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/GORA/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/GORA/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css">
 
     <style>
       .form-signin {

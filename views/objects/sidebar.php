@@ -4,7 +4,7 @@ $current_page = '';
 $request_uri = $_SERVER['REQUEST_URI'];
 
 // Remover la base del proyecto y parámetros
-$base_path = '/ITSAdata/';
+$base_path = '/GORA/';
 if (strpos($request_uri, $base_path) === 0) {
     $path = substr($request_uri, strlen($base_path));
     $path = explode('?', $path)[0]; // Remover parámetros GET
@@ -60,28 +60,28 @@ if (!isset($modificacion_ruta)) {
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li class="nav-item">
-        <a href="/ITSAdata/dashboard" class="nav-link text-white <?= active(['dashboard']); ?>">
+        <a href="/GORA/dashboard" class="nav-link text-white <?= active(['dashboard']); ?>">
           <i class="bi bi-speedometer2 me-2"></i> <span class="sidebar-text">Dashboard</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="/ITSAdata/listas" class="nav-link text-white <?= active(['listas']); ?>">
+        <a href="/GORA/listas" class="nav-link text-white <?= active(['listas']); ?>">
           <i class="bi bi-people me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li>
-        <a href="/ITSAdata/estadisticas" class="nav-link text-white <?= active(['estadisticas']); ?>">
+        <a href="/GORA/estadisticas" class="nav-link text-white <?= active(['estadisticas']); ?>">
           <i class="bi bi-bar-chart-fill me-2"></i> <span class="sidebar-text">Estadísticas</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="/ITSAdata/seguimientos" class="nav-link text-white <?= active(['seguimientos']); ?>">
+        <a href="/GORA/seguimientos" class="nav-link text-white <?= active(['seguimientos']); ?>">
           <i class="bi bi-journal-text me-2"></i> <span class="sidebar-text">Seguimientos</span>
         </a>
       </li>
@@ -91,37 +91,37 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Gestión</h6>
 
       <li>
-        <a href="/ITSAdata/usuarios" class="nav-link text-white <?= active(['usuarios']); ?>">
+        <a href="/GORA/usuarios" class="nav-link text-white <?= active(['usuarios']); ?>">
           <i class="bi bi-person-vcard me-2"></i> <span class="sidebar-text">Usuarios</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/alumnos" class="nav-link text-white <?= active(['alumnos']); ?>">
+        <a href="/GORA/alumnos" class="nav-link text-white <?= active(['alumnos']); ?>">
           <i class="bi bi-person-workspace me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/carreras" class="nav-link text-white <?= active(['carreras']); ?>">
+        <a href="/GORA/carreras" class="nav-link text-white <?= active(['carreras']); ?>">
           <i class="bi bi-book me-2"></i> <span class="sidebar-text">Carreras</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/grupos" class="nav-link text-white <?= active(['grupos']); ?>">
+        <a href="/GORA/grupos" class="nav-link text-white <?= active(['grupos']); ?>">
           <i class="bi bi-person-video2 me-2"></i> <span class="sidebar-text">Grupos</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/modalidades" class="nav-link text-white <?= active(['modalidades']); ?>">
+        <a href="/GORA/modalidades" class="nav-link text-white <?= active(['modalidades']); ?>">
           <i class="bi bi-person-video3 me-2"></i> <span class="sidebar-text">Modalidades</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/tipo-seguimiento" class="nav-link text-white <?= active(['tipo-seguimiento', 'tipo_seguimiento']); ?>">
+        <a href="/GORA/tipo-seguimiento" class="nav-link text-white <?= active(['tipo-seguimiento', 'tipo_seguimiento']); ?>">
           <i class="bi bi-person-rolodex me-2"></i> <span class="sidebar-text">Tipo de Seguimientos</span>
         </a>
       </li>
@@ -130,7 +130,7 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Tú</h6>
 
       <li>
-        <a href="/ITSAdata/profile" class="nav-link text-white <?= active(['profile']); ?>">
+        <a href="/GORA/profile" class="nav-link text-white <?= active(['profile']); ?>">
           <i class="bi bi-person-circle me-2"></i> <span class="sidebar-text">Perfil</span>
         </a>
       </li>

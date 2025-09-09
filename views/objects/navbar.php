@@ -21,7 +21,7 @@ if (!isset($modificacion_ruta)) {
                         
                         
                         <li>
-                            <a class="dropdown-item text-danger" href="/ITSAdata/logout" id="logout-link">
+                            <a class="dropdown-item text-danger" href="/GORA/logout" id="logout-link">
                                 <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                             </a>
                         </li>

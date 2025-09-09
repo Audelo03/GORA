@@ -87,7 +87,7 @@ include 'objects/header.php';
                     </table>
                     <div class="text-end mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <i class="bi bi-check-circle me-2"></i>
                             Guardar Asistencia
                         </button>
                     </div>

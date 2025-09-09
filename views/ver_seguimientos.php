@@ -14,7 +14,7 @@ $auth->checkAuth();
 
 $id_alumno = filter_input(INPUT_GET, 'id_alumno', FILTER_VALIDATE_INT);
 if (!$id_alumno) {
-    header("Location: /ITSAdata/listas?error=invalid_id");
+    header("Location: /GORA/listas?error=invalid_id");
     exit;
 }
 
@@ -22,7 +22,7 @@ $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId($id_alumno);
 
 if (!$alumno) {
-    header("Location: /ITSAdata/listas?error=alumno_not_found");
+    header("Location: /GORA/listas?error=alumno_not_found");
     exit;
 }
 
@@ -106,7 +106,7 @@ function formatFecha(?string $fecha): string {
                                             <td><?= formatFecha($seguimiento['fecha_compromiso']) ?></td>
                                             <td>
                                                 <a href="editar_seguimiento.php?id_seguimiento=<?= $seguimiento['id_seguimiento'] ?>" class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil"></i>
+                                                    <i class="bi bi-pencil-square"></i>
                                                 </a>
                                             </td>
                                         </tr>
@@ -120,7 +120,7 @@ function formatFecha(?string $fecha): string {
 
             <div class="mt-4 text-end">
                 <a href="listas.php" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-bar-left"></i>Volver a la Lista
+                    <i class="bi bi-arrow-left"></i>Volver a la Lista
                 </a>
             </div>
 

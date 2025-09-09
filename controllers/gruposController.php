@@ -1,6 +1,6 @@
 <?php
 /**
- * CONTROLADOR DE GRUPOS - ITSADATA
+ * CONTROLADOR DE GRUPOS - GORA
  * 
  * Maneja todas las operaciones CRUD relacionadas con los grupos
  * de estudiantes en el sistema.

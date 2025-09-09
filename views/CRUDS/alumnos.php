@@ -174,7 +174,7 @@ include __DIR__ . "/../objects/header.php"
                 search: search
             });
             
-            $.get(`/ITSAdata/controllers/alumnoController.php?${params}`, function(response) {
+            $.get(`/GORA/controllers/alumnoController.php?${params}`, function(response) {
                 const data = typeof response === 'string' ? JSON.parse(response) : response;
                 
                 if (data.success) {
@@ -328,7 +328,7 @@ include __DIR__ . "/../objects/header.php"
         // Editar alumno
         $(document).on('click', '.btn-editar', function() {
             const id = $(this).data('id');
-            $.get(`/ITSAdata/controllers/alumnoController.php?action=show&id=${id}`, function(data) {
+            $.get(`/GORA/controllers/alumnoController.php?action=show&id=${id}`, function(data) {
                 const alumno = JSON.parse(data);
                 $('#id_alumno').val(alumno.id_alumno);
                 $('#matricula').val(alumno.matricula);
@@ -352,7 +352,7 @@ include __DIR__ . "/../objects/header.php"
         // Guardar alumno
         $('#btnGuardar').on('click', function() {
             const id = $('#id_alumno').val();
-            const url = id ? `/ITSAdata/controllers/alumnoController.php?action=update` : `/ITSAdata/controllers/alumnoController.php?action=store`;
+            const url = id ? `/GORA/controllers/alumnoController.php?action=update` : `/GORA/controllers/alumnoController.php?action=store`;
             const data = $('#formAlumno').serialize();
             
             $.post(url, data, function(response) {
@@ -389,7 +389,7 @@ include __DIR__ . "/../objects/header.php"
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.post(`/ITSAdata/controllers/alumnoController.php?action=delete`, { id: id }, function() {
+                    $.post(`/GORA/controllers/alumnoController.php?action=delete`, { id: id }, function() {
                         Swal.fire(
                             '¡Eliminado!',
                             'El alumno ha sido eliminado.',

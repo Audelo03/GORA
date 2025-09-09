@@ -1,6 +1,6 @@
 <?php
 /**
- * CONTROLADOR DE AUTENTICACIÓN - ITSADATA
+ * CONTROLADOR DE AUTENTICACIÓN - GORA
  * 
  * Maneja el proceso de login, logout y verificación de autenticación
  * de usuarios en el sistema.
@@ -47,7 +47,7 @@ class AuthController {
     public function logout() {
         session_unset();
         session_destroy();
-        header("Location: /ITSAdata/login");
+        header("Location: /GORA/login");
         exit;
     }
 
@@ -57,7 +57,7 @@ class AuthController {
      */
     public function checkAuth() {
         if (!isset($_SESSION["usuario_id"])) {
-            header("Location: /ITSAdata/login");
+            header("Location: /GORA/login");
             exit;
         }
     }

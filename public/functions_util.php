@@ -1,6 +1,6 @@
 <?php
 /**
- * FUNCIONES UTILITARIAS DEL SISTEMA - ITSADATA
+ * FUNCIONES UTILITARIAS DEL SISTEMA - GORA
  * 
  * Este archivo contiene funciones de utilidad para el manejo seguro
  * de datos, codificación y validación en toda la aplicación.

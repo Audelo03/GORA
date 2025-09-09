@@ -1,23 +1,27 @@
 RewriteEngine On
 
 # Allow access to vendor directory for CSS/JS files
-RewriteCond %{REQUEST_URI} ^/ITSAdata/vendor/
+RewriteCond %{REQUEST_URI} ^/GORA/vendor/
 RewriteRule ^(.*)$ - [L]
 
 # Allow access to public directory
-RewriteCond %{REQUEST_URI} ^/ITSAdata/public/
+RewriteCond %{REQUEST_URI} ^/GORA/public/
+RewriteRule ^(.*)$ - [L]
+
+# Allow access to node_modules directory
+RewriteCond %{REQUEST_URI} ^/GORA/node_modules/
 RewriteRule ^(.*)$ - [L]
 
 # Allow direct access to controllers
-RewriteCond %{REQUEST_URI} ^/ITSAdata/controllers/
+RewriteCond %{REQUEST_URI} ^/GORA/controllers/
 RewriteRule ^(.*)$ - [L]
 
 # Allow direct access to models
-RewriteCond %{REQUEST_URI} ^/ITSAdata/models/
+RewriteCond %{REQUEST_URI} ^/GORA/models/
 RewriteRule ^(.*)$ - [L]
 
 # Allow direct access to config
-RewriteCond %{REQUEST_URI} ^/ITSAdata/config/
+RewriteCond %{REQUEST_URI} ^/GORA/config/
 RewriteRule ^(.*)$ - [L]
 
 # Redirect all other requests to index.php

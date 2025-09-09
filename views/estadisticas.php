@@ -148,7 +148,7 @@ $datos = $estadisticasController->obtenerEstadisticas();
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-success text-white">
-                    <i class="bi bi-people"></i> Usuarios por Nivel
+                    <i class="bi bi-person-vcard"></i> Usuarios por Nivel
                 </div>
                 <div class="card-body">
                     <canvas id="usuariosPorNivelChart"></canvas>
@@ -220,7 +220,7 @@ $datos = $estadisticasController->obtenerEstadisticas();
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-purple text-white" style="background-color: #6f42c1 !important;">
-                    <i class="bi bi-book"></i> Modalidades Más Utilizadas
+                    <i class="bi bi-person-video3"></i> Modalidades Más Utilizadas
                 </div>
                 <div class="card-body">
                     <canvas id="modalidadesMasUtilizadasChart"></canvas>
@@ -234,7 +234,7 @@ $datos = $estadisticasController->obtenerEstadisticas();
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-teal text-white" style="background-color: #20c997 !important;">
-                    <i class="bi bi-person-workspace"></i> Productividad de Tutores
+                    <i class="bi bi-people"></i> Productividad de Tutores
                 </div>
                 <div class="card-body">
                     <canvas id="productividadTutoresChart"></canvas>

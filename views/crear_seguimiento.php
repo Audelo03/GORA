@@ -14,7 +14,7 @@ $auth->checkAuth();
 
 $id_alumno = filter_input(INPUT_GET, 'id_alumno', FILTER_VALIDATE_INT);
 if (!$id_alumno) {
-    header("Location: /ITSAdata/listas?error=invalid_id");
+    header("Location: /GORA/listas?error=invalid_id");
     exit;
 }
 
@@ -22,7 +22,7 @@ $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId($id_alumno);
 
 if (!$alumno) {
-    header("Location: /ITSAdata/listas?error=alumno_not_found");
+    header("Location: /GORA/listas?error=alumno_not_found");
     exit;
 }
 
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
 
         if ($resultado) {
-            header("Location: /ITSAdata/ver_seguimientos.php?id_alumno=$id_alumno&success=created");
+            header("Location: /GORA/ver_seguimientos.php?id_alumno=$id_alumno&success=created");
             exit;
         } else {
             $errors['general'] = "Hubo un error al guardar el seguimiento.";

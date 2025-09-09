@@ -1,4 +1,4 @@
-# ITSADATA Routing System - Complete Guide
+# GORA Routing System - Complete Guide
 
 ## Overview
 The application now uses a modern MVC routing system with a single entry point (`index.php`) and clean URLs. All requests are routed through the main router, providing better security, maintainability, and user experience.
@@ -30,16 +30,16 @@ The application now uses a modern MVC routing system with a single entry point (
 
 ### Before (Old System)
 ```
-http://localhost/ITSAdata/views/login.php
-http://localhost/ITSAdata/views/dashboard.php
-http://localhost/ITSAdata/views/CRUDS/usuarios.php
+http://localhost/GORA/views/login.php
+http://localhost/GORA/views/dashboard.php
+http://localhost/GORA/views/CRUDS/usuarios.php
 ```
 
 ### After (New System)
 ```
-http://localhost/ITSAdata/login
-http://localhost/ITSAdata/dashboard
-http://localhost/ITSAdata/usuarios
+http://localhost/GORA/login
+http://localhost/GORA/dashboard
+http://localhost/GORA/usuarios
 ```
 
 ## Complete Use Case Flow
@@ -47,7 +47,7 @@ http://localhost/ITSAdata/usuarios
 ### 1. User Access Flow
 
 #### Scenario: User visits the application
-1. **User enters URL**: `http://localhost/ITSAdata/`
+1. **User enters URL**: `http://localhost/GORA/`
 2. **Apache processes request**: `.htaccess` redirects to `index.php`
 3. **Router processes**: Empty path defaults to `/login`
 4. **View loaded**: `views/login.php` is included
@@ -176,7 +176,7 @@ http://localhost/ITSAdata/usuarios
 ## Testing the System
 
 ### 1. Basic Navigation
-- Visit `http://localhost/ITSAdata/` → Should redirect to login
+- Visit `http://localhost/GORA/` → Should redirect to login
 - Login with valid credentials → Should redirect to dashboard
 - Navigate through sidebar links → Should work correctly
 
@@ -204,4 +204,4 @@ http://localhost/ITSAdata/usuarios
 - Verify database connection
 - Test individual routes
 
-This routing system provides a solid foundation for the ITSADATA application with improved security, maintainability, and user experience.
+This routing system provides a solid foundation for the GORA application with improved security, maintainability, and user experience.

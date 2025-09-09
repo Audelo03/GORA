@@ -112,7 +112,7 @@ function formatFecha(?string $fecha): string {
                                            data-bs-toggle="tooltip" 
                                            data-bs-placement="top" 
                                            title="Editar este Seguimiento">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <a href="ver_seguimientos.php?id_alumno=<?= $s['id_alumno'] ?>" 
                                            class="btn btn-sm btn-outline-primary" 

@@ -1,18 +1,18 @@
-# ITSADATA Routing System - Troubleshooting Guide
+# GORA Routing System - Troubleshooting Guide
 
 ## Current Issue: Internal Server Error
 
 ### Step 1: Test Basic PHP Functionality
-1. Visit: `http://localhost/ITSAdata/test.php`
+1. Visit: `http://localhost/GORA/test.php`
 2. This will show you if PHP is working and if the database connection is OK
 
 ### Step 2: Test Direct Access
-1. Visit: `http://localhost/ITSAdata/index.php`
+1. Visit: `http://localhost/GORA/index.php`
 2. This should show the login page directly
 
 ### Step 3: Test Routing
-1. Visit: `http://localhost/ITSAdata/` (should redirect to login)
-2. Visit: `http://localhost/ITSAdata/login` (should show login page)
+1. Visit: `http://localhost/GORA/` (should redirect to login)
+2. Visit: `http://localhost/GORA/login` (should show login page)
 
 ## Common Issues and Solutions
 
@@ -67,7 +67,7 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 **Symptoms**: Database errors in test.php
 
 **Solution**: Check database configuration
-1. Verify database exists: `itsadatav2`
+1. Verify database exists: `gorav2`
 2. Check credentials in `config/db.php`
 3. Ensure MySQL is running in XAMPP
 
@@ -75,7 +75,7 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 
 ### 1. Basic Test
 ```
-http://localhost/ITSAdata/test.php
+http://localhost/GORA/test.php
 ```
 Should show:
 - PHP is working!
@@ -84,22 +84,22 @@ Should show:
 
 ### 2. Direct Access Test
 ```
-http://localhost/ITSAdata/index.php
+http://localhost/GORA/index.php
 ```
 Should show the login page
 
 ### 3. Routing Test
 ```
-http://localhost/ITSAdata/
-http://localhost/ITSAdata/login
-http://localhost/ITSAdata/dashboard
+http://localhost/GORA/
+http://localhost/GORA/login
+http://localhost/GORA/dashboard
 ```
 Should work with clean URLs
 
 ## Fallback Solutions
 
 ### If mod_rewrite doesn't work:
-1. Use direct access: `http://localhost/ITSAdata/index.php`
+1. Use direct access: `http://localhost/GORA/index.php`
 2. The application will still work, just with less clean URLs
 
 ### If .htaccess causes issues:

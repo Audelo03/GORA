@@ -9,11 +9,11 @@ if(!isset($modificacion_ruta)){
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $page_title ?? 'ITSADATA'; ?></title>
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="public/css/sidebar.css" rel="stylesheet">
-    <link href="vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
+    <title><?php echo $page_title ?? 'GORA'; ?></title>
+    <link href="/GORA/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/GORA/public/css/sidebar.css" rel="stylesheet">
+    <link href="/GORA/vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/GORA/node_modules/sweetalert2/dist/sweetalert2.min.css">
     
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"/>

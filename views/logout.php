@@ -3,6 +3,6 @@
 session_unset();
 session_destroy();
 
-header("Location: /ITSAdata/login");
+header("Location: /GORA/login");
 exit;
 ?>

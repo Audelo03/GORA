@@ -1,6 +1,6 @@
 <?php
 /**
- * SISTEMA DE ENRUTAMIENTO PRINCIPAL - ITSADATA
+ * SISTEMA DE ENRUTAMIENTO PRINCIPAL - GORA
  * 
  * Este archivo maneja todas las rutas de la aplicación usando URLs limpias.
  * Procesa las solicitudes HTTP y redirige a las vistas correspondientes.
@@ -114,5 +114,5 @@ if (file_exists($viewFile)) {
 http_response_code(404);
 echo "<h1>404 - Página No Encontrada</h1>";
 echo "<p>La página que solicitaste no pudo ser encontrada.</p>";
-echo "<a href='/'>Ir al Inicio</a>";
+echo "<a href='/GORA/'>Ir al Inicio</a>";
 ?>

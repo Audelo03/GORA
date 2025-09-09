@@ -1,6 +1,6 @@
 <?php
 /**
- * MODELO DE GRUPO - ITSADATA
+ * MODELO DE GRUPO - GORA
  * 
  * Maneja todas las operaciones de base de datos relacionadas
  * con los grupos de estudiantes.

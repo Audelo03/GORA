@@ -123,7 +123,7 @@ window.addEventListener('load', function() {
             search: search
         });
         
-        $.get(`/ITSAdata/controllers/modalidadesController.php?${params}`, function(response) {
+        $.get(`/GORA/controllers/modalidadesController.php?${params}`, function(response) {
             const data = typeof response === 'string' ? JSON.parse(response) : response;
             
             if (data.success) {
@@ -159,7 +159,7 @@ window.addEventListener('load', function() {
                 <td>${m.nombre}</td>
                 <td>
                     <button class="btn btn-warning btn-sm btn-editar" data-modalidad='${JSON.stringify(m)}' title="Editar"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${m.id_modalidad}" title="Eliminar"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${m.id_modalidad}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>`;
             $('#modalidadesBody').append(row);
@@ -278,7 +278,7 @@ window.addEventListener('load', function() {
     // Guardar modalidad
     $('#btnGuardar').on('click', function() {
         let id = $("#id_modalidad").val();
-        let url = id ? "/ITSAdata/controllers/modalidadesController.php?action=update" : "/ITSAdata/controllers/modalidadesController.php?action=store";
+        let url = id ? "/GORA/controllers/modalidadesController.php?action=update" : "/GORA/controllers/modalidadesController.php?action=store";
 
         $.post(url, $('#formModalidad').serialize())
             .done(function(response) {
@@ -335,7 +335,7 @@ window.addEventListener('load', function() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post("/ITSAdata/controllers/modalidadesController.php?action=delete", { id: idParaEliminar }, function(response) {
+                $.post("/GORA/controllers/modalidadesController.php?action=delete", { id: idParaEliminar }, function(response) {
                     if (response.status === 'success') {
                         Swal.fire('¡Eliminado!', response.message, 'success');
                         cargarModalidades(currentPage, searchTerm);

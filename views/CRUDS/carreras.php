@@ -134,7 +134,7 @@ window.addEventListener('load', function() {
             search: search
         });
         
-        $.get(`/ITSAdata/controllers/carrerasController.php?${params}`, function(response) {
+        $.get(`/GORA/controllers/carrerasController.php?${params}`, function(response) {
             const data = typeof response === 'string' ? JSON.parse(response) : response;
             
             if (data.success) {
@@ -173,7 +173,7 @@ window.addEventListener('load', function() {
                 <td>${c.fecha_creacion}</td>
                 <td>
                     <button class="btn btn-warning btn-sm btn-editar" data-id='${JSON.stringify(c)}'><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${c.id_carrera}"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${c.id_carrera}"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>`;
             $('#carrerasBody').append(row);
@@ -292,7 +292,7 @@ window.addEventListener('load', function() {
     // Guardar carrera
     $('#btnGuardar').on('click', function() {
         let id = $("#id_carrera").val();
-        let url = id ? "/ITSAdata/controllers/carrerasController.php?action=update" : "/ITSAdata/controllers/carrerasController.php?action=store";
+        let url = id ? "/GORA/controllers/carrerasController.php?action=update" : "/GORA/controllers/carrerasController.php?action=store";
         
         $.post(url, $('#formCarrera').serialize(), function() {
             carreraModal.hide();
@@ -339,7 +339,7 @@ window.addEventListener('load', function() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post("/ITSAdata/controllers/carrerasController.php?action=delete", { id: idParaEliminar }, function(response) {
+                $.post("/GORA/controllers/carrerasController.php?action=delete", { id: idParaEliminar }, function(response) {
                     if (response.status === 'success') {
                         Swal.fire('¡Eliminada!', response.message, 'success');
                         cargarCarreras(currentPage, searchTerm);

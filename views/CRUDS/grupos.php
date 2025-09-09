@@ -170,7 +170,7 @@ window.addEventListener('load', function() {
             search: search
         });
         
-        $.get(`/ITSAdata/controllers/gruposController.php?${params}`, function(response) {
+        $.get(`/GORA/controllers/gruposController.php?${params}`, function(response) {
             const data = typeof response === 'string' ? JSON.parse(response) : response;
             
             if (data.success) {
@@ -210,7 +210,7 @@ window.addEventListener('load', function() {
                 <td>${g.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
                 <td>
                     <button class="btn btn-warning btn-sm btn-editar" data-grupo='${JSON.stringify(g)}' title="Editar"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${g.id_grupo}" title="Eliminar"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${g.id_grupo}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>`;
             $('#gruposBody').append(row);
@@ -329,7 +329,7 @@ window.addEventListener('load', function() {
     // Guardar grupo
     $('#btnGuardar').on('click', function() {
         let id = $("#id_grupo").val();
-        let url = id ? "/ITSAdata/controllers/gruposController.php?action=update" : "/ITSAdata/controllers/gruposController.php?action=store";
+        let url = id ? "/GORA/controllers/gruposController.php?action=update" : "/GORA/controllers/gruposController.php?action=store";
         
         $.post(url, $('#formGrupo').serialize())
             .done(function(response) {
@@ -390,7 +390,7 @@ window.addEventListener('load', function() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post("/ITSAdata/controllers/gruposController.php?action=delete", { id: idParaEliminar }, function(response) {
+                $.post("/GORA/controllers/gruposController.php?action=delete", { id: idParaEliminar }, function(response) {
                     if (response.status === 'success') {
                         Swal.fire('¡Eliminado!', response.message, 'success');
                         cargarGrupos(currentPage, searchTerm);

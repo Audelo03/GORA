@@ -22,8 +22,8 @@
         initTooltips();
         });
 </script>
-<script src="node_modules/jquery/dist/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/GORA/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/GORA/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -42,10 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
-
-
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/GORA/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const logoutLink = document.getElementById('logout-link');
@@ -119,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 id_grupo: id_grupo,
                 page: currentPage
             });
-            const url = `/ITSAdata/alumnos-paginados?${params.toString()}`;
+            const url = `/GORA/alumnos-paginados?${params.toString()}`;
 
             try {
                 // Realizar la petición con fetch

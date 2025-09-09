@@ -1,11 +1,11 @@
 {
-    "name": "diego/itsa",
-    "description": "platafoma de",
+    "name": "diego/gora",
+    "description": "Sistema de gestión académica GORA",
     "type": "project",
     "license": "proprietary",
     "autoload": {
         "psr-4": {
-            "Diego\\Itsa\\": "src/"
+            "Diego\\Gora\\": "src/"
         }
     },
     "authors": [
