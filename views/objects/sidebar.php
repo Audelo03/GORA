@@ -1,9 +1,37 @@
 <?php
-$current = basename($_SERVER['PHP_SELF']);
+// Obtener la página actual del sistema de enrutamiento
+$current_page = '';
+$request_uri = $_SERVER['REQUEST_URI'];
+
+// Remover la base del proyecto y parámetros
+$base_path = '/ITSAdata/';
+if (strpos($request_uri, $base_path) === 0) {
+    $path = substr($request_uri, strlen($base_path));
+    $path = explode('?', $path)[0]; // Remover parámetros GET
+    $path = explode('#', $path)[0]; // Remover fragmentos
+    $current_page = trim($path, '/');
+}
+
+// Si no hay página específica, asumir dashboard
+if (empty($current_page)) {
+    $current_page = 'dashboard';
+}
+
+// Debug: Mostrar la página actual (remover en producción)
+echo "<!-- Página actual: " . $current_page . " -->";
+
 if (!function_exists('active')) {
-  function active($files) {
-    global $current;
-    return in_array($current, (array)$files) ? 'active' : '';
+  function active($pages) {
+    global $current_page;
+    $pages_array = (array)$pages;
+    
+    // Verificar si la página actual coincide con alguna de las páginas especificadas
+    foreach ($pages_array as $page) {
+      if ($current_page === $page || $current_page === $page . '.php') {
+        return 'active';
+      }
+    }
+    return '';
   }
 }
 if (isset($_SESSION))
@@ -27,28 +55,28 @@ if (!isset($modificacion_ruta)) {
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li class="nav-item">
-        <a href="/ITSAdata/dashboard" class="nav-link text-white <?= active(['dashboard.php']); ?>">
+        <a href="/ITSAdata/dashboard" class="nav-link text-white <?= active(['dashboard']); ?>">
           <i class="bi bi-speedometer2 me-2"></i> <span class="sidebar-text">Dashboard</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="/ITSAdata/listas" class="nav-link text-white <?= active(['listas.php']); ?>">
+        <a href="/ITSAdata/listas" class="nav-link text-white <?= active(['listas']); ?>">
           <i class="bi bi-people me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li>
-        <a href="/ITSAdata/estadisticas" class="nav-link text-white <?= active(['estadisticas.php']); ?>">
+        <a href="/ITSAdata/estadisticas" class="nav-link text-white <?= active(['estadisticas']); ?>">
           <i class="bi bi-bar-chart-fill me-2"></i> <span class="sidebar-text">Estadísticas</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="/ITSAdata/seguimientos" class="nav-link text-white <?= active(['seguimientos.php']); ?>">
+        <a href="/ITSAdata/seguimientos" class="nav-link text-white <?= active(['seguimientos']); ?>">
           <i class="bi bi-journal-text me-2"></i> <span class="sidebar-text">Seguimientos</span>
         </a>
       </li>
@@ -58,37 +86,37 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Gestión</h6>
 
       <li>
-        <a href="/ITSAdata/usuarios" class="nav-link text-white <?= active(['usuarios.php']); ?>">
+        <a href="/ITSAdata/usuarios" class="nav-link text-white <?= active(['usuarios']); ?>">
           <i class="bi bi-person-vcard me-2"></i> <span class="sidebar-text">Usuarios</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/alumnos" class="nav-link text-white <?= active(['alumnos.php']); ?>">
+        <a href="/ITSAdata/alumnos" class="nav-link text-white <?= active(['alumnos']); ?>">
           <i class="bi bi-person-workspace me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/carreras" class="nav-link text-white <?= active(['carreras.php']); ?>">
+        <a href="/ITSAdata/carreras" class="nav-link text-white <?= active(['carreras']); ?>">
           <i class="bi bi-book me-2"></i> <span class="sidebar-text">Carreras</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/grupos" class="nav-link text-white <?= active(['grupos.php']); ?>">
+        <a href="/ITSAdata/grupos" class="nav-link text-white <?= active(['grupos']); ?>">
           <i class="bi bi-person-video2 me-2"></i> <span class="sidebar-text">Grupos</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/modalidades" class="nav-link text-white <?= active(['modalidades.php']); ?>">
+        <a href="/ITSAdata/modalidades" class="nav-link text-white <?= active(['modalidades']); ?>">
           <i class="bi bi-person-video3 me-2"></i> <span class="sidebar-text">Modalidades</span>
         </a>
       </li>
 
       <li>
-        <a href="/ITSAdata/tipo-seguimiento" class="nav-link text-white <?= active(['tipo_seguimiento.php']); ?>">
+        <a href="/ITSAdata/tipo-seguimiento" class="nav-link text-white <?= active(['tipo-seguimiento', 'tipo_seguimiento']); ?>">
           <i class="bi bi-person-rolodex me-2"></i> <span class="sidebar-text">Tipo de Seguimientos</span>
         </a>
       </li>
@@ -97,7 +125,7 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Tú</h6>
 
       <li>
-        <a href="/ITSAdata/profile" class="nav-link text-white <?= active(['profile.php']); ?>">
+        <a href="/ITSAdata/profile" class="nav-link text-white <?= active(['profile']); ?>">
           <i class="bi bi-person-circle me-2"></i> <span class="sidebar-text">Perfil</span>
         </a>
       </li>
