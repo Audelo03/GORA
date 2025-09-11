@@ -188,11 +188,23 @@ function renderUsuarios(usuarios) {
                 <td>${u.email}</td>
                 <td>${u.nivel_usuario ?? 'N/A'}</td>
                 <td>
-                    <button onclick='editarUsuario(${JSON.stringify(u)})' class="btn btn-sm btn-warning" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                    <button onclick="eliminarUsuario(${u.id_usuario})" class="btn btn-sm btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    <button onclick='editarUsuario(${JSON.stringify(u)})' class="btn btn-sm btn-warning" 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Usuario">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button onclick="eliminarUsuario(${u.id_usuario})" class="btn btn-sm btn-danger" 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Usuario">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
                 </td>
             </tr>`;
             $('#usuariosBody').append(row);
+        });
+        
+        // Reinicializar tooltips después de renderizar
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 }
 
@@ -339,6 +351,12 @@ window.addEventListener('load', function() {
     
     // Inicializar Select2 después de cargar los datos
     setTimeout(inicializarSelect2, 100);
+    
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     // Reinicializar Select2 cuando se abre el modal
     $('#usuarioModal').on('shown.bs.modal', function() {

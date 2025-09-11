@@ -62,7 +62,11 @@ function formatFecha(?string $fecha): string {
                     </h4>
                     <p class="mb-0">Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></p>
                 </div>
-                <a href="crear_seguimiento.php?id_alumno=<?= $id_alumno ?>" class="btn btn-primary">
+                <a href="crear_seguimiento.php?id_alumno=<?= $id_alumno ?>" 
+                   class="btn btn-primary" 
+                   data-bs-toggle="tooltip" 
+                   data-bs-placement="top" 
+                   title="Crear Nuevo Seguimiento">
                     <i class="bi bi-plus-circle"></i>
                 </a>
             </div>
@@ -105,7 +109,11 @@ function formatFecha(?string $fecha): string {
                                             <td><?= formatFecha($seguimiento['fecha_creacion']) ?></td>
                                             <td><?= formatFecha($seguimiento['fecha_compromiso']) ?></td>
                                             <td>
-                                                <a href="editar_seguimiento.php?id_seguimiento=<?= $seguimiento['id_seguimiento'] ?>" class="btn btn-sm btn-warning">
+                                                <a href="editar_seguimiento.php?id_seguimiento=<?= $seguimiento['id_seguimiento'] ?>" 
+                                                   class="btn btn-sm btn-warning" 
+                                                   data-bs-toggle="tooltip" 
+                                                   data-bs-placement="top" 
+                                                   title="Editar Seguimiento">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                             </td>
@@ -119,7 +127,11 @@ function formatFecha(?string $fecha): string {
             </div>
 
             <div class="mt-4 text-end">
-                <a href="listas.php" class="btn btn-outline-secondary">
+                <a href="listas.php" 
+                   class="btn btn-outline-secondary" 
+                   data-bs-toggle="tooltip" 
+                   data-bs-placement="top" 
+                   title="Volver a la Lista de Alumnos">
                     <i class="bi bi-arrow-left"></i>Volver a la Lista
                 </a>
             </div>

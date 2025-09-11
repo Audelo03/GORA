@@ -103,6 +103,13 @@ $nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_patern
         paginacionControles.innerHTML += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${currentPage + 1}" data-termino="${termino}">Siguiente</a></li>`;
     }
 
+    function initTooltips() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+
     paginacionControles.addEventListener('click', function(e) {
         e.preventDefault();
         const target = e.target.closest('a');

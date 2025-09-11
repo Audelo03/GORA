@@ -41,9 +41,13 @@ include 'objects/header.php';
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h1 class="h3 mb-0">Toma de Asistencia</h1>
-            <button class="btn btn-secondary" onclick="window.history.back();">
-    ← 
-</button>
+            <button class="btn btn-secondary" 
+                    onclick="window.history.back();" 
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="Volver a la Página Anterior">
+                ← 
+            </button>
         </div>
         <div class="card-body">
             <h2 class="card-title text-primary"><?= htmlspecialchars($nombre_grupo) ?></h2>
@@ -86,7 +90,11 @@ include 'objects/header.php';
                         </tbody>
                     </table>
                     <div class="text-end mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" 
+                                class="btn btn-primary btn-lg" 
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Guardar la Asistencia de los Alumnos">
                             <i class="bi bi-check-circle me-2"></i>
                             Guardar Asistencia
                         </button>

@@ -12,13 +12,11 @@ if (strpos($request_uri, $base_path) === 0) {
     $current_page = trim($path, '/');
 }
 
-// Si no hay página específica, asumir dashboard
 if (empty($current_page)) {
     $current_page = 'dashboard';
 }
 
-// Debug: Mostrar la página actual (remover en producción)
-// echo "<!-- Página actual: " . $current_page . " -->";
+
 
 if (!function_exists('active')) {
   /**
@@ -50,7 +48,7 @@ if (!isset($modificacion_ruta)) {
 <nav id="app-sidebar" class="sidebar bg-dark text-white position-fixed h-100 p-3 collapsed">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <span class="fs-5 fw-bold">GORA</span>
-    <button id="btn-toggle-sidebar" class="btn btn-sm btn-outline-light">
+    <button id="btn-toggle-sidebar" class="btn btn-sm btn-outline-light" >
       <i class="bi bi-list"></i>
     </button>
   </div>
@@ -60,28 +58,32 @@ if (!isset($modificacion_ruta)) {
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li class="nav-item">
-        <a href="/GORA/dashboard" class="nav-link text-white <?= active(['dashboard']); ?>">
+        <a href="/GORA/dashboard" class="nav-link text-white <?= active(['dashboard']); ?>" 
+           <?= active(['dashboard']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Panel Principal"' ?>>
           <i class="bi bi-speedometer2 me-2"></i> <span class="sidebar-text">Dashboard</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="/GORA/listas" class="nav-link text-white <?= active(['listas']); ?>">
+        <a href="/GORA/listas" class="nav-link text-white <?= active(['listas']); ?>" 
+           <?= active(['listas']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Lista de Alumnos"' ?>>
           <i class="bi bi-people me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <?php if ($nivel === 1 || $nivel === 4): ?>
       <li>
-        <a href="/GORA/estadisticas" class="nav-link text-white <?= active(['estadisticas']); ?>">
+        <a href="/GORA/estadisticas" class="nav-link text-white <?= active(['estadisticas']); ?>" 
+           <?= active(['estadisticas']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Estadísticas y Reportes"' ?>>
           <i class="bi bi-bar-chart-fill me-2"></i> <span class="sidebar-text">Estadísticas</span>
         </a>
       </li>
       <?php endif; ?>
 
       <li>
-        <a href="/GORA/seguimientos" class="nav-link text-white <?= active(['seguimientos']); ?>">
+        <a href="/GORA/seguimientos" class="nav-link text-white <?= active(['seguimientos']); ?>" 
+           <?= active(['seguimientos']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Seguimientos"' ?>>
           <i class="bi bi-journal-text me-2"></i> <span class="sidebar-text">Seguimientos</span>
         </a>
       </li>
@@ -91,37 +93,43 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Gestión</h6>
 
       <li>
-        <a href="/GORA/usuarios" class="nav-link text-white <?= active(['usuarios']); ?>">
+        <a href="/GORA/usuarios" class="nav-link text-white <?= active(['usuarios']); ?>" 
+           <?= active(['usuarios']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Gestión de Usuarios"' ?>>
           <i class="bi bi-person-vcard me-2"></i> <span class="sidebar-text">Usuarios</span>
         </a>
       </li>
 
       <li>
-        <a href="/GORA/alumnos" class="nav-link text-white <?= active(['alumnos']); ?>">
+        <a href="/GORA/alumnos" class="nav-link text-white <?= active(['alumnos']); ?>" 
+           <?= active(['alumnos']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Gestión de Alumnos"' ?>>
           <i class="bi bi-person-workspace me-2"></i> <span class="sidebar-text">Alumnos</span>
         </a>
       </li>
 
       <li>
-        <a href="/GORA/carreras" class="nav-link text-white <?= active(['carreras']); ?>">
+        <a href="/GORA/carreras" class="nav-link text-white <?= active(['carreras']); ?>" 
+           <?= active(['carreras']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Gestión de Carreras"' ?>>
           <i class="bi bi-book me-2"></i> <span class="sidebar-text">Carreras</span>
         </a>
       </li>
 
       <li>
-        <a href="/GORA/grupos" class="nav-link text-white <?= active(['grupos']); ?>">
+        <a href="/GORA/grupos" class="nav-link text-white <?= active(['grupos']); ?>" 
+           <?= active(['grupos']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Gestión de Grupos"' ?>>
           <i class="bi bi-person-video2 me-2"></i> <span class="sidebar-text">Grupos</span>
         </a>
       </li>
 
       <li>
-        <a href="/GORA/modalidades" class="nav-link text-white <?= active(['modalidades']); ?>">
+        <a href="/GORA/modalidades" class="nav-link text-white <?= active(['modalidades']); ?>" 
+           <?= active(['modalidades']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Gestión de Modalidades"' ?>>
           <i class="bi bi-person-video3 me-2"></i> <span class="sidebar-text">Modalidades</span>
         </a>
       </li>
 
       <li>
-        <a href="/GORA/tipo-seguimiento" class="nav-link text-white <?= active(['tipo-seguimiento', 'tipo_seguimiento']); ?>">
+        <a href="/GORA/tipo-seguimiento" class="nav-link text-white <?= active(['tipo-seguimiento', 'tipo_seguimiento']); ?>" 
+           <?= active(['tipo-seguimiento', 'tipo_seguimiento']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Gestión de tipos de seguimientos"' ?>>
           <i class="bi bi-person-rolodex me-2"></i> <span class="sidebar-text">Tipo de Seguimientos</span>
         </a>
       </li>
@@ -130,7 +138,8 @@ if (!isset($modificacion_ruta)) {
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Tú</h6>
 
       <li>
-        <a href="/GORA/profile" class="nav-link text-white <?= active(['profile']); ?>">
+        <a href="/GORA/profile" class="nav-link text-white <?= active(['profile']); ?>" 
+           <?= active(['profile']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Mi Perfil de Usuario"' ?>>
           <i class="bi bi-person-circle me-2"></i> <span class="sidebar-text">Perfil</span>
         </a>
       </li>

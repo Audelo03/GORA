@@ -144,25 +144,37 @@ window.addEventListener('load', function() {
         });
     }
 
-    // Función para renderizar la tabla de modalidades
-    function renderModalidades(modalidades) {
-        $('#modalidadesBody').empty();
-        
-        if (modalidades.length === 0) {
-            $('#modalidadesBody').html('<tr><td colspan="3" class="text-center text-muted">No se encontraron modalidades</td></tr>');
-            return;
-        }
-        
-        modalidades.forEach(m => {
-            const row = `<tr>
+        // Función para renderizar la tabla de modalidades
+        function renderModalidades(modalidades) {
+            $('#modalidadesBody').empty();
+            
+            if (modalidades.length === 0) {
+                $('#modalidadesBody').html('<tr><td colspan="3" class="text-center text-muted">No se encontraron modalidades</td></tr>');
+                return;
+            }
+            
+            modalidades.forEach(m => {
+                const row = `<tr>
                 <td>${m.id_modalidad}</td>
                 <td>${m.nombre}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm btn-editar" data-modalidad='${JSON.stringify(m)}' title="Editar"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${m.id_modalidad}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-warning btn-sm btn-editar" data-modalidad='${JSON.stringify(m)}' 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Modalidad">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${m.id_modalidad}" 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Modalidad">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
                 </td>
             </tr>`;
             $('#modalidadesBody').append(row);
+        });
+        
+        // Reinicializar tooltips después de renderizar
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     }
 
@@ -351,6 +363,12 @@ window.addEventListener('load', function() {
 
     // Cargar datos iniciales
     cargarModalidades();
+    
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 </script>
 

@@ -205,11 +205,23 @@ include __DIR__ . "/../objects/header.php"
                     <td>${a.carrera ?? 'N/A'}</td>
                     <td>${a.grupo ?? 'N/A'}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm btn-editar" data-id='${a.id_alumno}' title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${a.id_alumno}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                        <button class="btn btn-warning btn-sm btn-editar" data-id='${a.id_alumno}' 
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Alumno">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${a.id_alumno}" 
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Alumno">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
                     </td>
                 </tr>`;
                 $('#alumnosBody').append(row);
+            });
+            
+            // Reinicializar tooltips después de renderizar
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         }
 
@@ -423,6 +435,12 @@ include __DIR__ . "/../objects/header.php"
         
         // Inicializar Select2 después de cargar los datos
         setTimeout(inicializarSelect2, 100);
+        
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
         // Reinicializar Select2 cuando se abre el modal
         $('#alumnoModal').on('shown.bs.modal', function() {

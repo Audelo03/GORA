@@ -183,28 +183,40 @@ window.addEventListener('load', function() {
         });
     }
 
-    // Función para renderizar la tabla de grupos
-    function renderGrupos(grupos) {
-        $('#gruposBody').empty();
-        
-        if (grupos.length === 0) {
-            $('#gruposBody').html('<tr><td colspan="6" class="text-center text-muted">No se encontraron grupos</td></tr>');
-            return;
-        }
-        
-        grupos.forEach(g => {
-            const row = `<tr>
+        // Función para renderizar la tabla de grupos
+        function renderGrupos(grupos) {
+            $('#gruposBody').empty();
+            
+            if (grupos.length === 0) {
+                $('#gruposBody').html('<tr><td colspan="6" class="text-center text-muted">No se encontraron grupos</td></tr>');
+                return;
+            }
+            
+            grupos.forEach(g => {
+                const row = `<tr>
                 <td>${g.id_grupo}</td>
                 <td>${g.nombre}</td>
                 <td>${g.tutor_nombre ?? 'N/A'}</td>
                 <td>${g.carrera_nombre ?? 'N/A'}</td>
                 <td>${g.modalidad_nombre ?? 'N/A'}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm btn-editar" data-grupo='${JSON.stringify(g)}' title="Editar"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${g.id_grupo}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-warning btn-sm btn-editar" data-grupo='${JSON.stringify(g)}' 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Grupo">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${g.id_grupo}" 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Grupo">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
                 </td>
             </tr>`;
             $('#gruposBody').append(row);
+        });
+        
+        // Reinicializar tooltips después de renderizar
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     }
 
@@ -429,6 +441,12 @@ window.addEventListener('load', function() {
     
     // Inicializar Select2 después de cargar los datos
     setTimeout(inicializarSelect2, 100);
+    
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     // Reinicializar Select2 cuando se abre el modal
     $('#grupoModal').on('shown.bs.modal', function() {

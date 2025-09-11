@@ -298,16 +298,33 @@ $datos = $estadisticasController->obtenerEstadisticas();
                     <h4 class="mb-0"><i class="bi bi-box-arrow-down"></i> Exportar</h4>
                 </div>
                 <div class="card-body text-center">
-                    <button class="btn btn-success btn-lg mx-2" onclick="exportarTodoA_Excel('reporte_estadisticas_completo.xlsx')">
+                    <button class="btn btn-success btn-lg mx-2" 
+                            onclick="exportarTodoA_Excel('reporte_estadisticas_completo.xlsx')" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Exportar Estadísticas a Excel">
                         <i class="fas fa-file-excel"></i> Excel
                     </button>
-                    <button class="btn btn-info btn-lg mx-2" onclick="exportarTodoA_CSV('reporte_estadisticas_completo.csv')">
+                    <button class="btn btn-info btn-lg mx-2" 
+                            onclick="exportarTodoA_CSV('reporte_estadisticas_completo.csv')" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Exportar Estadísticas a CSV">
                         <i class="fas fa-file-csv"></i> CSV
                     </button>
-                    <button id="exportPdfBtn" class="btn btn-danger btn-lg mx-2" onclick="exportarTodoA_PDF('reporte_graficas.pdf')">
+                    <button id="exportPdfBtn" 
+                            class="btn btn-danger btn-lg mx-2" 
+                            onclick="exportarTodoA_PDF('reporte_graficas.pdf')" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Exportar Gráficas a PDF">
                         <i class="fas fa-file-pdf"></i> PDF
                     </button>
-                    <button class="btn btn-warning btn-lg mx-2" onclick="exportarGraficasComoImagenes()">
+                    <button class="btn btn-warning btn-lg mx-2" 
+                            onclick="exportarGraficasComoImagenes()" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Exportar Gráficas como Imágenes PNG">
                         <i class="fas fa-image"></i> PNG
                     </button>
                 </div>

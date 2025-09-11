@@ -158,11 +158,23 @@ include __DIR__ . "/../objects/footer.php";
                     <td>${t.id_tipo_seguimiento}</td>
                     <td>${t.nombre}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm btn-editar" data-id="${t.id_tipo_seguimiento}" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${t.id_tipo_seguimiento}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                        <button class="btn btn-warning btn-sm btn-editar" data-id="${t.id_tipo_seguimiento}" 
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Tipo de Seguimiento">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-eliminar" data-id="${t.id_tipo_seguimiento}" 
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Tipo de Seguimiento">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
                     </td>
                 </tr>`;
                 $('#tiposBody').append(row);
+            });
+            
+            // Reinicializar tooltips después de renderizar
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         }
 
@@ -345,5 +357,11 @@ include __DIR__ . "/../objects/footer.php";
 
         // Cargar datos iniciales
         cargarTipos();
+        
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
     });
     </script>

@@ -38,7 +38,10 @@ include 'objects/header.php';
 <div class="card shadow-sm mb-4">
     <div class="card-body text-center">
         <a href="asistencia.php?id_grupo=<?= htmlspecialchars($id_grupo) ?>&fecha=<?= urlencode($fecha) ?>" 
-           class="btn btn-primary btn-lg">
+           class="btn btn-primary btn-lg" 
+           data-bs-toggle="tooltip" 
+           data-bs-placement="top" 
+           title="Tomar Asistencia para Hoy">
             <i class="bi bi-calendar-plus-fill me-2"></i>
             Pasar lista / Editar la de hoy (<?= date('d/m/Y') ?>)
         </a>
@@ -76,7 +79,10 @@ include 'objects/header.php';
                                 <div class="accordion-body">
                                     <div class="d-flex justify-content-end mb-3">
                                         <a href="asistencia.php?id_grupo=<?= $id_grupo ?>&fecha=<?= $fecha ?>" 
-                                           class="btn btn-sm btn-outline-secondary">
+                                           class="btn btn-sm btn-outline-secondary" 
+                                           data-bs-toggle="tooltip" 
+                                           data-bs-placement="top" 
+                                           title="Editar Asistencia de esta Fecha">
                                            <i class="bi bi-pencil-square me-1"></i> Editar esta lista
                                         </a>
                                     </div>

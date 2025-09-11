@@ -23,6 +23,36 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar modales
     initializeModals();
+    
+    // Limpiar tooltips antes de salir de la página
+    window.addEventListener('beforeunload', function() {
+        cleanupAllTooltips();
+    });
+    
+    // Limpiar tooltips cuando se detecta navegación
+    window.addEventListener('pagehide', function() {
+        cleanupAllTooltips();
+    });
+    
+    // Limpiar tooltips cuando se detecta cambio de visibilidad
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            cleanupAllTooltips();
+        }
+    });
+    
+    // Limpiar tooltips cuando se detecta navegación del navegador
+    window.addEventListener('popstate', function() {
+        cleanupAllTooltips();
+    });
+    
+    // Limpiar tooltips periódicamente para casos edge
+    setInterval(function() {
+        const visibleTooltips = document.querySelectorAll('.tooltip.show');
+        if (visibleTooltips.length > 0) {
+            cleanupAllTooltips();
+        }
+    }, 5000);
 });
 
 /**
@@ -39,12 +69,65 @@ function initializeSidebar() {
             content.classList.toggle('collapsed');
         });
     }
+    
+    // Limpiar tooltips cuando se hace clic en enlaces del sidebar
+    const sidebarLinks = sidebar.querySelectorAll('a[data-bs-toggle="tooltip"]');
+    sidebarLinks.forEach(function(link) {
+        // Limpiar al hacer clic
+        link.addEventListener('click', function() {
+            cleanupAllTooltips();
+            // Limpieza adicional con delay para casos edge
+            setTimeout(function() {
+                cleanupAllTooltips();
+            }, 100);
+        });
+        
+        // Limpiar al salir del elemento con el mouse
+        link.addEventListener('mouseleave', function() {
+            const tooltip = bootstrap.Tooltip.getInstance(link);
+            if (tooltip) {
+                tooltip.hide();
+            }
+        });
+        
+        // Limpiar al perder el foco
+        link.addEventListener('blur', function() {
+            const tooltip = bootstrap.Tooltip.getInstance(link);
+            if (tooltip) {
+                tooltip.hide();
+            }
+        });
+    });
+}
+
+/**
+ * Limpia todos los tooltips existentes
+ */
+function cleanupAllTooltips() {
+    const allTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    allTooltips.forEach(function(element) {
+        const tooltip = bootstrap.Tooltip.getInstance(element);
+        if (tooltip) {
+            tooltip.hide();
+            tooltip.dispose();
+        }
+    });
+    
+    // Limpiar también cualquier tooltip que pueda estar en el DOM
+    const existingTooltipElements = document.querySelectorAll('.tooltip');
+    existingTooltipElements.forEach(function(element) {
+        element.remove();
+    });
 }
 
 /**
  * Inicializa los tooltips de Bootstrap
  */
 function initializeTooltips() {
+    // Primero, eliminar todos los tooltips existentes para evitar bugs
+    cleanupAllTooltips();
+    
+    // Luego, inicializar todos los tooltips nuevamente
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);

@@ -155,28 +155,40 @@ window.addEventListener('load', function() {
         });
     }
 
-    // Función para renderizar la tabla de carreras
-    function renderCarreras(carreras) {
-        $('#carrerasBody').empty();
-        
-        if (carreras.length === 0) {
-            $('#carrerasBody').html('<tr><td colspan="5" class="text-center text-muted">No se encontraron carreras</td></tr>');
-            return;
-        }
-        
-        carreras.forEach(c => {
-            const coordinadorNombre = c.coordinador_nombre ? `${c.coordinador_nombre} ${c.coordinador_apellido_paterno}` : 'N/A';
-            const row = `<tr>
+        // Función para renderizar la tabla de carreras
+        function renderCarreras(carreras) {
+            $('#carrerasBody').empty();
+            
+            if (carreras.length === 0) {
+                $('#carrerasBody').html('<tr><td colspan="5" class="text-center text-muted">No se encontraron carreras</td></tr>');
+                return;
+            }
+            
+            carreras.forEach(c => {
+                const coordinadorNombre = c.coordinador_nombre ? `${c.coordinador_nombre} ${c.coordinador_apellido_paterno}` : 'N/A';
+                const row = `<tr>
                 <td>${c.id_carrera}</td>
                 <td>${c.nombre}</td>
                 <td>${coordinadorNombre}</td>
                 <td>${c.fecha_creacion}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm btn-editar" data-id='${JSON.stringify(c)}'><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${c.id_carrera}"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-warning btn-sm btn-editar" data-id='${JSON.stringify(c)}' 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Carrera">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-eliminar" data-id="${c.id_carrera}" 
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar Carrera">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
                 </td>
             </tr>`;
             $('#carrerasBody').append(row);
+        });
+        
+        // Reinicializar tooltips después de renderizar
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     }
 
@@ -370,6 +382,12 @@ window.addEventListener('load', function() {
     
     // Inicializar Select2 después de cargar los datos
     setTimeout(inicializarSelect2, 100);
+    
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     // Reinicializar Select2 cuando se abre el modal
     $('#carreraModal').on('shown.bs.modal', function() {

@@ -173,8 +173,19 @@ $tipo_seguimiento_id = $_POST['tipo_seguimiento_id'] ?? null;
 
                         <div class="d-flex justify-content-end">
                             <a href="javascript:window.history.back();" 
-                               class="btn btn-outline-secondary me-2">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                               class="btn btn-outline-secondary me-2" 
+                               data-bs-toggle="tooltip" 
+                               data-bs-placement="top" 
+                               title="Cancelar y Volver Atrás">
+                                Cancelar
+                            </a>
+                            <button type="submit" 
+                                    class="btn btn-primary" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Guardar el Nuevo Seguimiento">
+                                Guardar
+                            </button>
                         </div>
 
                     </form>
