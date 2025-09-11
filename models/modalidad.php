@@ -18,11 +18,11 @@ class Modalidad {
     }
 
     public function getAllPaginated($offset, $limit, $search = '') {
-        $sql = "SELECT id_modalidad, nombre FROM " . $this->table_name;
+        $sql = "SELECT id_modalidad, nombre FROM " . $this->table_name . " WHERE estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE LOWER(nombre) LIKE LOWER(:search)";
+            $sql .= " AND LOWER(nombre) LIKE LOWER(:search)";
             $params[':search'] = '%' . $search . '%';
         }
         
@@ -42,11 +42,11 @@ class Modalidad {
     }
 
     public function countAll($search = '') {
-        $sql = "SELECT COUNT(*) FROM " . $this->table_name;
+        $sql = "SELECT COUNT(*) FROM " . $this->table_name . " WHERE estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE LOWER(nombre) LIKE LOWER(:search)";
+            $sql .= " AND LOWER(nombre) LIKE LOWER(:search)";
             $params[':search'] = '%' . $search . '%';
         }
         
@@ -96,7 +96,7 @@ class Modalidad {
     }
 
     public function delete() {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id_modalidad = :id_modalidad";
+        $query = "UPDATE " . $this->table_name . " SET estatus = 0 WHERE id_modalidad = :id_modalidad";
         
         $stmt = $this->conn->prepare($query);
 

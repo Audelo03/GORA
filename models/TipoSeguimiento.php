@@ -19,16 +19,16 @@ class TipoSeguimiento {
      * Obtener todos los tipos de seguimiento.
      */
     public function getAll() {
-        $sql = "SELECT id_tipo_seguimiento, nombre FROM " . $this->table . " ORDER BY nombre";
+        $sql = "SELECT id_tipo_seguimiento, nombre FROM " . $this->table . " WHERE estatus = 1 ORDER BY nombre";
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllPaginated($offset, $limit, $search = '') {
-        $sql = "SELECT id_tipo_seguimiento, nombre FROM " . $this->table;
+        $sql = "SELECT id_tipo_seguimiento, nombre FROM " . $this->table . " WHERE estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE LOWER(nombre) LIKE LOWER(:search)";
+            $sql .= " AND LOWER(nombre) LIKE LOWER(:search)";
             $params[':search'] = '%' . $search . '%';
         }
         
@@ -48,11 +48,11 @@ class TipoSeguimiento {
     }
 
     public function countAll($search = '') {
-        $sql = "SELECT COUNT(*) FROM " . $this->table;
+        $sql = "SELECT COUNT(*) FROM " . $this->table . " WHERE estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE LOWER(nombre) LIKE LOWER(:search)";
+            $sql .= " AND LOWER(nombre) LIKE LOWER(:search)";
             $params[':search'] = '%' . $search . '%';
         }
         
@@ -136,7 +136,7 @@ class TipoSeguimiento {
      * Eliminar un tipo de seguimiento.
      */
     public function delete($id) {
-        $sql = "DELETE FROM " . $this->table . " WHERE id_tipo_seguimiento = :id";
+        $sql = "UPDATE " . $this->table . " SET estatus = 0 WHERE id_tipo_seguimiento = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", htmlspecialchars(strip_tags($id)));
 

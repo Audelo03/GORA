@@ -23,11 +23,12 @@
                            u.nombre AS coordinador_nombre, u.apellido_paterno AS coordinador_apellido_paterno, 
                            u.apellido_materno AS coordinador_apellido_materno, u.id_usuario AS coordinador_id
                     FROM " . $this->table . " c
-                    LEFT JOIN usuarios u ON c.usuarios_id_usuario_coordinador = u.id_usuario";
+                    LEFT JOIN usuarios u ON c.usuarios_id_usuario_coordinador = u.id_usuario
+                    WHERE c.estatus = 1";
             
             $params = [];
             if (!empty($search)) {
-                $sql .= " WHERE (LOWER(c.nombre) LIKE LOWER(:search) 
+                $sql .= " AND (LOWER(c.nombre) LIKE LOWER(:search) 
                          OR LOWER(u.nombre) LIKE LOWER(:search) 
                          OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
                          OR LOWER(u.apellido_materno) LIKE LOWER(:search))";
@@ -51,11 +52,12 @@
 
         public function countAll($search = '') {
             $sql = "SELECT COUNT(*) FROM " . $this->table . " c
-                    LEFT JOIN usuarios u ON c.usuarios_id_usuario_coordinador = u.id_usuario";
+                    LEFT JOIN usuarios u ON c.usuarios_id_usuario_coordinador = u.id_usuario
+                    WHERE c.estatus = 1";
             
             $params = [];
             if (!empty($search)) {
-                $sql .= " WHERE (LOWER(c.nombre) LIKE LOWER(:search) 
+                $sql .= " AND (LOWER(c.nombre) LIKE LOWER(:search) 
                          OR LOWER(u.nombre) LIKE LOWER(:search) 
                          OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
                          OR LOWER(u.apellido_materno) LIKE LOWER(:search))";
@@ -104,7 +106,7 @@
 
         public function delete($id) {
     try {
-        $sql = "DELETE FROM " . $this->table . " WHERE id_carrera = :id";
+        $sql = "UPDATE " . $this->table . " SET estatus = 0 WHERE id_carrera = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->execute();

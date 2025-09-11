@@ -15,7 +15,7 @@ class Estadisticas {
     }
 
     public function totalCarreras() {
-        $sql = "SELECT COUNT(id_carrera) as total FROM carreras";
+        $sql = "SELECT COUNT(id_carrera) as total FROM carreras WHERE estatus = 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -275,8 +275,8 @@ class Estadisticas {
         $sql = "SELECT 
                     (SELECT COUNT(*) FROM alumnos WHERE estatus = 1) as alumnos_activos,
                     (SELECT COUNT(*) FROM usuarios WHERE estatus = 1) as usuarios_activos,
-                    (SELECT COUNT(*) FROM grupos) as total_grupos,
-                    (SELECT COUNT(*) FROM carreras) as total_carreras,
+                    (SELECT COUNT(*) FROM grupos WHERE estatus = 1) as total_grupos,
+                    (SELECT COUNT(*) FROM carreras WHERE estatus = 1) as total_carreras,
                     (SELECT COUNT(*) FROM seguimientos WHERE estatus = 1) as seguimientos_abiertos,
                     (SELECT COUNT(*) FROM asistencias WHERE fecha = CURDATE()) as asistencias_hoy,
                     (SELECT COUNT(*) FROM asistencias WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)) as asistencias_semana,
