@@ -136,17 +136,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                         <div class="d-flex justify-content-end">
                             <a href="ver_seguimientos.php?id_alumno=<?= $id_alumno ?>" 
-                               class="btn btn-outline-secondary me-2" 
-                               data-bs-toggle="tooltip" 
-                               data-bs-placement="top" 
-                               title="Cancelar y Volver a Seguimientos">
+                               class="btn btn-outline-secondary me-2">
                                 Cancelar
                             </a>
                             <button type="submit" 
-                                    class="btn btn-primary" 
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="Actualizar el Seguimiento">
+                                    class="btn btn-primary">
                                 Actualizar
                             </button>
                         </div>
