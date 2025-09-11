@@ -108,7 +108,7 @@ include __DIR__ . "/../objects/header.php"
 
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="carrera" class="form-label">Carrera</label>
+                                <label for="carreras_id_carrera" class="form-label">Carrera</label>
                                 <select id="carreras_id_carrera" name="carreras_id_carrera" class="form-select" required>
                                     <option value="">Seleccione una carrera</option>
                                     <?php foreach ($carreras as $carrera): ?>
@@ -117,7 +117,7 @@ include __DIR__ . "/../objects/header.php"
                                 </select>
                             </div>
                              <div class="col-md-4">
-                                <label for="grupo" class="form-label">Grupo</label>
+                                <label for="grupos_id_grupo" class="form-label">Grupo</label>
                                 <select id="grupos_id_grupo" name="grupos_id_grupo" class="form-select" required>
                                     <option value="">Seleccione un grupo</option>
                                      <?php foreach ($grupos as $grupo): ?>
@@ -397,7 +397,52 @@ include __DIR__ . "/../objects/header.php"
             });
         });
 
+        // Inicializar Select2 para los selects
+        function inicializarSelect2() {
+            // Select de Carreras
+            $('#carreras_id_carrera').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Seleccione una carrera',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#alumnoModal')
+            });
+
+            // Select de Grupos
+            $('#grupos_id_grupo').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Seleccione un grupo',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#alumnoModal')
+            });
+        }
+
         // Cargar datos iniciales
         cargarAlumnos();
+        
+        // Inicializar Select2 después de cargar los datos
+        setTimeout(inicializarSelect2, 100);
+
+        // Reinicializar Select2 cuando se abre el modal
+        $('#alumnoModal').on('shown.bs.modal', function() {
+            setTimeout(function() {
+                $('#carreras_id_carrera').select2('destroy').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Seleccione una carrera',
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('#alumnoModal')
+                });
+                
+                $('#grupos_id_grupo').select2('destroy').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: 'Seleccione un grupo',
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('#alumnoModal')
+                });
+            }, 100);
+        });
     }); // Close window load
     </script>

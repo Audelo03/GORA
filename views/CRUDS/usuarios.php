@@ -321,9 +321,37 @@ window.addEventListener('load', function() {
         $('#id_usuario').val('');
     });
 
+    // Inicializar Select2 para los selects
+    function inicializarSelect2() {
+        // Select de Niveles de Usuario
+        $('#niveles_usuarios_id_nivel_usuario').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccione un nivel',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#usuarioModal')
+        });
+    }
+
     // Cargar datos iniciales
     cargarNiveles();
     cargarUsuarios();
+    
+    // Inicializar Select2 después de cargar los datos
+    setTimeout(inicializarSelect2, 100);
+
+    // Reinicializar Select2 cuando se abre el modal
+    $('#usuarioModal').on('shown.bs.modal', function() {
+        setTimeout(function() {
+            $('#niveles_usuarios_id_nivel_usuario').select2('destroy').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Seleccione un nivel',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#usuarioModal')
+            });
+        }, 100);
+    });
 });
 
 // Global functions

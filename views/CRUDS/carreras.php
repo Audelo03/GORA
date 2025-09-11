@@ -85,7 +85,7 @@ include __DIR__ . "/../objects/header.php";
                         <input type="text" id="nombre" name="nombre" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="coordinador" class="form-label">Coordinador</label>
+                        <label for="coordinador_id" class="form-label">Coordinador</label>
                         <select id="coordinador_id" name="usuario_id" class="form-select" required>
                             <option value="">Seleccione un coordinador</option>
                             <?php foreach ($coordinadores as $coordinador): ?>
@@ -353,8 +353,36 @@ window.addEventListener('load', function() {
         });
     });
 
+    // Inicializar Select2 para los selects
+    function inicializarSelect2() {
+        // Select de Coordinadores
+        $('#coordinador_id').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccione un coordinador',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#carreraModal')
+        });
+    }
+
     // Cargar datos iniciales
     cargarCarreras();
+    
+    // Inicializar Select2 después de cargar los datos
+    setTimeout(inicializarSelect2, 100);
+
+    // Reinicializar Select2 cuando se abre el modal
+    $('#carreraModal').on('shown.bs.modal', function() {
+        setTimeout(function() {
+            $('#coordinador_id').select2('destroy').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Seleccione un coordinador',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#carreraModal')
+            });
+        }, 100);
+    });
 });
 </script>
 

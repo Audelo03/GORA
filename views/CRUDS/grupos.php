@@ -90,7 +90,7 @@ include __DIR__ . "/../objects/header.php";
                     </div>
 
                     <div class="mb-3">
-                        <label for="tutor" class="form-label">Tutor Asignado</label>
+                        <label for="usuarios_id_usuario_tutor" class="form-label">Tutor Asignado</label>
                         <select class="form-select" id="usuarios_id_usuario_tutor" name="usuarios_id_usuario_tutor" required>
                             <option value="">Seleccione un tutor</option>
                             <?php foreach ($tutores as $tutor) : ?>
@@ -100,7 +100,7 @@ include __DIR__ . "/../objects/header.php";
                     </div>
 
                     <div class="mb-3">
-                        <label for="carrera" class="form-label">Carrera</label>
+                        <label for="carreras_id_carrera" class="form-label">Carrera</label>
                         <select class="form-select" id="carreras_id_carrera" name="carreras_id_carrera" required>
                             <option value="">Seleccione una carrera</option>
                             <?php foreach ($carreras as $carrera) : ?>
@@ -110,7 +110,7 @@ include __DIR__ . "/../objects/header.php";
                     </div>
 
                     <div class="mb-3">
-                        <label for="modalidad" class="form-label">Modalidad</label>
+                        <label for="modalidades_id_modalidad" class="form-label">Modalidad</label>
                         <select class="form-select" id="modalidades_id_modalidad" name="modalidades_id_modalidad" required>
                             <option value="">Seleccione una modalidad</option>
                             <?php foreach ($modalidades as $modalidad) : ?>
@@ -394,8 +394,70 @@ window.addEventListener('load', function() {
         });
     });
 
+    // Inicializar Select2 para los selects
+    function inicializarSelect2() {
+        // Select de Tutores
+        $('#usuarios_id_usuario_tutor').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccione un tutor',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#grupoModal')
+        });
+
+        // Select de Carreras
+        $('#carreras_id_carrera').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccione una carrera',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#grupoModal')
+        });
+
+        // Select de Modalidades
+        $('#modalidades_id_modalidad').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Seleccione una modalidad',
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#grupoModal')
+        });
+    }
+
     // Cargar datos iniciales
     cargarGrupos();
+    
+    // Inicializar Select2 después de cargar los datos
+    setTimeout(inicializarSelect2, 100);
+
+    // Reinicializar Select2 cuando se abre el modal
+    $('#grupoModal').on('shown.bs.modal', function() {
+        setTimeout(function() {
+            $('#usuarios_id_usuario_tutor').select2('destroy').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Seleccione un tutor',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#grupoModal')
+            });
+            
+            $('#carreras_id_carrera').select2('destroy').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Seleccione una carrera',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#grupoModal')
+            });
+            
+            $('#modalidades_id_modalidad').select2('destroy').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Seleccione una modalidad',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#grupoModal')
+            });
+        }, 100);
+    });
 });
 </script>
 

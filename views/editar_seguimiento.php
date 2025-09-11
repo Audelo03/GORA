@@ -146,3 +146,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 
 <?php include 'objects/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Select2 para los selects
+    $('#tipo_seguimiento_id').select2({
+        theme: 'bootstrap-5',
+        placeholder: 'Selecciona un tipo...',
+        allowClear: true,
+        width: '100%'
+    });
+});
+</script>
