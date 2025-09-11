@@ -51,7 +51,7 @@
 /* Iconos de los enlaces */
 #app-sidebar .nav-link i {
   font-size: 1.1rem;
-  transition: transform 0.5s ease;
+  /* Sin transiciones de transform - iconos mantienen tamaño fijo */
 }
 
 /* Efecto hover en los enlaces */
@@ -60,10 +60,7 @@
   color: #ffffff;
 }
 
-/* Efecto hover en los iconos */
-#app-sidebar .nav-link:hover i {
-  transform: scale(1.1); /* Agranda ligeramente el icono */
-}
+/* Efecto hover en los iconos - Sin escalado para mantener tamaño fijo */
 
 /* Estilo del enlace activo */
 #app-sidebar .nav-link.active {
@@ -74,10 +71,9 @@
   border-left: 4px solid #1d4ed8;
 }
 
-/* Icono del enlace activo */
+/* Icono del enlace activo - Sin escalado para mantener tamaño fijo */
 #app-sidebar .nav-link.active i {
   color: #ffffff !important;
-  transform: scale(1.1);
 }
 
 /* Ocultar separadores horizontales */
