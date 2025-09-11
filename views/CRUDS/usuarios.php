@@ -38,7 +38,6 @@ include __DIR__ . "/../objects/header.php";
                     <th>Nombre Completo</th>
                     <th>Email</th>
                     <th>Nivel</th>
-                    <th>Estatus</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
@@ -109,13 +108,6 @@ include __DIR__ . "/../objects/header.php";
                             <select id="niveles_usuarios_id_nivel_usuario" name="niveles_usuarios_id_nivel_usuario" class="form-select">
                                 </select>
                         </div>
-                        <div class="col-md-6">
-                            <label for="estatus" class="form-label">Estatus</label>
-                            <select id="estatus" name="estatus" class="form-select">
-                                <option value="1">Activo</option>
-                                <option value="0">Inactivo</option>
-                            </select>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -139,10 +131,6 @@ let totalPages = 0;
 let searchTerm = '';
 let isLoading = false;
 
-const estatusMap = {
-    1: '<span class="badge bg-success">Activo</span>',
-    0: '<span class="badge bg-danger">Inactivo</span>'
-};
 
 // Global function for loading users
 function cargarUsuarios(page = 1, search = '') {
@@ -153,7 +141,7 @@ function cargarUsuarios(page = 1, search = '') {
         searchTerm = search;
         
         // Mostrar loading
-        $('#usuariosBody').html('<tr><td colspan="6" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
+        $('#usuariosBody').html('<tr><td colspan="5" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
         
         const params = new URLSearchParams({
             action: 'paginated',
@@ -188,7 +176,7 @@ function renderUsuarios(usuarios) {
         $('#usuariosBody').empty();
         
         if (usuarios.length === 0) {
-            $('#usuariosBody').html('<tr><td colspan="6" class="text-center text-muted">No se encontraron usuarios</td></tr>');
+            $('#usuariosBody').html('<tr><td colspan="5" class="text-center text-muted">No se encontraron usuarios</td></tr>');
             return;
         }
         
@@ -199,7 +187,6 @@ function renderUsuarios(usuarios) {
                 <td>${nombreCompleto}</td>
                 <td>${u.email}</td>
                 <td>${u.nivel_usuario ?? 'N/A'}</td>
-                <td>${estatusMap[u.estatus] ?? 'Desconocido'}</td>
                 <td>
                     <button onclick='editarUsuario(${JSON.stringify(u)})' class="btn btn-sm btn-warning" title="Editar"><i class="bi bi-pencil-square"></i></button>
                     <button onclick="eliminarUsuario(${u.id_usuario})" class="btn btn-sm btn-danger" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
@@ -263,7 +250,7 @@ function renderPaginationControls() {
 
 // Global function for showing errors
 function showError(message) {
-        $('#usuariosBody').html(`<tr><td colspan="6" class="text-center text-danger">${message}</td></tr>`);
+        $('#usuariosBody').html(`<tr><td colspan="5" class="text-center text-danger">${message}</td></tr>`);
         Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -350,7 +337,6 @@ function editarUsuario(usuario) {
     $('#password').val('');
     $('#password').prop('required', false);
     $('#niveles_usuarios_id_nivel_usuario').val(usuario.niveles_usuarios_id_nivel_usuario);
-    $('#estatus').val(usuario.estatus);
     $('#modalLabel').text('Editar Usuario');
     $('#usuarioModal').modal('show');
 }

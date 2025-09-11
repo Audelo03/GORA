@@ -74,7 +74,7 @@ class GruposController {
         // Asignar datos del formulario al objeto
         error_log("Entrando al metodo store del controlador!!!!".print_r($_POST,true));
         $this->grupo->nombre = $_POST['nombre'];
-        $this->grupo->estatus = $_POST['estatus'];
+        $this->grupo->estatus = 1; // Siempre activo al crear
         $this->grupo->usuarios_id_usuario_tutor = $_POST['usuarios_id_usuario_tutor'];
         $this->grupo->carreras_id_carrera = $_POST['carreras_id_carrera'];
         $this->grupo->modalidades_id_modalidad = $_POST['modalidades_id_modalidad'];
@@ -98,7 +98,7 @@ class GruposController {
         // Asignar datos del formulario al objeto
         $this->grupo->id_grupo = $_POST['id_grupo'];
         $this->grupo->nombre = $_POST['nombre'];
-        $this->grupo->estatus = $_POST['estatus'];
+        $this->grupo->estatus = 1; // Mantener activo al actualizar
         $this->grupo->usuarios_id_usuario_tutor = $_POST['usuarios_id_usuario_tutor'];
         $this->grupo->carreras_id_carrera = $_POST['carreras_id_carrera'];
         $this->grupo->modalidades_id_modalidad = $_POST['modalidades_id_modalidad'];

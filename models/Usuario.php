@@ -67,6 +67,7 @@ class Usuario {
                         nu.nombre as nivel_usuario 
                       FROM " . $this->table . " u
                       LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario
+                      WHERE u.estatus = 1
                       ORDER BY u.id_usuario DESC";
 
         $stmt = $this->conn->prepare($query);
@@ -86,11 +87,12 @@ class Usuario {
                     u.niveles_usuarios_id_nivel_usuario,
                     nu.nombre as nivel_usuario 
                 FROM " . $this->table . " u
-                LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario";
+                LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario
+                WHERE u.estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE (LOWER(u.nombre) LIKE LOWER(:search) 
+            $sql .= " AND (LOWER(u.nombre) LIKE LOWER(:search) 
                      OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
                      OR LOWER(u.apellido_materno) LIKE LOWER(:search) 
                      OR LOWER(u.email) LIKE LOWER(:search)
@@ -115,11 +117,12 @@ class Usuario {
 
     public function countAll($search = '') {
         $sql = "SELECT COUNT(*) FROM " . $this->table . " u
-                LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario";
+                LEFT JOIN niveles_usuarios nu ON u.niveles_usuarios_id_nivel_usuario = nu.id_nivel_usuario
+                WHERE u.estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE (LOWER(u.nombre) LIKE LOWER(:search) 
+            $sql .= " AND (LOWER(u.nombre) LIKE LOWER(:search) 
                      OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
                      OR LOWER(u.apellido_materno) LIKE LOWER(:search) 
                      OR LOWER(u.email) LIKE LOWER(:search)
@@ -188,7 +191,7 @@ class Usuario {
     }
 
      public function delete($id) {
-        $query = "DELETE FROM " . $this->table . " WHERE id_usuario = :id_usuario";
+        $query = "UPDATE " . $this->table . " SET estatus = 0 WHERE id_usuario = :id_usuario";
         $stmt = $this->conn->prepare($query);
         $id = htmlspecialchars(strip_tags($id));
         $stmt->bindValue(":id_usuario", $id);

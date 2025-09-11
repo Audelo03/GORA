@@ -25,6 +25,7 @@ class Alumno {
                 FROM alumnos a
                 LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
                 LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
+                WHERE a.estatus = 1
                 ORDER BY a.nombre ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -35,11 +36,12 @@ class Alumno {
         $sql = "SELECT a.*, c.nombre AS carrera, g.nombre AS grupo, g.usuarios_id_usuario_tutor AS id_tutor
                 FROM alumnos a
                 LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
-                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo";
+                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
+                WHERE a.estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE (LOWER(a.nombre) LIKE LOWER(:search) 
+            $sql .= " AND (LOWER(a.nombre) LIKE LOWER(:search) 
                      OR LOWER(a.apellido_paterno) LIKE LOWER(:search) 
                      OR LOWER(a.apellido_materno) LIKE LOWER(:search) 
                      OR LOWER(a.matricula) LIKE LOWER(:search)
@@ -66,11 +68,12 @@ class Alumno {
     public function countAll($search = '') {
         $sql = "SELECT COUNT(*) FROM alumnos a
                 LEFT JOIN carreras c ON a.carreras_id_carrera = c.id_carrera
-                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo";
+                LEFT JOIN grupos g ON a.grupos_id_grupo = g.id_grupo
+                WHERE a.estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE (LOWER(a.nombre) LIKE LOWER(:search) 
+            $sql .= " AND (LOWER(a.nombre) LIKE LOWER(:search) 
                      OR LOWER(a.apellido_paterno) LIKE LOWER(:search) 
                      OR LOWER(a.apellido_materno) LIKE LOWER(:search) 
                      OR LOWER(a.matricula) LIKE LOWER(:search)
@@ -182,7 +185,7 @@ class Alumno {
     }
 
     public function delete($id) {
-        $sql = "DELETE FROM $this->table WHERE id_alumno = :id";
+        $sql = "UPDATE $this->table SET estatus = 0 WHERE id_alumno = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         return $stmt->execute();

@@ -46,6 +46,7 @@ class Grupo {
                   LEFT JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
                   LEFT JOIN carreras c ON g.carreras_id_carrera = c.id_carrera
                   LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad
+                  WHERE g.estatus = 1
                   ORDER BY g.nombre ASC";
       
          $stmt = $this->conn->prepare($query);
@@ -74,11 +75,12 @@ class Grupo {
                   FROM " . $this->table_name . " g
                   LEFT JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
                   LEFT JOIN carreras c ON g.carreras_id_carrera = c.id_carrera
-                  LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad";
+                  LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad
+                  WHERE g.estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE (LOWER(g.nombre) LIKE LOWER(:search) 
+            $sql .= " AND (LOWER(g.nombre) LIKE LOWER(:search) 
                      OR LOWER(u.nombre) LIKE LOWER(:search) 
                      OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
                      OR LOWER(c.nombre) LIKE LOWER(:search)
@@ -110,11 +112,12 @@ class Grupo {
         $sql = "SELECT COUNT(*) FROM " . $this->table_name . " g
                 LEFT JOIN usuarios u ON g.usuarios_id_usuario_tutor = u.id_usuario
                 LEFT JOIN carreras c ON g.carreras_id_carrera = c.id_carrera
-                LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad";
+                LEFT JOIN modalidades m ON g.modalidades_id_modalidad = m.id_modalidad
+                WHERE g.estatus = 1";
         
         $params = [];
         if (!empty($search)) {
-            $sql .= " WHERE (LOWER(g.nombre) LIKE LOWER(:search) 
+            $sql .= " AND (LOWER(g.nombre) LIKE LOWER(:search) 
                      OR LOWER(u.nombre) LIKE LOWER(:search) 
                      OR LOWER(u.apellido_paterno) LIKE LOWER(:search) 
                      OR LOWER(c.nombre) LIKE LOWER(:search)
@@ -222,7 +225,7 @@ class Grupo {
      * @throws Exception - Si hay error en la eliminación
      */
     public function delete() {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id_grupo = :id";
+        $query = "UPDATE " . $this->table_name . " SET estatus = 0 WHERE id_grupo = :id";
         
         try {
             $stmt = $this->conn->prepare($query);
@@ -235,10 +238,6 @@ class Grupo {
             return true;
 
         } catch (PDOException $e) {
-            // Error por restricción de llave foránea
-            if ($e->getCode() == '23000') {
-                throw new Exception("No se puede eliminar el grupo porque tiene alumnos u otros registros asociados.");
-            }
             throw new Exception("Error al eliminar el grupo: " . $e->getMessage());
         }
     }

@@ -42,7 +42,6 @@ include __DIR__ . "/../objects/header.php"
                         <th>Nombre Completo</th>
                         <th>Carrera</th>
                         <th>Grupo</th>
-                        <th>Estatus</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -126,13 +125,6 @@ include __DIR__ . "/../objects/header.php"
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label for="estatus" class="form-label">Estatus</label>
-                                <select id="estatus" name="estatus" class="form-select">
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -165,7 +157,7 @@ include __DIR__ . "/../objects/header.php"
             searchTerm = search;
             
             // Mostrar loading
-            $('#alumnosBody').html('<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
+            $('#alumnosBody').html('<tr><td colspan="6" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
             
             const params = new URLSearchParams({
                 action: 'paginated',
@@ -200,7 +192,7 @@ include __DIR__ . "/../objects/header.php"
             $('#alumnosBody').empty();
             
             if (alumnos.length === 0) {
-                $('#alumnosBody').html('<tr><td colspan="7" class="text-center text-muted">No se encontraron alumnos</td></tr>');
+                $('#alumnosBody').html('<tr><td colspan="6" class="text-center text-muted">No se encontraron alumnos</td></tr>');
                 return;
             }
             
@@ -212,7 +204,6 @@ include __DIR__ . "/../objects/header.php"
                     <td>${nombreCompleto}</td>
                     <td>${a.carrera ?? 'N/A'}</td>
                     <td>${a.grupo ?? 'N/A'}</td>
-                    <td>${a.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
                     <td>
                         <button class="btn btn-warning btn-sm btn-editar" data-id='${a.id_alumno}' title="Editar"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger btn-sm btn-eliminar" data-id="${a.id_alumno}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
@@ -276,7 +267,7 @@ include __DIR__ . "/../objects/header.php"
 
         // Función para mostrar errores
         function showError(message) {
-            $('#alumnosBody').html(`<tr><td colspan="7" class="text-center text-danger">${message}</td></tr>`);
+            $('#alumnosBody').html(`<tr><td colspan="6" class="text-center text-danger">${message}</td></tr>`);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -337,7 +328,6 @@ include __DIR__ . "/../objects/header.php"
                 $('#apellido_materno').val(alumno.apellido_materno);
                 $('#carreras_id_carrera').val(alumno.carreras_id_carrera);
                 $('#grupos_id_grupo').val(alumno.grupos_id_grupo);
-                $('#estatus').val(alumno.estatus);
                 $('#modalLabel').text('Editar Alumno');
                 alumnoModal.show();
             }).fail(function() {

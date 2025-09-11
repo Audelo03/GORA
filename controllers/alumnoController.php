@@ -71,7 +71,7 @@ class AlumnoController {
                 'nombre' => $_POST['nombre'],
                 'apellido_paterno' => $_POST['apellido_paterno'],
                 'apellido_materno' => $_POST['apellido_materno'],
-                'estatus' => $_POST['estatus'],
+                'estatus' => 1, // Mantener activo al actualizar
                 'usuarios_id_usuario_movimiento' => $_SESSION['usuario_id'],
                 'carreras_id_carrera' => $_POST['carreras_id_carrera'],
                 'grupos_id_grupo' => $_POST['grupos_id_grupo']
@@ -93,7 +93,7 @@ class AlumnoController {
                 'nombre' => $_POST['nombre'],
                 'apellido_paterno' => $_POST['apellido_paterno'],
                 'apellido_materno' => $_POST['apellido_materno'],
-                'estatus' => $_POST['estatus'],
+                'estatus' => 1, // Siempre activo al crear
                 'usuarios_id_usuario_movimiento' => $_SESSION['usuario_id'],
                 'carreras_id_carrera' => $_POST['carreras_id_carrera'],
                 'grupos_id_grupo' => $_POST['grupos_id_grupo']

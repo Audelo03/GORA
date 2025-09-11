@@ -42,7 +42,6 @@ include __DIR__ . "/../objects/header.php";
                     <th>Tutor</th>
                     <th>Carrera</th>
                     <th>Modalidad</th>
-                    <th>Estatus</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -120,13 +119,6 @@ include __DIR__ . "/../objects/header.php";
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="estatus" class="form-label">Estatus</label>
-                        <select class="form-select" id="estatus" name="estatus">
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -161,7 +153,7 @@ window.addEventListener('load', function() {
         searchTerm = search;
         
         // Mostrar loading
-        $('#gruposBody').html('<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
+        $('#gruposBody').html('<tr><td colspan="6" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
         
         const params = new URLSearchParams({
             action: 'paginated',
@@ -196,7 +188,7 @@ window.addEventListener('load', function() {
         $('#gruposBody').empty();
         
         if (grupos.length === 0) {
-            $('#gruposBody').html('<tr><td colspan="7" class="text-center text-muted">No se encontraron grupos</td></tr>');
+            $('#gruposBody').html('<tr><td colspan="6" class="text-center text-muted">No se encontraron grupos</td></tr>');
             return;
         }
         
@@ -207,7 +199,6 @@ window.addEventListener('load', function() {
                 <td>${g.tutor_nombre ?? 'N/A'}</td>
                 <td>${g.carrera_nombre ?? 'N/A'}</td>
                 <td>${g.modalidad_nombre ?? 'N/A'}</td>
-                <td>${g.estatus == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
                 <td>
                     <button class="btn btn-warning btn-sm btn-editar" data-grupo='${JSON.stringify(g)}' title="Editar"><i class="bi bi-pencil-square"></i></button>
                     <button class="btn btn-danger btn-sm btn-eliminar" data-id="${g.id_grupo}" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
@@ -271,7 +262,7 @@ window.addEventListener('load', function() {
 
     // Función para mostrar errores
     function showError(message) {
-        $('#gruposBody').html(`<tr><td colspan="7" class="text-center text-danger">${message}</td></tr>`);
+        $('#gruposBody').html(`<tr><td colspan="6" class="text-center text-danger">${message}</td></tr>`);
         Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -370,7 +361,6 @@ window.addEventListener('load', function() {
         $("#usuarios_id_usuario_tutor").val(grupo.usuarios_id_usuario_tutor);
         $("#carreras_id_carrera").val(grupo.carreras_id_carrera);
         $("#modalidades_id_modalidad").val(grupo.modalidades_id_modalidad);
-        $("#estatus").val(grupo.estatus);
         $('#modalLabel').text('Editar Grupo');
         grupoModal.show();
     });
