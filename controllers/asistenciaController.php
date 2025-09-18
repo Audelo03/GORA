@@ -15,17 +15,20 @@ class AsistenciaController {
 
     public function guardarAsistenciasGrupo($id_grupo, $fecha, $ids_alumnos_presentes, $todos_los_alumnos_del_grupo) {
         $query_delete = "DELETE FROM " . $this->table_name . " WHERE id_grupo = :id_grupo AND fecha = :fecha";
-        $stmt_delete = $this->conn->prepare($query_delete);
-        $stmt_delete->bindParam(':id_grupo', $id_grupo);
-        $stmt_delete->bindParam(':fecha', $fecha);
-        $stmt_delete->execute();
- 
-
         $query_insert = "INSERT INTO " . $this->table_name . " (id_alumno, id_grupo, fecha, estatus) VALUES (:id_alumno, :id_grupo, :fecha, :estatus)";
+        
+        $stmt_delete = $this->conn->prepare($query_delete);
         $stmt_insert = $this->conn->prepare($query_insert);
 
         try {
             $this->conn->beginTransaction();
+            
+            // Limpiar asistencias existentes para esta fecha y grupo
+            $stmt_delete->bindParam(':id_grupo', $id_grupo);
+            $stmt_delete->bindParam(':fecha', $fecha);
+            $stmt_delete->execute();
+            
+            // Insertar nuevas asistencias
             foreach ($todos_los_alumnos_del_grupo as $alumno) {
                 $estatus = in_array($alumno['id_alumno'], $ids_alumnos_presentes) ? 1 : 0;
                 $stmt_insert->bindParam(':id_alumno', $alumno['id_alumno']);
@@ -34,6 +37,7 @@ class AsistenciaController {
                 $stmt_insert->bindParam(':estatus', $estatus);
                 $stmt_insert->execute();
             }
+            
             $this->conn->commit();
             return true;
         } catch (PDOException $e) {

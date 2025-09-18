@@ -20,7 +20,7 @@ class Seguimiento {
         $sql = "SELECT s.*, ts.nombre as tipo_seguimiento_nombre 
                 FROM " . $this->table . " s
                 LEFT JOIN tipo_seguimiento ts ON s.tipo_seguimiento_id = ts.id_tipo_seguimiento
-                WHERE s.alumnos_id_alumno = :idAlumno 
+                WHERE s.alumnos_id_alumno = :idAlumno AND s.estatus = 1
                 ORDER BY s.fecha_creacion DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":idAlumno", $idAlumno, PDO::PARAM_INT);
@@ -46,14 +46,14 @@ class Seguimiento {
     }
 
     public function delete($id) {
-        $sql = "DELETE FROM " . $this->table . " WHERE id_seguimiento = :id";
+        $sql = "UPDATE " . $this->table . " SET estatus = 0 WHERE id_seguimiento = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     public function getById($id) {
-        $sql = "SELECT * FROM " . $this->table . " WHERE id_seguimiento = :id LIMIT 1";
+        $sql = "SELECT * FROM " . $this->table . " WHERE id_seguimiento = :id AND estatus = 1 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
