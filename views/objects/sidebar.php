@@ -38,7 +38,13 @@ if (!function_exists('active')) {
   }
 }
 if (isset($_SESSION))
-  $nivel = $_SESSION["usuario_nivel"];
+  $nivel = (int)$_SESSION["usuario_nivel"];
+
+// Debug: Mostrar información del usuario (remover en producción)
+if (isset($_SESSION["usuario_nivel"])) {
+  echo "<!-- DEBUG: Nivel de usuario: " . $_SESSION["usuario_nivel"] . " (tipo: " . gettype($_SESSION["usuario_nivel"]) . ") -->";
+  echo "<!-- DEBUG: Nivel convertido: " . $nivel . " (tipo: " . gettype($nivel) . ") -->";
+}
 
 if (!isset($modificacion_ruta)) {
   $modificacion_ruta = "";
@@ -56,7 +62,7 @@ if (!isset($modificacion_ruta)) {
   <div id="slow" class="slow">
     <ul class="nav nav-pills flex-column mb-auto">
 
-      <?php if ($nivel === 1 || $nivel === 4): ?>
+      <?php if ($nivel == 1): ?>
       <li class="nav-item">
         <a href="/GORA/dashboard" class="nav-link text-white <?= active(['dashboard']); ?>" 
            <?= active(['dashboard']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Panel Principal"' ?>>
@@ -72,7 +78,7 @@ if (!isset($modificacion_ruta)) {
         </a>
       </li>
 
-      <?php if ($nivel === 1 || $nivel === 4): ?>
+      <?php if ($nivel == 1): ?>
       <li>
         <a href="/GORA/estadisticas" class="nav-link text-white <?= active(['estadisticas']); ?>" 
            <?= active(['estadisticas']) ? '' : 'data-bs-toggle="tooltip" data-bs-placement="right" title="Estadísticas y Reportes"' ?>>
@@ -88,7 +94,7 @@ if (!isset($modificacion_ruta)) {
         </a>
       </li>
 
-       <?php if ($nivel === 1 || $nivel === 4): ?>
+       <?php if ($nivel == 1): ?>
 
       <h6 class="text-uppercase text-secondary fw-bold small mt-3 mb-2">Gestión</h6>
 
