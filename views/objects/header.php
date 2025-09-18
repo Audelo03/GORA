@@ -10,10 +10,10 @@ if(!isset($modificacion_ruta)){
 <head>
     <meta charset="UTF-8">
     <title><?php echo $page_title ?? 'GORA'; ?></title>
-    <link href="/GORA/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/GORA/public/css/sidebar.css" rel="stylesheet">
-    <link href="/GORA/vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/GORA/node_modules/sweetalert2/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css">
     
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"/>

@@ -22,8 +22,8 @@
         initTooltips();
         });
 </script>
-<script src="/GORA/node_modules/jquery/dist/jquery.min.js"></script>
-<script src="/GORA/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<script src="/GORA/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const logoutLink = document.getElementById('logout-link');
