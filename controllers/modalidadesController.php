@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 require_once __DIR__ . "/../config/db.php";
-require_once __DIR__ . "/../models/Modalidad.php";
+require_once __DIR__ . "/../models/modalidad.php";
 
 class ModalidadesController {
     private $modalidad;
@@ -27,6 +27,10 @@ class ModalidadesController {
 
     public function paginated() {
         try {
+            // Habilitar reporte de errores para debugging
+            error_reporting(E_ALL);
+            ini_set('display_errors', 1);
+            
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
             $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -36,6 +40,11 @@ class ModalidadesController {
             if ($limit < 1 || $limit > 100) $limit = 10;
             
             $offset = ($page - 1) * $limit;
+            
+            // Verificar conexión a base de datos
+            if (!$this->conn) {
+                throw new Exception("No hay conexión a la base de datos");
+            }
             
             // Obtener total de registros
             $total = $this->modalidad->countAll($search);
@@ -55,10 +64,13 @@ class ModalidadesController {
             
         } catch (Exception $e) {
             error_log("Error en paginated: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             echo json_encode([
                 'success' => false,
                 'message' => 'Error al cargar los datos',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
         }
     }
