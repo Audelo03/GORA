@@ -106,7 +106,8 @@ include __DIR__ . "/../objects/header.php";
                         <div class="col-md-6">
                             <label for="niveles_usuarios_id_nivel_usuario" class="form-label">Nivel de Usuario</label>
                             <select id="niveles_usuarios_id_nivel_usuario" name="niveles_usuarios_id_nivel_usuario" class="form-select">
-                                </select>
+                                <option value="">Seleccione un nivel</option>
+                            </select>
                         </div>
                     </div>
                 </form>
@@ -273,7 +274,7 @@ function showError(message) {
 // Global function for loading levels
 function cargarNiveles() {
     $.get("/GORA/controllers/nivelesusuariosController.php?accion=listar", function(niveles) {
-        let options = "";
+        let options = '<option value="">Seleccione un nivel</option>';
         niveles.forEach(n => {
             options += `<option value="${n.id_nivel_usuario}">${n.nombre}</option>`;
         });
@@ -290,7 +291,11 @@ window.addEventListener('load', function() {
         $('#formUsuario')[0].reset();
         $('#id_usuario').val('');
         $('#modalLabel').text('Agregar Usuario');
-        $('#password').prop('required', true); 
+        $('#password').prop('required', true);
+        
+        // Limpiar el select2
+        $('#niveles_usuarios_id_nivel_usuario').val(null).trigger('change');
+        
         usuarioModal.show();
     });
 
@@ -331,6 +336,9 @@ window.addEventListener('load', function() {
     $('#usuarioModal').on('hidden.bs.modal', function() {
         $('#formUsuario')[0].reset();
         $('#id_usuario').val('');
+        
+        // Limpiar el select2
+        $('#niveles_usuarios_id_nivel_usuario').val(null).trigger('change');
     });
 
     // Inicializar Select2 para los selects
