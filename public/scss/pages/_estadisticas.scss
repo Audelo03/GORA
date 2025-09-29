@@ -1,0 +1,344 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+@use 'sass:color';
+
+// Dashboard Ejecutivo
+.stats-dashboard {
+	background: linear-gradient(135deg, 
+		rgba($color-negro, .95) 0%, 
+		rgba($color-primario, .02) 25%, 
+		rgba($color-negro, .98) 50%,
+		rgba($color-acento, .015) 75%,
+		rgba($color-negro, 1) 100%);
+	min-height: 100vh;
+	padding: 1rem 0;
+	
+	// Grid fluido para el dashboard
+	.dashboard-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 1.5rem;
+		margin-bottom: 2rem;
+	}
+	
+	.wide-grid {
+		grid-column: 1 / -1;
+	}
+	
+	.half-grid {
+		grid-column: span 2;
+		
+		@media (max-width: $bp-lg) {
+			grid-column: span 1;
+		}
+	}
+}
+
+// Cards de métricas principales
+.metric-card {
+	@include card-surface;
+	border: 1px solid rgba($color-primario, .15);
+	transition: all .3s ease;
+	overflow: hidden;
+	position: relative;
+	
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: linear-gradient(90deg, $color-primario, $color-primario-claro);
+	}
+	
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: $shadow-lg;
+		border-color: rgba($color-primario, .3);
+	}
+	
+	.metric-value {
+		font-size: 2.5rem;
+		font-weight: 700;
+		@include text-primary;
+		line-height: 1;
+	}
+	
+	.metric-label {
+		color: $text-color;
+		font-weight: 500;
+		margin-bottom: .5rem;
+	}
+	
+	.metric-sublabel {
+		color: $text-color-muted;
+		font-size: .875rem;
+	}
+	
+	.metric-icon {
+		color: rgba($color-primario, .3);
+		font-size: 3rem;
+	}
+}
+
+// Cards de gráficas estilo ejecutivo (sin aspecto de tabla)
+.chart-widget {
+	background: rgba($surface-1, .6);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba($color-primario, .08);
+	border-radius: 1rem;
+	padding: 0;
+	transition: all .3s ease;
+	overflow: hidden;
+	position: relative;
+	
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: linear-gradient(90deg, 
+			transparent, 
+			rgba($color-primario, .4) 20%, 
+			rgba($color-acento, .3) 50%, 
+			rgba($color-primario, .4) 80%, 
+			transparent);
+	}
+	
+	&:hover {
+		transform: translateY(-2px);
+		border-color: rgba($color-primario, .2);
+		box-shadow: 0 8px 32px rgba($color-primario, .1);
+	}
+	
+	.widget-content {
+		padding: 1.5rem;
+		
+		.widget-title {
+			color: $text-color;
+			font-size: .9rem;
+			font-weight: 500;
+			margin-bottom: 1rem;
+			text-transform: uppercase;
+			letter-spacing: .5px;
+			text-align: center;
+			
+			.subtitle {
+				color: $text-color-muted;
+				font-size: .75rem;
+				display: block;
+				margin-top: .25rem;
+				text-transform: none;
+				letter-spacing: normal;
+			}
+		}
+		
+		.widget-chart {
+			position: relative;
+			min-height: 250px;
+			
+			canvas {
+				border-radius: .5rem;
+				transition: all .3s ease;
+				width: 100% !important;
+				height: auto !important;
+			}
+		}
+	}
+}
+
+// Widget de tabla estilo ejecutivo
+.data-widget {
+	background: rgba($surface-1, .4);
+	backdrop-filter: blur(15px);
+	border: 1px solid rgba($color-primario, .06);
+	border-radius: 1rem;
+	overflow: hidden;
+	
+	.widget-header {
+		background: linear-gradient(135deg, 
+			rgba($color-primario, .08), 
+			rgba($color-acento, .04));
+		padding: 1.25rem 1.5rem;
+		border-bottom: 1px solid rgba($color-primario, .1);
+		
+		.widget-title {
+			color: $text-color;
+			font-size: .95rem;
+			font-weight: 600;
+			margin: 0;
+			text-transform: uppercase;
+			letter-spacing: .5px;
+			text-align: center;
+		}
+	}
+	
+	.widget-body {
+		padding: 0;
+		
+		.data-table {
+			margin: 0;
+			background: transparent;
+			
+			thead th {
+				background: rgba($color-primario, .05);
+				color: $text-color;
+				border: none;
+				border-bottom: 2px solid rgba($color-primario, .15);
+				font-size: .8rem;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: .5px;
+				padding: 1rem .75rem;
+				
+				&:first-child { padding-left: 1.5rem; }
+				&:last-child { padding-right: 1.5rem; }
+			}
+			
+			tbody {
+				tr {
+					border: none;
+					transition: all .2s ease;
+					
+					&:hover {
+						background: rgba($color-primario, .04);
+					}
+					
+					&:not(:last-child) {
+						border-bottom: 1px solid rgba($color-primario, .08);
+					}
+					
+					td {
+						color: $text-color;
+						padding: 1rem .75rem;
+						vertical-align: middle;
+						border: none;
+						
+						&:first-child { padding-left: 1.5rem; }
+						&:last-child { padding-right: 1.5rem; }
+					}
+				}
+			}
+		}
+		
+		.metric-badge {
+			padding: .4rem .8rem;
+			font-weight: 500;
+			border-radius: .5rem;
+			font-size: .8rem;
+			
+			&.primary-badge { 
+				background: linear-gradient(135deg, $color-primario, color.adjust($color-primario, $lightness: -8%));
+				color: #fff;
+			}
+			&.success-badge { 
+				background: linear-gradient(135deg, $color-exito, color.adjust($color-exito, $lightness: -8%));
+				color: #fff;
+			}
+			&.info-badge { 
+				background: linear-gradient(135deg, $color-info, color.adjust($color-info, $lightness: -8%));
+				color: #fff;
+			}
+			&.warning-badge { 
+				background: linear-gradient(135deg, $color-aviso, color.adjust($color-aviso, $lightness: -8%));
+				color: #000;
+			}
+		}
+	}
+}
+
+// Progress bar mejorada
+.enhanced-progress {
+	height: 1.5rem;
+	background-color: rgba($color-primario, .1);
+	border-radius: .75rem;
+	overflow: hidden;
+	border: 1px solid rgba($color-primario, .2);
+	
+	.progress-bar {
+		background: linear-gradient(90deg, $color-primario, $color-primario-claro);
+		border-radius: .75rem;
+		transition: width .6s ease;
+		color: #fff;
+		font-weight: 600;
+		text-shadow: 0 1px 2px rgba(0,0,0,.3);
+	}
+}
+
+// Exportación
+.export-section {
+	margin-top: 3rem;
+	
+	.export-card {
+		@include card-surface;
+		border: 1px solid $surface-border;
+		
+		.export-header {
+			background: linear-gradient(135deg, rgba($color-acento, .1), rgba($color-primario, .05));
+			color: $text-color;
+			border-bottom: 1px solid $surface-border;
+		}
+	}
+}
+
+// Animaciones para elementos interactivos
+@keyframes spin {
+	0% { transform: translate(-50%, -50%) rotate(0deg); }
+	100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// Aplicar animaciones escalonadas a las cards
+.metric-card, .chart-card {
+	animation: fadeInUp .6s ease;
+	
+	&:nth-child(1) { animation-delay: .1s; }
+	&:nth-child(2) { animation-delay: .2s; }
+	&:nth-child(3) { animation-delay: .3s; }
+	&:nth-child(4) { animation-delay: .4s; }
+}
+
+// Efectos adicionales para gráficas
+.chart-section {
+	.section-title {
+		animation: fadeInUp .5s ease;
+	}
+}
+
+// Responsive adjustments
+@media (max-width: $bp-md) {
+	.metric-card {
+		margin-bottom: 1rem;
+		
+		.metric-value { font-size: 2rem; }
+		.metric-icon { font-size: 2rem; }
+	}
+	
+	.chart-card .chart-body { 
+		padding: 1rem;
+		
+		canvas {
+			&:hover {
+				transform: none; // Desactivar hover en móviles
+			}
+		}
+	}
+	
+	.section-title {
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+	}
+}

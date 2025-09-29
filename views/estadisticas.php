@@ -16,114 +16,124 @@ $estadisticasController = new EstadisticasController($conn);
 $datos = $estadisticasController->obtenerEstadisticas();
 ?>
 
-<div class="container mt-4">
-    <!-- Dashboard Principal -->
-    <div class="row mb-4">
-        <div class="col-12">
-          
-        </div>
-    </div>
-
+<div class="container-fluid stats-dashboard">
+   
     <!-- Métricas Principales -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3 h-100">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card metric-card h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="flex-grow-1">
-                        <div class="card-title h4 mb-1"><?php echo $datos['total_alumnos']; ?></div>
-                        <div class="card-text">Total de Alumnos</div>
-                        <small class="text-light"><?php echo $datos['estadisticas_generales']['alumnos_activos']; ?> activos</small>
+                        <div class="metric-value"><?php echo $datos['total_alumnos']; ?></div>
+                        <div class="metric-label">Total de Alumnos</div>
+                        <div class="metric-sublabel">
+                            <i class="bi bi-person-check me-1"></i>
+                            <?php echo $datos['estadisticas_generales']['alumnos_activos']; ?> activos
+                        </div>
                     </div>
                     <div class="ms-3">
-                        <i class="bi bi-people-fill fs-1 opacity-75"></i>
+                        <i class="bi bi-people-fill metric-icon"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3 h-100">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card metric-card h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="flex-grow-1">
-                        <div class="card-title h4 mb-1"><?php echo $datos['total_carreras']; ?></div>
-                        <div class="card-text">Carreras</div>
-                        <small class="text-light"><?php echo $datos['estadisticas_generales']['total_grupos']; ?> grupos</small>
+                        <div class="metric-value"><?php echo $datos['total_carreras']; ?></div>
+                        <div class="metric-label">Carreras Activas</div>
+                        <div class="metric-sublabel">
+                            <i class="bi bi-collection me-1"></i>
+                            <?php echo $datos['estadisticas_generales']['total_grupos']; ?> grupos
+                        </div>
                     </div>
                     <div class="ms-3">
-                        <i class="bi bi-mortarboard-fill fs-1 opacity-75"></i>
+                        <i class="bi bi-mortarboard-fill metric-icon"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3 h-100">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card metric-card h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="flex-grow-1">
-                        <div class="card-title h4 mb-1"><?php echo $datos['estadisticas_generales']['usuarios_activos']; ?></div>
-                        <div class="card-text">Usuarios Activos</div>
-                        <small class="text-light"><?php echo $datos['estadisticas_generales']['seguimientos_abiertos']; ?> seguimientos abiertos</small>
+                        <div class="metric-value"><?php echo $datos['estadisticas_generales']['usuarios_activos']; ?></div>
+                        <div class="metric-label">Usuarios Activos</div>
+                        <div class="metric-sublabel">
+                            <i class="bi bi-journal-text me-1"></i>
+                            <?php echo $datos['estadisticas_generales']['seguimientos_abiertos']; ?> seguimientos abiertos
+                        </div>
                     </div>
                     <div class="ms-3">
-                        <i class="bi bi-person-check-fill fs-1 opacity-75"></i>
+                        <i class="bi bi-person-check-fill metric-icon"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3 h-100">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card metric-card h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="flex-grow-1">
-                        <div class="card-title h4 mb-1"><?php echo $datos['tasa_asistencia']; ?>%</div>
-                        <div class="card-text">Tasa de Asistencia</div>
-                        <small class="text-light"><?php echo $datos['estadisticas_generales']['asistencias_hoy']; ?> asistencias hoy</small>
+                        <div class="metric-value"><?php echo $datos['tasa_asistencia']; ?>%</div>
+                        <div class="metric-label">Tasa de Asistencia</div>
+                        <div class="metric-sublabel">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            <?php echo $datos['estadisticas_generales']['asistencias_hoy']; ?> asistencias hoy
+                        </div>
                     </div>
                     <div class="ms-3">
-                        <i class="bi bi-calendar-check-fill fs-1 opacity-75"></i>
+                        <i class="bi bi-calendar-check-fill metric-icon"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Métricas Secundarias -->
+    <!-- Actividad Reciente y Tasa de Asistencia -->
     <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card border-primary mb-3">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-graph-up"></i> Actividad Reciente
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card metric-card h-100">
+                <div class="card-header chart-header">
+                    Actividad Reciente
                 </div>
                 <div class="card-body">
                     <div class="row text-center">
                         <div class="col-6">
-                            <h5 class="text-primary"><?php echo $datos['estadisticas_generales']['asistencias_semana']; ?></h5>
-                            <small class="text-muted">Asistencias esta semana</small>
+                            <div class="metric-value" style="font-size: 1.8rem;"><?php echo $datos['estadisticas_generales']['asistencias_semana']; ?></div>
+                            <small class="metric-sublabel">Asistencias semana</small>
                         </div>
                         <div class="col-6">
-                            <h5 class="text-success"><?php echo $datos['estadisticas_generales']['seguimientos_mes']; ?></h5>
-                            <small class="text-muted">Seguimientos este mes</small>
+                            <div class="metric-value" style="font-size: 1.8rem;"><?php echo $datos['estadisticas_generales']['seguimientos_mes']; ?></div>
+                            <small class="metric-sublabel">Seguimientos mes</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
-            <div class="card border-info mb-3">
-                <div class="card-header bg-info text-white">
-                    <i class="bi bi-speedometer2"></i> Tasa de Asistencia General
+        <div class="col-lg-8 col-md-6 mb-3">
+            <div class="card metric-card h-100">
+                <div class="card-header chart-header">
+                    Progreso de Asistencia General
                 </div>
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-1"><?php echo $datos['tasa_asistencia']; ?>%</h3>
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar bg-gradient" role="progressbar" 
-                                     style="width: <?php echo $datos['tasa_asistencia']; ?>%;" 
-                                     aria-valuenow="<?php echo $datos['tasa_asistencia']; ?>" 
-                                     aria-valuemin="0" aria-valuemax="100">
-                                    <?php echo $datos['tasa_asistencia']; ?>%
-                                </div>
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="metric-label">Tasa actual</span>
+                            <span class="metric-value" style="font-size: 2rem;"><?php echo $datos['tasa_asistencia']; ?>%</span>
+                        </div>
+                        <div class="enhanced-progress">
+                            <div class="progress-bar" 
+                                 style="width: <?php echo $datos['tasa_asistencia']; ?>%;" 
+                                 aria-valuenow="<?php echo $datos['tasa_asistencia']; ?>" 
+                                 aria-valuemin="0" aria-valuemax="100">
+                                <?php echo $datos['tasa_asistencia']; ?>%
                             </div>
                         </div>
-                     
+                        <div class="d-flex justify-content-between mt-2">
+                            <small class="metric-sublabel">0%</small>
+                            <small class="metric-sublabel">100%</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -133,158 +143,165 @@ $datos = $estadisticasController->obtenerEstadisticas();
     <!-- BOTONES DE EXPORTACIÓN -->
     
 
-    <!-- Gráficas Principales -->
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-pie-chart"></i> Distribución de Alumnos por Estatus
-                </div>
-                <div class="card-body">
-                    <canvas id="alumnosPorEstatusChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">
-                    <i class="bi bi-person-vcard"></i> Usuarios por Nivel
-                </div>
-                <div class="card-body">
-                    <canvas id="usuariosPorNivelChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
+     <!-- Grid de Gráficas Principal -->
+     <div class="dashboard-grid">
+         <div class="chart-widget">
+             <div class="widget-content">
+                 <div class="widget-title">
+                     Distribución de Alumnos
+                 </div>
+                 <div class="widget-chart">
+                     <canvas id="alumnosPorEstatusChart"></canvas>
+                 </div>
+             </div>
+         </div>
+         
+         <div class="chart-widget">
+             <div class="widget-content">
+                 <div class="widget-title">
+                     Usuarios por Nivel
+                 </div>
+                 <div class="widget-chart">
+                     <canvas id="usuariosPorNivelChart"></canvas>
+                 </div>
+             </div>
+         </div>
+         
+         <div class="chart-widget">
+             <div class="widget-content">
+                 <div class="widget-title">
+                     Seguimientos
+                     <span class="subtitle">por estatus</span>
+                 </div>
+                 <div class="widget-chart">
+                     <canvas id="seguimientosPorEstatusChart"></canvas>
+                 </div>
+             </div>
+         </div>
+         
+         <div class="chart-widget">
+             <div class="widget-content">
+                 <div class="widget-title">
+                     Tipos de Seguimiento
+                 </div>
+                 <div class="widget-chart">
+                     <canvas id="seguimientosPorTipoChart"></canvas>
+                 </div>
+             </div>
+         </div>
+     </div>
 
-    <!-- Gráficas de Seguimientos -->
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <i class="bi bi-graph-up"></i> Seguimientos por Estatus
+    <!-- Grid de Gráficas Temporales -->
+    <div class="dashboard-grid">
+        <div class="chart-widget half-grid">
+            <div class="widget-content">
+                <div class="widget-title">
+                    Asistencia Mensual
+                    <span class="subtitle">últimos 12 meses</span>
                 </div>
-                <div class="card-body">
-                    <canvas id="seguimientosPorEstatusChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-warning text-white">
-                    <i class="bi bi-list-check"></i> Seguimientos por Tipo
-                </div>
-                <div class="card-body">
-                    <canvas id="seguimientosPorTipoChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Gráficas de Tendencias Temporales -->
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <i class="bi bi-calendar-month"></i> Asistencia por Mes (Últimos 12 meses)
-                </div>
-                <div class="card-body">
+                <div class="widget-chart">
                     <canvas id="asistenciaPorMesChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
-                    <i class="bi bi-graph-up-arrow"></i> Seguimientos por Mes (Últimos 12 meses)
+        
+        <div class="chart-widget half-grid">
+            <div class="widget-content">
+                <div class="widget-title">
+                    Seguimientos Mensuales
+                    <span class="subtitle">últimos 12 meses</span>
                 </div>
-                <div class="card-body">
+                <div class="widget-chart">
                     <canvas id="seguimientosPorMesChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Gráficas de Distribución -->
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-danger text-white">
-                    <i class="bi bi-mortarboard"></i> Carreras Más Populares
+    <!-- Grid de Análisis de Popularidad -->
+    <div class="dashboard-grid">
+        <div class="chart-widget">
+            <div class="widget-content">
+                <div class="widget-title">
+                    Top Carreras
                 </div>
-                <div class="card-body">
+                <div class="widget-chart">
                     <canvas id="carrerasMasPopularesChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-purple text-white" style="background-color: #6f42c1 !important;">
-                    <i class="bi bi-person-video3"></i> Modalidades Más Utilizadas
+        
+        <div class="chart-widget">
+            <div class="widget-content">
+                <div class="widget-title">
+                    Modalidades
                 </div>
-                <div class="card-body">
+                <div class="widget-chart">
                     <canvas id="modalidadesMasUtilizadasChart"></canvas>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Gráficas de Productividad -->
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-teal text-white" style="background-color: #20c997 !important;">
-                    <i class="bi bi-people"></i> Productividad de Tutores
+        
+        <div class="chart-widget">
+            <div class="widget-content">
+                <div class="widget-title">
+                    Productividad
                 </div>
-                <div class="card-body">
+                <div class="widget-chart">
                     <canvas id="productividadTutoresChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-orange text-white" style="background-color: #fd7e14 !important;">
-                    <i class="bi bi-calendar-range"></i> Alumnos por Año de Ingreso
+        
+        <div class="chart-widget">
+            <div class="widget-content">
+                <div class="widget-title">
+                    Años de Ingreso
                 </div>
-                <div class="card-body">
+                <div class="widget-chart">
                     <canvas id="alumnosPorAnioIngresoChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Tabla de Productividad de Tutores -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-gradient text-white" style="background: linear-gradient(45deg, #007bff, #0056b3) !important;">
-                    <i class="bi bi-table"></i> Detalle de Productividad de Tutores
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Tutor</th>
-                                    <th>Grupos Asignados</th>
-                                    <th>Alumnos Tutoreados</th>
-                                    <th>Seguimientos Realizados</th>
-                                    <th>Promedio por Alumno</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($datos['productividad_tutores'] as $tutor): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($tutor['tutor']); ?></td>
-                                    <td><span class="badge bg-primary"><?php echo $tutor['grupos_asignados']; ?></span></td>
-                                    <td><span class="badge bg-success"><?php echo $tutor['alumnos_tutoreados']; ?></span></td>
-                                    <td><span class="badge bg-info"><?php echo $tutor['seguimientos_realizados']; ?></span></td>
-                                    <td><span class="badge bg-warning"><?php echo $tutor['promedio_seguimientos_por_alumno']; ?></span></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+    <!-- Widget de Tabla de Productividad -->
+    <div class="dashboard-grid">
+         <div class="data-widget wide-grid">
+             <div class="widget-header">
+                 <h3 class="widget-title">
+                     Ranking de Productividad de Tutores
+                 </h3>
+             </div>
+            <div class="widget-body">
+                <div class="table-responsive">
+                    <table class="data-table table">
+                        <thead>
+                            <tr>
+                                <th>Tutor</th>
+                                <th>Grupos</th>
+                                <th>Alumnos</th>
+                                <th>Seguimientos</th>
+                                <th>Promedio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($datos['productividad_tutores'] as $tutor): ?>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person-circle me-2 text-primary"></i>
+                                        <?php echo htmlspecialchars($tutor['tutor']); ?>
+                                    </div>
+                                </td>
+                                <td><span class="metric-badge primary-badge"><?php echo $tutor['grupos_asignados']; ?></span></td>
+                                <td><span class="metric-badge success-badge"><?php echo $tutor['alumnos_tutoreados']; ?></span></td>
+                                <td><span class="metric-badge info-badge"><?php echo $tutor['seguimientos_realizados']; ?></span></td>
+                                <td><span class="metric-badge warning-badge"><?php echo $tutor['promedio_seguimientos_por_alumno']; ?></span></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

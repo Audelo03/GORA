@@ -4,13 +4,17 @@
 @use 'pages/login';
 @use 'pages/sweetalert';
 @use 'pages/seguimientos';
+@use 'pages/estadisticas';
 
 // Reset básico y tipografía
 html, body {
-	background-color: $color-negro;
+	background-color: rgba($color-negro-2, .08);
 	color: $text-color;
 	font-family: $font-family-base;
+	height: 100%;
+	height: 100vh;
 }
+
 
 a { color: $color-primario; text-decoration: none; }
 a:hover { color: $color-primario-claro; }
@@ -78,9 +82,7 @@ a:hover { color: $color-primario-claro; }
 
 // Contenido principal
 #app-content {
-	background: radial-gradient(1200px 800px at 20% -10%, rgba($color-primario, .08), transparent 50%),
-		radial-gradient(800px 600px at 80% 100%, rgba($color-acento, .05), transparent 40%),
-		linear-gradient(180deg, $color-negro 0%, $color-negro-2 100%);
+	background: rgba($color-negro-2, .08);
 }
 
 // Tarjetas y contenedores
