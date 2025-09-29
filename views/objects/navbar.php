@@ -40,8 +40,12 @@ if (!isset($modificacion_ruta)) {
                     </a>
                     
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="navbarUserDropdown">
-                        
-                        
+                        <li>
+                            <a class="dropdown-item" href="/GORA/profile.php">
+                                <i class="bi bi-person me-2"></i>Mi Perfil
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-danger" href="/GORA/logout" id="logout-link">
                                 <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
