@@ -48,10 +48,10 @@ if (isset($_SESSION))
   $nivel = (int)$_SESSION["usuario_nivel"];
 
 // Debug: Mostrar información del usuario (remover en producción)
-if (isset($_SESSION["usuario_nivel"])) {
-  echo "<!-- DEBUG: Nivel de usuario: " . $_SESSION["usuario_nivel"] . " (tipo: " . gettype($_SESSION["usuario_nivel"]) . ") -->";
-  echo "<!-- DEBUG: Nivel convertido: " . $nivel . " (tipo: " . gettype($nivel) . ") -->";
-}
+// if (isset($_SESSION["usuario_nivel"])) {
+//   echo "<!-- DEBUG: Nivel de usuario: " . $_SESSION["usuario_nivel"] . " (tipo: " . gettype($_SESSION["usuario_nivel"]) . ") -->";
+//   echo "<!-- DEBUG: Nivel convertido: " . $nivel . " (tipo: " . gettype($nivel) . ") -->";
+// }
 
 if (!isset($modificacion_ruta)) {
   $modificacion_ruta = "";
