@@ -20,7 +20,7 @@ class Seguimiento {
         $sql = "SELECT s.*, ts.nombre as tipo_seguimiento_nombre 
                 FROM " . $this->table . " s
                 LEFT JOIN tipo_seguimiento ts ON s.tipo_seguimiento_id = ts.id_tipo_seguimiento
-                WHERE s.alumnos_id_alumno = :idAlumno AND s.estatus = 1
+                WHERE s.alumnos_id_alumno = :idAlumno
                 ORDER BY s.fecha_creacion DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":idAlumno", $idAlumno, PDO::PARAM_INT);

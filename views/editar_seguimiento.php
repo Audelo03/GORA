@@ -26,13 +26,9 @@ if (!$seguimiento) {
     exit;
 }
 
-$page_title = "Editar Seguimiento";
-include 'objects/header.php';
-
 $alumnoController = new AlumnoController($conn);
 $alumno = $alumnoController->obtenerAlumnoPorId((int)$seguimiento['alumnos_id_alumno']);
 $tipos_seguimiento = $seguimientoController->obtenerTiposSeguimiento();
-
 
 $errors = [];
 $descripcion = $seguimiento['descripcion'];
@@ -40,7 +36,6 @@ $estatus = (int)$seguimiento['estatus'];
 $fecha_compromiso = $seguimiento['fecha_compromiso'] ?? "";
 $tipo_seguimiento_id = (int)$seguimiento['tipo_seguimiento_id'];
 $id_alumno = (int)$seguimiento['alumnos_id_alumno'];
-
 
 // --- PROCESAR FORMULARIO ---
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -70,6 +65,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 }
+
+$page_title = "Editar Seguimiento";
+include 'objects/header.php';
 
 ?>
 
