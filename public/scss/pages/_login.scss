@@ -1,0 +1,42 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+html, body.login-page {
+	background: linear-gradient(180deg, $surface-0, $surface-1);
+	color: $text-color;
+}
+
+.login-card {
+	@include card-surface;
+	max-width: 420px;
+	margin: 0 auto;
+	padding: 2rem;
+	color: $text-color;
+}
+
+.login-brand {
+	font-weight: 700;
+	@include text-primary;
+}
+
+.login-title { color: $text-color; }
+
+.login-form .form-floating > label { color: $text-color-muted; }
+.login-form .form-control {
+	background-color: $surface-2;
+	border-color: $color-gris-600;
+	color: $text-color;
+	&:focus { @include focus-ring($color-primario); background-color: $color-gris-700; }
+}
+
+.login-submit.btn {
+	background: linear-gradient(135deg, $color-primario, $color-primario-oscuro);
+	border-color: $color-primario-oscuro;
+	color: #fff;
+	@include hover-brighten(8%);
+	&:focus { @include focus-ring($color-primario); }
+}
+
+.login-footer { color: $text-color-muted; }
+
+

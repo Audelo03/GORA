@@ -271,7 +271,6 @@ class AlumnoController {
         $raw_group_ids = array_column($grupos_ids, 'id_grupo');
         $alumnosPorPagina = 5;
     
-        // PASO 1: Obtener toda la información de los grupos y carreras en UNA SOLA CONSULTA.
         $placeholders = implode(',', array_fill(0, count($raw_group_ids), '?'));
         $sql_info = "SELECT g.id_grupo, g.nombre AS nombre_grupo, c.nombre AS nombre_carrera
                      FROM grupos g
@@ -284,8 +283,6 @@ class AlumnoController {
             $info_grupos[$row['id_grupo']] = $row;
         }
     
-        // PASO 2: Obtener todos los alumnos necesarios (la primera página de cada grupo) en UNA SOLA CONSULTA.
-        // Se asume que el método `listByGroupIds` existe en el modelo Alumno.
         $alumnos_todos = $this->alumno->listByGroupIds($raw_group_ids, $terminoBusqueda);
         
         // Agrupamos los alumnos por su ID de grupo en un array de PHP.
@@ -354,7 +351,7 @@ class AlumnoController {
                 <div class="accordion-item shadow-sm rounded-3 mb-2 border-0">
                     <h2 class="accordion-header" id="heading_<?= htmlspecialchars($grupoUid) ?>">
                         <button class="accordion-button collapsed bg-light fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_<?= htmlspecialchars($grupoUid) ?>">
-                            <i class="bi bi-people-fill me-2 text-primary"></i> Grupo: <?= htmlspecialchars($grupo_nombre) ?>
+                            <i class="bi bi-people-fill me-2 text-primary"></i><span class="text-muted"> Grupo: <?= htmlspecialchars($grupo_nombre) ?></span>
                             <span class="badge bg-primary ms-2"><?= $totalAlumnos ?> alumnos</span>
                         </button>
                     </h2>

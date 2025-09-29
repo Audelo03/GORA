@@ -4,7 +4,29 @@ if (!isset($modificacion_ruta)) {
 }
 ?>
 <nav id = "navbar1" class="navbar navbar-expand-lg navbar-light bg-white border-bottom"> <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-dark" href="#"><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?></a>
+        <?php 
+            $page_label = $page_title ?? '';
+            if ($page_label === '' || $page_label === null) {
+                $uri = $_SERVER['REQUEST_URI'] ?? '';
+                $base_path = '/GORA/';
+                if (strpos($uri, $base_path) === 0) {
+                    $path = explode('?', substr($uri, strlen($base_path)))[0];
+                    $path = trim($path, '/');
+                    $page_label = $path !== '' ? $path : 'dashboard';
+                } else {
+                    $page_label = 'dashboard';
+                }
+                $page_label = preg_replace('/\.php$/', '', $page_label);
+                $page_label = str_replace('-', ' ', $page_label);
+                $page_label = ucfirst($page_label);
+            }
+        ?>
+        <span class="navbar-brand small fw-normal breadcrumb-brand">
+            <i class="bi bi-house-door me-1 text-muted"></i>
+            <span class="text-muted">GORA</span>
+            <i class="bi bi-chevron-right mx-1 text-muted"></i>
+            <span class="brand-page text-primary text-uppercase"><?php echo htmlspecialchars($page_label); ?></span>
+        </span>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

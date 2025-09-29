@@ -17,6 +17,13 @@ if (empty($current_page)) {
 }
 
 
+// Etiqueta amigable para mostrar en el encabezado del sidebar
+$page_label = $current_page;
+$page_label = preg_replace('/\.php$/', '', $page_label);
+$page_label = str_replace('-', ' ', $page_label);
+$page_label = ucfirst($page_label);
+
+
 
 if (!function_exists('active')) {
   /**
@@ -54,7 +61,7 @@ if (!isset($modificacion_ruta)) {
 <nav id="app-sidebar" class="sidebar bg-dark text-white position-fixed h-100 p-3 collapsed">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <span class="fs-5 fw-bold">GORA</span>
-    <button id="btn-toggle-sidebar" class="btn btn-sm btn-outline-light" >
+    <button id="btn-toggle-sidebar" class="btn btn-sm btn-outline-light btn-toggle-sidebar" >
       <i class="bi bi-list"></i>
     </button>
   </div>

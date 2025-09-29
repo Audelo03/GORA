@@ -1,0 +1,26 @@
+@use '../variables' as *;
+@use 'sass:color';
+
+#tabla-seguimientos {
+	thead th {
+		background: $table-head-bg !important;
+		color: $text-color !important;
+		border-bottom: 1px solid $color-gris-600 !important;
+	}
+	tbody td { color: $text-color; }
+}
+
+// Botones alineados con CRUDs
+#tabla-seguimientos .btn.btn-warning {
+	background-color: $color-aviso !important;
+	border-color: color.adjust($color-aviso, $lightness: -10%) !important;
+	color: #000 !important;
+}
+
+#tabla-seguimientos .btn.btn-primary {
+	background: linear-gradient(135deg, $color-primario, $color-primario-oscuro) !important;
+	border-color: $color-primario-oscuro !important;
+	color: #fff !important;
+}
+
+

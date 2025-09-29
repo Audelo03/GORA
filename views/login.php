@@ -94,10 +94,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         z-index: -1;
       }
     </style>
+    <link href="/GORA/public/css/theme.css" rel="stylesheet">
 </head>
-<body class="d-flex align-items-center py-4 bg-body-tertiary h-100">
+<body class="d-flex align-items-center py-4 h-100 login-page">
   
-    <main class="form-signin w-100 m-auto bg-white rounded-3 shadow">
+    <main class="form-signin w-100 m-auto login-card rounded-3">
         <form method="POST" novalidate>
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
 
@@ -109,8 +110,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?php unset($_SESSION['error_message']); endif; ?>
 
             <div class="text-center mb-4">
-                <p class="h3 mb-3 font-weight-bold">GORA</p>
-                <h2 class="h5 mb-4 fw-normal">Iniciar Sesión</h2>
+                <p class="h3 mb-3 font-weight-bold login-brand">GORA</p>
+                <h2 class="h5 mb-4 fw-normal login-title">Iniciar Sesión</h2>
             </div>
 
             <div class="form-floating mb-3">
@@ -121,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Contraseña" required>
                 <label for="floatingPassword"><i class="bi bi-key-fill me-2"></i>Contraseña</label>
             </div>
-            <button class="btn btn-danger w-100 py-2" type="submit">Entrar</button>
+            <button class="btn login-submit w-100 py-2" type="submit">Entrar</button>
 
             <?php if(!empty($error)): ?>
                 <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
@@ -132,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
             <?php endif; ?>
 
-            <p class="mt-4 mb-3 text-body-secondary text-center">2025 ITSA</p>
+            <p class="mt-4 mb-3 text-center login-footer">2025 ITSA</p>
         </form>
     </main>
 

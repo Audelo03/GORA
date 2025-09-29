@@ -1,6 +1,9 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 @use 'pages/alumnos';
+@use 'pages/login';
+@use 'pages/sweetalert';
+@use 'pages/seguimientos';
 
 // Reset básico y tipografía
 html, body {
@@ -29,6 +32,13 @@ a:hover { color: $color-primario-claro; }
 	background-color: $color-negro-2 !important;
 	border-bottom: 1px solid rgba(255,255,255,.08) !important;
 	.navbar-brand { color: $text-color; }
+	.navbar-brand.small { font-size: .9rem; letter-spacing: .2px; }
+	.navbar-brand.breadcrumb-brand {
+		display: inline-flex;
+		align-items: center;
+		gap: .25rem;
+		.brand-page { letter-spacing: .4px; }
+	}
 	.nav-link { color: $text-color; }
 	.nav-link:hover { color: $color-primario; }
 	.dropdown-menu {
@@ -84,6 +94,16 @@ a:hover { color: $color-primario-claro; }
 	color: $text-color;
 	&::placeholder { color: $color-gris-500; }
 	&:focus { @include focus-ring($color-primario); background-color: $color-gris-700; color: $color-gris-100; }
+}
+
+// Estados deshabilitados: similar a selects pero un poco más claro
+.form-control:disabled,
+.form-select:disabled,
+input[type="date"].form-control:disabled {
+	background-color: $color-gris-700 !important;
+	color: $text-color-muted !important;
+	border-color: $color-gris-600 !important;
+	opacity: 1; // Evita atenuación por Bootstrap
 }
 
 .form-check-input {
@@ -145,6 +165,7 @@ a:hover { color: $color-primario-claro; }
 
 // Recolor de fondo claro hacia beige para secciones específicas
 .bg-light { background-color: $color-beige-light !important; color: #0b0b0b !important; }
+.bg-light  { color: $color-gris-500 !important; }
 
 // Tablas (DataTables)
 table.dataTable, .table {
@@ -166,7 +187,6 @@ table.dataTable, .table {
 	&.table-hover > tbody > tr:hover { background-color: rgba($color-primario,.08); }
 }
 
-// Asegurar utilitarios de texto sobre fondo oscuro
 .text-dark, .text-body { color: $text-color !important; }
 .text-muted { color: $text-color-muted !important; }
 
@@ -177,6 +197,36 @@ table.dataTable, .table {
 		border: 1px solid $color-primario !important; 
 	}
 }
+
+// Cambia el color del botón de acordeón cuando está activo (abierto)
+.accordion-button:not(.collapsed) {
+	background-color: rgba($color-primario, 0.15) !important;
+	color: $color-primario !important;
+	box-shadow: none;
+}
+
+// Cambia el color al hacer hover sobre el botón de acordeón
+.accordion-button:hover {
+	background-color: rgba($color-primario, 0.10) !important;
+	color: $color-primario !important;
+}
+
+.btn-toggle-sidebar{
+	background-color: $color-primario-oscuro ;
+}
+
+.btn-toggle-sidebar:hover{
+	outline: 1px solid $color-primario !important;
+	background-color: $color-primario !important;
+}
+
+
+
+// Opcional: cambia el color del icono cuando está abierto
+.accordion-button:not(.collapsed)::after {
+	filter: brightness(1.3) sepia(1) hue-rotate(-20deg) saturate(2);
+}
+
 
 // Badges y etiquetas
 .badge.bg-primary {
@@ -238,6 +288,38 @@ table.dataTable, .table {
 	color: $text-color;
 	&:focus { @include focus-ring($color-primario); }
 }
+
+// Ajustes de texto/placeholder y dropdown para Select2 (tema oscuro)
+.select2-container--bootstrap-5 .select2-selection .select2-selection__rendered { color: $text-color !important; }
+.select2-container--bootstrap-5 .select2-selection .select2-selection__placeholder { color: $text-color-muted !important; }
+.select2-container--bootstrap-5 .select2-selection .select2-selection__clear { color: $text-color-muted !important; }
+
+.select2-container--bootstrap-5 .select2-dropdown {
+	background-color: $surface-1 !important;
+	color: $text-color !important;
+	border: 1px solid $surface-border !important;
+}
+.select2-container--bootstrap-5 .select2-results__option { color: $text-color !important; }
+.select2-container--bootstrap-5 .select2-results__option--selected {
+	background-color: rgba($color-primario,.2) !important;
+	color: $text-color !important;
+}
+.select2-container--bootstrap-5 .select2-results__option--highlighted {
+	background-color: rgba($color-primario,.35) !important;
+	color: #fff !important;
+}
+
+// Modo múltiple
+.select2-container--bootstrap-5 .select2-selection--multiple {
+	background-color: $color-grafito;
+	border-color: $color-gris-600;
+}
+.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+	background-color: rgba($color-primario,.15) !important;
+	border: 1px solid $color-primario !important;
+	color: $text-color !important;
+}
+.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove { color: $text-color-muted !important; }
 
 // Mejoras adicionales
 .card-header {

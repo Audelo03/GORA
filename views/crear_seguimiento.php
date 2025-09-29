@@ -26,7 +26,6 @@ if (!$alumno) {
     exit;
 }
 
-// Procesar el formulario ANTES de incluir el header
 $errors = [];
 $success = false;
 
@@ -107,7 +106,7 @@ $tipo_seguimiento_id = $_POST['tipo_seguimiento_id'] ?? null;
 
                     <div class="mb-4 p-3 bg-light rounded">
                         <h5 class="mb-1"><?= htmlspecialchars($alumno['nombre']) ?></h5>
-                        <small class="text-muted">Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></small>
+                        <small class="mb-0">Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></small>
                     </div>
 
                     <?php if (!empty($errors['general'])): ?>

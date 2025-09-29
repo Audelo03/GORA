@@ -108,14 +108,14 @@ function formatFecha(?string $fecha): string {
                                     <td><?= htmlspecialchars($s['nombre_tutor']) ?></td>
                                     <td>
                                         <a href="editar_seguimiento.php?id_seguimiento=<?= $s['id_seguimiento'] ?>" 
-                                           class="btn btn-sm btn-outline-warning" 
+                                           class="btn btn-sm btn-warning" 
                                            data-bs-toggle="tooltip" 
                                            data-bs-placement="top" 
                                            title="Editar este Seguimiento">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <a href="ver_seguimientos.php?id_alumno=<?= $s['id_alumno'] ?>" 
-                                           class="btn btn-sm btn-outline-primary" 
+                                           class="btn btn-sm btn-primary" 
                                            data-bs-toggle="tooltip" 
                                            data-bs-placement="top" 
                                            title="Ver Seguimientos del Alumno">

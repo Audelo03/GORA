@@ -1,0 +1,26 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.swal2-popup {
+	background: $surface-1 !important;
+	color: $text-color !important;
+	border: 1px solid $surface-border;
+	box-shadow: $shadow-lg;
+}
+.swal2-title { color: $text-color !important; }
+.swal2-html-container { color: $text-color-muted !important; }
+.swal2-icon.swal2-warning { border-color: $color-aviso !important; color: $color-aviso !important; }
+.swal2-icon.swal2-error { border-color: $color-peligro !important; color: $color-peligro !important; }
+.swal2-icon.swal2-success { border-color: $color-exito !important; color: $color-exito !important; }
+.swal2-confirm.btn, .swal2-styled.swal2-confirm {
+	background: linear-gradient(135deg, $color-primario, $color-primario-oscuro) !important;
+	border: 1px solid $color-primario-oscuro !important;
+	color: #fff !important;
+}
+.swal2-cancel.btn, .swal2-styled.swal2-cancel {
+	background: transparent !important;
+	border: 1px solid $color-primario !important;
+	color: $color-primario !important;
+	&:hover { background: rgba($color-primario,.08) !important; }
+}
+

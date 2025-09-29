@@ -2,8 +2,7 @@
 if(!isset($modificacion_ruta)){
   $modificacion_ruta = "";
 }
-// auth_check.php should be included only in pages that require authentication
-// include "auth_check.php"
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -30,7 +29,7 @@ if(!isset($modificacion_ruta)){
 
 <div class="d-flex">
     <?php include 'sidebar.php'; ?>
-    <main id="app-content" class="flex-grow-1 p-3 collapsed">
+    <main id="app-content" class="flex-grow-1  collapsed">
       <?php include "navbar.php"?>
       
       
