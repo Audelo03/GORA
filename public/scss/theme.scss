@@ -605,6 +605,11 @@ table tbody td .btn {
 	color: #fff !important;
 }
 
+.badge.bg-warning {
+	background: $color-aviso !important;
+	color: #fff !important;
+}
+
 // Modales y popovers
 .modal-content { 
 	@include card-surface; 
