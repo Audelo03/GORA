@@ -83,8 +83,19 @@
 	background-color: $color-negro-2;
 	border-color: $color-gris-600;
 	thead { background: linear-gradient(180deg, $color-negro-2, $color-grafito); }
-	thead th { color: $color-primario; border-bottom-color: $color-gris-600; }
+	thead th { 
+		color: $color-primario; 
+		border-bottom-color: $color-gris-600;
+		text-align: center !important;
+	}
 	tbody tr:hover { background-color: $alumnos-row-hover; }
+	
+	// Solo centrar botones de acción
+	
+	// Centrar botones de acción
+	tbody td:last-child {
+		text-align: center !important;
+	}
 }
 
 // Badges y estados (si se usan etiquetas en tarjetas/listas)

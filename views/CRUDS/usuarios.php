@@ -31,7 +31,7 @@ include __DIR__ . "/../objects/header.php";
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped table-hover" id="tablaUsuarios">
+            <table class="table table-bordered table-striped table-hover" id="tablaUsuarios">
                 <thead class="table-dark">
                 <tr>
                     <th>ID</th>

@@ -104,7 +104,7 @@ $tipo_seguimiento_id = $_POST['tipo_seguimiento_id'] ?? null;
 
                 
 
-                    <div class="mb-4 p-3 bg-light rounded">
+                    <div class="mb-4 p-3 rounded">
                         <h5 class="mb-1"><?= htmlspecialchars($alumno['nombre']) ?></h5>
                         <small class="mb-0">Matrícula: <?= htmlspecialchars($alumno['matricula']) ?></small>
                     </div>

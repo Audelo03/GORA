@@ -8,7 +8,7 @@
 
 // Reset básico y tipografía
 html, body {
-	background-color: rgba($color-negro-2, .08);
+	background-color: $color-negro-2;
 	color: $text-color;
 	font-family: $font-family-base;
 	height: 100%;
@@ -54,6 +54,26 @@ a:hover { color: $color-primario-claro; }
 	}
 }
 
+.dashboard-grid{
+	background-color: $color-negro-2;
+}
+
+.stats-dashboard{
+	background-color: $color-negro-2;
+
+	.widget-content{
+		background-color: $color-negro-2;
+	}
+
+	.widget-title{
+		background-color: $color-negro-2;
+	}
+}
+
+.container-fluid{
+	background-color: $color-negro-2;
+}
+
 // Sidebar
 #app-sidebar.sidebar {
 	background: linear-gradient(180deg, $color-negro-2 0%, $color-grafito 100%);
@@ -82,7 +102,7 @@ a:hover { color: $color-primario-claro; }
 
 // Contenido principal
 #app-content {
-	background: rgba($color-negro-2, .08);
+	background: $color-negro-2;
 }
 
 // Tarjetas y contenedores
@@ -169,34 +189,202 @@ input[type="date"].form-control:disabled {
 .bg-light { background-color: $color-beige-light !important; color: #0b0b0b !important; }
 .bg-light  { color: $color-gris-500 !important; }
 
-// Tablas (DataTables)
+.encabezado-nombre{
+	color: $color-primario !important;
+}
+
+// Tablas (DataTables) - Patrón Uniforme
 table.dataTable, .table {
 	color: $text-color;
 	background-color: $color-negro-2;
 	border-color: $color-gris-600;
+	border-radius: 0.5rem;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	
 	> :not(caption) > * > * { background-color: transparent; }
-	thead th { 
-		color: $color-primario; 
-		border-bottom-color: $color-gris-600; 
-		font-weight: 600;
+	
+	// Encabezados uniformes
+	thead {
+		background: linear-gradient(180deg, $color-negro-2, $color-grafito);
+		th { 
+			color: $color-primario; 
+			border-bottom-color: $color-gris-600; 
+			font-weight: 600;
+			font-size: 0.875rem;
+			padding: 1rem 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.025em;
+		}
 	}
-	tbody tr { border-color: $color-gris-600; }
-	tbody tr:hover { background-color: rgba($color-primario,.06); }
-	// Forzar color de texto en celdas
-	th, td { color: $text-color !important; }
-	// Mejorar franjas de tabla
-	&.table-striped > tbody > tr:nth-of-type(odd) { background-color: rgba(255,255,255,.03); }
-	&.table-hover > tbody > tr:hover { background-color: rgba($color-primario,.08); }
+	
+	// Filas del cuerpo
+	tbody {
+		tr { 
+			border-color: $color-gris-600;
+			transition: all 0.2s ease;
+		}
+		tr:hover { 
+			background-color: rgba($color-primario,.08);
+			transform: translateY(-1px);
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+		td {
+			padding: 0.75rem;
+			vertical-align: middle;
+			border-top: 1px solid rgba($color-gris-600, 0.3);
+		}
+	}
+	
+	// Texto uniforme
+	th, td { 
+		color: $text-color !important;
+		border-color: rgba($color-gris-600, 0.3);
+	}
+	
+	// Franjas de tabla mejoradas
+	&.table-striped > tbody > tr:nth-of-type(odd) { 
+		background-color: rgba(255,255,255,.02); 
+	}
+	
+	// Hover mejorado
+	&.table-hover > tbody > tr:hover { 
+		background-color: rgba($color-primario,.08); 
+	}
+	
+	// Bordes redondeados para la primera y última fila
+	tbody tr:first-child td {
+		border-top: none;
+	}
+	
+	// Botones en tablas
+	.btn {
+		margin: 0 0.125rem;
+		transition: all 0.2s ease;
+		
+		&:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		}
+	}
+}
+
+// Uniformizar clases de encabezados de tablas
+.table-light thead {
+	background: linear-gradient(180deg, $color-negro-2, $color-grafito) !important;
+	th {
+		color: $color-primario !important;
+		border-bottom-color: $color-gris-600 !important;
+		font-weight: 600 !important;
+		font-size: 0.875rem !important;
+		padding: 1rem 0.75rem !important;
+		text-transform: uppercase !important;
+		letter-spacing: 0.025em !important;
+		text-align: center !important;
+	}
+}
+
+.table-dark thead {
+	background: linear-gradient(180deg, $color-negro-2, $color-grafito) !important;
+	th {
+		color: $color-primario !important;
+		border-bottom-color: $color-gris-600 !important;
+		font-weight: 600 !important;
+		font-size: 0.875rem !important;
+		padding: 1rem 0.75rem !important;
+		text-transform: uppercase !important;
+		letter-spacing: 0.025em !important;
+		text-align: center !important;
+	}
+}
+
+// Centrar solo encabezados en todas las tablas
+table thead th {
+	text-align: center !important;
+}
+
+// Centrar solo botones de acción en la última columna
+table tbody td:last-child {
+	text-align: center !important;
+}
+
+// Estilos específicos para botones de acción en tablas
+table tbody td .btn {
+	margin: 0 0.125rem;
+	display: inline-block;
 }
 
 .text-dark, .text-body { color: $text-color !important; }
 .text-muted { color: $text-color-muted !important; }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-	color: $color-primario !important;
-	&.current, &.current:hover { 
-		background: rgba($color-primario,.15) !important; 
-		border: 1px solid $color-primario !important; 
+// Contenedores de tablas uniformes
+.table-responsive {
+	border-radius: 0.5rem;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	
+	.table {
+		margin-bottom: 0;
+		border-radius: 0;
+		box-shadow: none;
+	}
+}
+
+// DataTables wrapper uniforme
+.dataTables_wrapper {
+	.dataTables_length,
+	.dataTables_filter,
+	.dataTables_info,
+	.dataTables_paginate {
+		color: $text-color;
+		margin: 0.5rem 0;
+	}
+	
+	.dataTables_filter input {
+		background-color: $surface-2;
+		border: 1px solid $color-gris-600;
+		color: $text-color;
+		border-radius: 0.375rem;
+		padding: 0.5rem 0.75rem;
+		
+		&:focus {
+			border-color: $color-primario;
+			box-shadow: 0 0 0 0.2rem rgba($color-primario, 0.25);
+		}
+	}
+	
+	.dataTables_length select {
+		background-color: $surface-2;
+		border: 1px solid $color-gris-600;
+		color: $text-color;
+		border-radius: 0.375rem;
+		padding: 0.25rem 0.5rem;
+	}
+	
+	.dataTables_paginate .paginate_button {
+		color: $color-primario !important;
+		border: 1px solid transparent;
+		border-radius: 0.375rem;
+		padding: 0.5rem 0.75rem;
+		margin: 0 0.125rem;
+		transition: all 0.2s ease;
+		
+		&:hover {
+			background: rgba($color-primario,.1) !important;
+			border-color: rgba($color-primario,.3) !important;
+			transform: translateY(-1px);
+		}
+		
+		&.current, &.current:hover { 
+			background: rgba($color-primario,.15) !important; 
+			border: 1px solid $color-primario !important; 
+			color: $color-primario !important;
+		}
+		
+		&.disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
 	}
 }
 
@@ -224,15 +412,24 @@ table.dataTable, .table {
 
 
 
+// Cambia el color de las flechitas de los acordeones a blanco
+.accordion-button::after {
+	filter: brightness(0) invert(1); // Convierte la flecha a blanco
+}
+
 // Opcional: cambia el color del icono cuando está abierto
 .accordion-button:not(.collapsed)::after {
-	filter: brightness(1.3) sepia(1) hue-rotate(-20deg) saturate(2);
+	filter: brightness(0) invert(1); // Mantiene blanco cuando está abierto
 }
 
 
 // Badges y etiquetas
 .badge.bg-primary {
 	background: linear-gradient(135deg, $color-primario, $color-primario-oscuro) !important;
+	color: #fff !important;
+}
+.badge.bg-info {
+	background: $color-info !important;
 	color: #fff !important;
 }
 

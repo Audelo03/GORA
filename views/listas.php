@@ -18,7 +18,7 @@ $nivel_nombre  = $niveles_autorizados[$_SESSION['usuario_nivel']] ?? "Desconocid
 $nombre = $_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido_paterno'] . ' ' . $_SESSION['usuario_apellido_materno'];
 ?>
 
-<div class="container mt-5">
+<div class="container mt-3">
     <!-- Tarjeta de usuario -->
     <div class="card shadow-lg border-0 rounded-3 mb-4">
         <div class="card-body d-flex flex-wrap justify-content-between align-items-center">

@@ -6,8 +6,28 @@
 		background: $table-head-bg !important;
 		color: $text-color !important;
 		border-bottom: 1px solid $color-gris-600 !important;
+		text-align: center !important;
 	}
-	tbody td { color: $text-color; }
+	tbody td { 
+		color: $text-color;
+	}
+	
+	// Centrar botones de acción
+	tbody td:last-child {
+		text-align: center !important;
+	}
+	
+	// Hover mejorado para filas
+	tbody tr:hover {
+		background-color: rgba($color-primario, 0.08) !important;
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+	
+	// Franjas de tabla mejoradas
+	tbody tr:nth-of-type(odd) {
+		background-color: rgba(255, 255, 255, 0.02) !important;
+	}
 }
 
 // Botones alineados con CRUDs

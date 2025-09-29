@@ -115,7 +115,7 @@ function formatFecha(?string $fecha): string {
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <a href="ver_seguimientos.php?id_alumno=<?= $s['id_alumno'] ?>" 
-                                           class="btn btn-sm btn-primary" 
+                                           class="btn btn-sm btn-info" 
                                            data-bs-toggle="tooltip" 
                                            data-bs-placement="top" 
                                            title="Ver Seguimientos del Alumno">

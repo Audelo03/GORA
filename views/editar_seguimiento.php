@@ -81,8 +81,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     <h3 class="mb-4">Editar Seguimiento</h3>
 
-                    <div class="mb-4 p-3 bg-light rounded">
-                        <h5 class="mb-1"><?= htmlspecialchars($alumno['nombre_completo'] ?? '') ?></h5>
+                    <div class="mb-4 p-3 rounded">
+                        <h5 class="mb-1 "><?= htmlspecialchars($alumno['nombre'] ?? '') ?></h5>
                         <small class="text-muted">Matrícula: <?= htmlspecialchars($alumno['matricula'] ?? '') ?></small>
                     </div>
 
