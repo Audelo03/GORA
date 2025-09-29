@@ -13,6 +13,88 @@ html, body {
 	font-family: $font-family-base;
 	height: 100%;
 	height: 100vh;
+	position: relative;
+	overflow-x: hidden;
+}
+
+// Patrón de fondo animado
+@keyframes backgroundMove {
+	0% {
+		transform: translateX(0) translateY(0);
+	}
+	25% {
+		transform: translateX(10px) translateY(-5px);
+	}
+	50% {
+		transform: translateX(-5px) translateY(10px);
+	}
+	75% {
+		transform: translateX(-10px) translateY(-5px);
+	}
+	100% {
+		transform: translateX(0) translateY(0);
+	}
+}
+
+@keyframes backgroundRotate {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+// Patrón de fondo oscuro animado
+body::before {
+	content: '';
+	position: fixed;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	background: 
+		radial-gradient(circle at 20% 80%, rgba($color-primario, 0.08) 0%, transparent 50%),
+		radial-gradient(circle at 80% 20%, rgba($color-primario, 0.06) 0%, transparent 50%),
+		radial-gradient(circle at 40% 40%, rgba($color-primario, 0.04) 0%, transparent 50%),
+		linear-gradient(45deg, 
+			rgba($color-negro, 0.9) 0%, 
+			rgba($color-negro-2, 0.95) 25%, 
+			rgba($color-grafito, 0.8) 50%, 
+			rgba($color-negro-2, 0.95) 75%, 
+			rgba($color-negro, 0.9) 100%
+		);
+	background-size: 400px 400px, 600px 600px, 300px 300px, 100% 100%;
+	animation: backgroundMove 60s ease-in-out infinite, backgroundRotate 120s linear infinite;
+	z-index: -1;
+	opacity: 0.8;
+}
+
+body::after {
+	content: '';
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: 
+		repeating-linear-gradient(
+			45deg,
+			transparent,
+			transparent 2px,
+			rgba($color-primario, 0.03) 2px,
+			rgba($color-primario, 0.03) 4px
+		),
+		repeating-linear-gradient(
+			-45deg,
+			transparent,
+			transparent 2px,
+			rgba($color-primario, 0.02) 2px,
+			rgba($color-primario, 0.02) 4px
+		);
+	animation: backgroundMove 80s ease-in-out infinite reverse;
+	z-index: -1;
+	opacity: 0.5;
 }
 
 
@@ -402,12 +484,87 @@ table tbody td .btn {
 }
 
 .btn-toggle-sidebar{
-	background-color: $color-primario-oscuro ;
+	background-color: $color-primario-oscuro;
+	transition: all 0.3s ease;
+	border: 1px solid rgba($color-primario, 0.3);
+	
+	&:hover {
+		outline: 1px solid $color-primario !important;
+		background-color: $color-primario !important;
+		transform: scale(1.05);
+	}
+	
+	// Estilos cuando el sidebar está abierto
+	.sidebar-icon-open {
+		display: inline-block;
+		transition: all 0.3s ease;
+	}
+	
+	.sidebar-icon-collapsed {
+		display: none;
+		transition: all 0.3s ease;
+	}
 }
 
-.btn-toggle-sidebar:hover{
-	outline: 1px solid $color-primario !important;
-	background-color: $color-primario !important;
+// Estilos cuando el sidebar está colapsado
+#app-sidebar.collapsed {
+	.btn-toggle-sidebar {
+		background: linear-gradient(135deg, rgba($color-primario, 0.2), rgba($color-primario, 0.1));
+		border-color: rgba($color-primario, 0.5);
+		
+		&:hover {
+			background: linear-gradient(135deg, rgba($color-primario, 0.4), rgba($color-primario, 0.3));
+			border-color: $color-primario;
+		}
+		
+		.sidebar-icon-open {
+			display: none;
+		}
+		
+		.sidebar-icon-collapsed {
+			display: inline-block;
+		}
+	}
+}
+
+// Estilos cuando el sidebar está expandido (sin clase collapsed)
+#app-sidebar:not(.collapsed) .btn-toggle-sidebar {
+	background: linear-gradient(135deg, $color-primario, $color-primario-oscuro) !important;
+	border-color: $color-primario !important;
+	color: $text-on-primary !important;
+	
+	&:hover {
+		background: linear-gradient(135deg, $color-primario-claro, $color-primario) !important;
+		transform: scale(1.05);
+	}
+	
+	.sidebar-icon-open {
+		display: inline-block !important;
+	}
+	
+	.sidebar-icon-collapsed {
+		display: none !important;
+	}
+}
+
+// Estilos cuando el sidebar está expandido (con clase expanded)
+#app-sidebar.expanded .btn-toggle-sidebar {
+	background: linear-gradient(135deg, $color-primario, $color-primario-oscuro) !important;
+	border-color: $color-primario !important;
+	color: $text-on-primary !important;
+	
+	&:hover {
+		background: linear-gradient(135deg, $color-primario-claro, $color-primario) !important;
+		transform: scale(1.05);
+	}
+	
+	.sidebar-icon-open {
+		display: inline-block !important;
+	}
+	
+	.sidebar-icon-collapsed {
+		display: none !important;
+	}
 }
 
 

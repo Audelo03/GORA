@@ -62,7 +62,8 @@ if (!isset($modificacion_ruta)) {
   <div class="d-flex justify-content-between align-items-center mb-3">
     <span class="fs-5 fw-bold">GORA</span>
     <button id="btn-toggle-sidebar" class="btn btn-sm btn-outline-light btn-toggle-sidebar" >
-      <i class="bi bi-list"></i>
+      <i class="bi bi-x sidebar-icon-open" style="display: none;"></i>
+      <i class="bi bi-list sidebar-icon-collapsed"></i>
     </button>
   </div>
 

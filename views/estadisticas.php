@@ -147,10 +147,10 @@ $datos = $estadisticasController->obtenerEstadisticas();
      <div class="dashboard-grid">
          <div class="chart-widget">
              <div class="widget-content">
-                <div class="widget-title">
-                    Distribución de Alumnos
+                 <div class="widget-title">
+                     Distribución de Alumnos
                     <span class="subtitle">por estatus</span>
-                </div>
+                 </div>
                  <div class="widget-chart">
                      <canvas id="alumnosPorEstatusChart"></canvas>
                  </div>
@@ -170,9 +170,9 @@ $datos = $estadisticasController->obtenerEstadisticas();
          
          <div class="chart-widget">
              <div class="widget-content">
-                <div class="widget-title">
+                 <div class="widget-title">
                     Seguimientos por estatus
-                </div>
+                 </div>
                  <div class="widget-chart">
                      <canvas id="seguimientosPorEstatusChart"></canvas>
                  </div>
@@ -1568,7 +1568,7 @@ new Chart(document.getElementById('seguimientosPorMesChart').getContext('2d'), {
                 grid: {
                     color: '#374151',
                     drawBorder: false
-                },
+            },
                 ticks: {
                     color: '#9ca3af',
                     font: { size: 11 }
@@ -1793,7 +1793,7 @@ new Chart(document.getElementById('alumnosPorAnioIngresoChart').getContext('2d')
                 grid: {
                     color: '#374151',
                     drawBorder: false
-                },
+            },
                 ticks: {
                     color: '#9ca3af',
                     font: { size: 11 }

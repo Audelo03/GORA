@@ -19,6 +19,39 @@ html, body.login-page {
 	@include text-primary;
 }
 
+.login-photo-placeholder {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0.5rem 0;
+	
+	.login-logo {
+		max-width: 80px;
+		max-height: 80px;
+		object-fit: contain;
+		border-radius: 8px;
+		transition: all 0.3s ease;
+		
+		&:hover {
+			transform: scale(1.05);
+			filter: brightness(1.1);
+		}
+	}
+	
+	.photo-placeholder {
+		flex-direction: column;
+		align-items: center;
+		
+		i {
+			transition: all 0.3s ease;
+			&:hover {
+				transform: scale(1.1);
+				filter: brightness(1.2);
+			}
+		}
+	}
+}
+
 .login-title { color: $text-color; }
 
 .login-form .form-floating > label { color: $text-color-muted; }
@@ -26,7 +59,92 @@ html, body.login-page {
 	background-color: $surface-2;
 	border-color: $color-gris-600;
 	color: $text-color;
-	&:focus { @include focus-ring($color-primario); background-color: $color-gris-700; }
+	transition: all 0.3s ease;
+	min-height: 3.5rem;
+	padding: 1rem 0.75rem;
+	font-size: 1rem;
+	&:focus { 
+		@include focus-ring($color-primario); 
+		background-color: $color-gris-700; 
+		border-color: $color-primario;
+		box-shadow: 0 0 0 0.2rem rgba($color-primario, 0.25);
+	}
+	&.is-valid {
+		border-color: $color-exito;
+		background-color: rgba($color-exito, 0.1);
+		&:focus {
+			border-color: $color-exito;
+			box-shadow: 0 0 0 0.2rem rgba($color-exito, 0.25);
+		}
+	}
+	&.is-invalid {
+		border-color: $color-peligro;
+		background-color: rgba($color-peligro, 0.1);
+		&:focus {
+			border-color: $color-peligro;
+			box-shadow: 0 0 0 0.2rem rgba($color-peligro, 0.25);
+		}
+	}
+}
+
+// Make form-floating containers larger
+.form-floating {
+	.form-control {
+		padding-top: 1.625rem;
+		padding-bottom: 0.625rem;
+		min-height: 3.5rem;
+	}
+	
+	> label {
+		padding: 1rem 0.75rem;
+		font-size: 1rem;
+	}
+}
+
+
+// Password toggle button improvements
+.password-toggle {
+	transition: all 0.2s ease;
+	color: $text-color-muted;
+	
+	&:hover {
+		color: $color-primario;
+		transform: scale(1.1);
+	}
+	
+	&:focus {
+		outline: 2px solid $color-primario;
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+}
+
+// Form feedback improvements
+.invalid-feedback, .valid-feedback {
+	font-size: 0.875rem;
+	font-weight: 500;
+	margin-top: 0.25rem;
+	display: block;
+	animation: slideIn 0.3s ease;
+}
+
+.valid-feedback {
+	color: $color-exito;
+}
+
+.invalid-feedback {
+	color: $color-peligro;
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .login-submit.btn {
