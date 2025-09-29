@@ -1,0 +1,80 @@
+// Paleta de colores tema Oscuro con Dorado
+$color-negro: #0b0b0e;          // Casi negro
+$color-negro-2: #111318;        // Base oscuro
+$color-grafito: #171a22;        // Superficie oscura
+$color-gris-700: #1f2430;       // Oscuro medio (bordes y líneas)
+$color-gris-600: #2a3140;       // Oscuro medio
+$color-gris-500: #4b5563;       // Gris de texto secundario
+$color-gris-400: #9ca3af;       // Gris medio texto
+$color-gris-300: #cbd5e1;       // Gris claro texto
+$color-gris-200: #e5e7eb;       // Gris muy claro (texto principal)
+$color-gris-100: #f8fafc;       // Casi blanco
+
+$color-primario: #c9a227;        // Dorado principal
+$color-primario-oscuro: #a8871a; // Dorado oscuro
+$color-primario-claro: #e0c14a;  // Dorado claro
+
+// Estado
+$color-exito: #10b981;           // Verde esmeralda
+$color-peligro: #ef4444;         // Rojo coral
+$color-aviso: #f59e0b;           // Ámbar
+$color-info: #06b6d4;            // Cian
+
+// Colores secundarios
+$color-acento: #d97706;          // Ámbar/acento cálido
+$color-acento-claro: #f59e0b;    // Ámbar claro
+$color-plata: #94a3b8;           // Plata elegante
+$color-beige-light: #f2e8d8;      // Beige claro cálido para fondos suaves
+
+// Textos y superficies (semánticos)
+$text-color: #ffffff;                // Texto principal sobre fondo oscuro
+$text-color-muted: #d1d5db;          // Texto secundario
+$text-on-primary: #0b0b0b;           // Texto sobre dorado
+$surface-0: $color-negro;            // Fondo base
+$surface-1: $color-negro-2;          // Superficie principal
+$surface-2: $color-grafito;          // Superficie elevada
+$surface-border: rgba(255,255,255,.08);
+
+// Tablas y listas (mejor legibilidad)
+$table-bg: $surface-1;
+$table-text: $text-color;
+$table-head-bg: linear-gradient(180deg, $surface-1, $surface-2);
+$table-head-text: $color-primario;
+$table-row-hover: rgba($color-primario, .06);
+
+// Listas de alumnos (UI específica)
+$alumnos-badge-bg: rgba($color-primario, .18);
+$alumnos-badge-color: $color-primario;
+$alumnos-input-bg: $surface-2;
+$alumnos-input-icon-bg: $color-primario;
+$alumnos-input-icon-color: $text-on-primary;
+$alumnos-card-bg: $surface-1;
+$alumnos-card-border: $surface-border;
+$alumnos-row-hover: rgba($color-primario,.08);
+$alumnos-pagination-active-bg: rgba($color-primario,.18);
+$alumnos-pagination-active-border: $color-primario;
+$alumnos-pagination-color: $color-primario;
+
+// Tipografía y dimensiones
+$font-family-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, 'Noto Sans', 'Helvetica Neue', sans-serif;
+$radio-base: .5rem;
+$radio-sm: .375rem;
+$radio-lg: .75rem;
+
+// Sombras mejoradas
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, .2), 0 1px 2px rgba(0, 0, 0, .1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, .3), 0 2px 4px rgba(0, 0, 0, .2);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, .4), 0 4px 6px rgba(0, 0, 0, .3);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, .5), 0 10px 10px rgba(0, 0, 0, .3);
+
+// Z-index capa de overlay
+$z-overlay: 1040;
+
+// Breakpoints
+$bp-sm: 576px;
+$bp-md: 768px;
+$bp-lg: 992px;
+$bp-xl: 1200px;
+$bp-xxl: 1400px;
+
+

@@ -1,0 +1,139 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+// Estilos para vistas de alumnos: listas.php y CRUDS/alumnos.php
+
+// Acordeón de listado de alumnos
+.accordion {
+	.accordion-item {
+		background-color: $alumnos-card-bg;
+		border: 1px solid $alumnos-card-border;
+		border-radius: $radio-base;
+		box-shadow: $shadow-sm;
+	}
+	.accordion-button {
+		background: linear-gradient(180deg, $color-negro-2, $color-grafito);
+		color: $color-gris-200;
+		border-radius: $radio-base;
+		&:not(.collapsed) {
+			color: $color-primario;
+			background: rgba($color-primario, .08);
+			box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.06);
+		}
+		&:focus { @include focus-ring($color-primario); }
+	}
+	.accordion-body {
+		background-color: $alumnos-card-bg;
+		border-top: 1px solid $alumnos-card-border;
+	}
+}
+
+// List-group de alumnos dentro del acordeón
+.accordion .list-group-item {
+	background-color: transparent;
+	color: $text-color;
+	border-color: $alumnos-card-border;
+	&:hover { background-color: $alumnos-row-hover; }
+}
+
+// Tarjeta de usuario e info superior
+.container .card {
+	background-color: $alumnos-card-bg;
+	border: 1px solid $alumnos-card-border;
+}
+
+// Buscador grande (listas.php)
+#buscador {
+	background-color: $alumnos-input-bg;
+	border: 1px solid $color-gris-600;
+	color: $color-gris-100;
+	&::placeholder { color: $color-gris-500; }
+	&:focus { @include focus-ring($color-primario); background-color: $color-gris-700; }
+}
+
+.input-group-text.bg-primary {
+	background-color: $alumnos-input-icon-bg !important;
+	color: $alumnos-input-icon-color !important;
+	border: none !important;
+}
+
+// Contenedor de tarjetas de alumnos (listas.php genera HTML dinámico)
+#contenedor-alumnos .card {
+	@include card-surface;
+	.transition { transition: transform .2s ease, box-shadow .2s ease; }
+	&:hover { transform: translateY(-2px); box-shadow: $shadow-lg; }
+}
+
+// Tabla de alumnos (CRUDS/alumnos.php)
+#alumnosTable.table {
+	background-color: $color-negro-2;
+	border-color: $color-gris-600;
+	thead { background: linear-gradient(180deg, $color-negro-2, $color-grafito); }
+	thead th { color: $color-primario; border-bottom-color: $color-gris-600; }
+	tbody tr:hover { background-color: $alumnos-row-hover; }
+}
+
+// Badges y estados (si se usan etiquetas en tarjetas/listas)
+.badge.alumno {
+	background-color: $alumnos-badge-bg;
+	color: $alumnos-badge-color;
+	border: 1px solid rgba($color-primario, .35);
+}
+
+// Paginaciones (listas.php y CRUDS/alumnos.php)
+.pagination .page-link {
+	color: $alumnos-pagination-color;
+	background-color: transparent;
+	border-color: $color-gris-600;
+	&:hover { background-color: rgba($color-primario, .1); border-color: $color-primario; }
+}
+
+.pagination .page-item.active .page-link {
+	color: #000;
+	background-color: $color-primario;
+	border-color: $alumnos-pagination-active-border;
+}
+
+.pagination .page-item.disabled .page-link {
+	color: $color-gris-500;
+	background-color: $color-negro-2;
+	border-color: $color-gris-600;
+}
+
+// Controles superiores (CRUDS/alumnos.php)
+#btnNuevoAlumno {
+	background-color: $color-primario;
+	border-color: $color-primario-oscuro;
+	color: #000;
+	@include hover-brighten(8%);
+	&:focus { @include focus-ring($color-primario); }
+}
+
+#btnSearch, #btnClear {
+	border-color: $color-primario !important;
+	color: $color-primario !important;
+	&:hover { background-color: $color-primario !important; color: #000 !important; }
+}
+
+#searchInput {
+	background-color: $alumnos-input-bg;
+	border: 1px solid $color-gris-600;
+	color: $color-gris-100;
+	&::placeholder { color: $color-gris-500; }
+	&:focus { @include focus-ring($color-primario); background-color: $color-gris-700; }
+}
+
+#itemsPerPage.form-select {
+	background-color: $alumnos-input-bg;
+	border: 1px solid $color-gris-600;
+	color: $color-gris-100;
+	&:focus { @include focus-ring($color-primario); }
+}
+
+#paginationInfo { color: $color-gris-400; }
+
+// Modal de alumno
+.modal-content { @include card-surface; }
+.modal-header, .modal-footer { border-color: rgba(255,255,255,.06); }
+
+

@@ -1,0 +1,41 @@
+@use 'variables' as *;
+@mixin focus-ring($color: $color-primario) {
+	outline: 0;
+	box-shadow: 0 0 0 .25rem rgba($color, .35);
+}
+
+@mixin truncate($lines: 1) {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: $lines;
+	-webkit-box-orient: vertical;
+}
+
+@mixin hover-brighten($factor: 7%) {
+	transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+	&:hover { filter: brightness(100% + $factor); }
+}
+
+@mixin card-surface {
+	background: linear-gradient(180deg, $color-negro-2 0%, $color-grafito 100%);
+	border: 1px solid rgba(255, 255, 255, .06);
+	border-radius: $radio-base;
+	box-shadow: $shadow-md;
+}
+
+@mixin primary-gradient {
+	background: linear-gradient(135deg, $color-primario 0%, $color-primario-claro 50%, $color-primario-oscuro 100%);
+}
+
+@mixin text-primary {
+	background: linear-gradient(135deg, $color-primario-claro, $color-primario-oscuro);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+@mixin accent-gradient {
+	background: linear-gradient(135deg, $color-acento 0%, $color-acento-claro 50%, darken($color-acento, 15%) 100%);
+}
+
+

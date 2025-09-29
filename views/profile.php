@@ -47,7 +47,7 @@ include 'objects/header.php';
                             <i class="bi bi-person-circle text-primary" style="font-size: 8rem;"></i>
                            
                         </div>
-
+    
                         <div class="col-md-8 p-4 p-lg-5">
                             <h4 class="card-title mb-4 fw-light text-primary border-bottom pb-2">
                                 Información de la Cuenta
